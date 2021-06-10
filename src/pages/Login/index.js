@@ -1,29 +1,39 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-
+import {
+  View,
+  Text,
+  TextInput,
+  Image,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+  Keyboard,
+} from 'react-native';
+import Logo from '../../assets/logo.png';
 import styles from './styles';
 
 const Login = ({ navigation }) => {
   return (
-    <View style={styles.container}>
-      <View style={styles.logo} />
-      <Text style={styles.label}>Matrícula</Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <Image style={styles.logo} source={Logo} />
 
-      <TextInput
-        keyboardType='number-pad'
-        style={styles.input}
-        placeholder={'Digite sua matrícula'}
-      />
+        <Text style={styles.label}>Matrícula</Text>
+        <TextInput
+          keyboardType='number-pad'
+          style={styles.input}
+          placeholder={'Digite sua matrícula'}
+        />
 
-      <Text style={styles.label}>Senha</Text>
-      <TextInput style={styles.input} secureTextEntry={true} />
+        <Text style={styles.label}>Senha</Text>
+        <TextInput style={styles.input} secureTextEntry={true} />
 
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Home')}
-        style={styles.button}>
-        <Text>Entrar</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Home')}
+          style={styles.button}>
+          <Text style={styles.labelEntrar}>Entrar</Text>
+        </TouchableOpacity>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

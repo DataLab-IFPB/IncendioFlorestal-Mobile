@@ -8,8 +8,9 @@ export default StyleSheet.create({
     justifyContent: 'center',
   },
   label: {
-    fontSize: 15,
+    fontSize: width * 0.04,
     margin: 10,
+    color: '#010101',
   },
   input: {
     width: width * 0.6,
@@ -17,13 +18,13 @@ export default StyleSheet.create({
     borderRadius: 25,
     backgroundColor: '#C1C1C1',
     textAlign: 'center',
+    fontSize: width * 0.04,
   },
   button: {
     width: width * 0.3,
     height: width * 0.1,
     borderRadius: 25,
-    backgroundColor: 'tomato',
-    color: 'white',
+    backgroundColor: '#C00',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 15,
@@ -31,7 +32,9 @@ export default StyleSheet.create({
   logo: {
     width: width * 0.3,
     height: width * 0.3,
-    backgroundColor: '#010101',
-    borderRadius: 15,
+  },
+  labelEntrar: {
+    color: '#FFFF',
+    fontSize: width * 0.04,
   },
 });
