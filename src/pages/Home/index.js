@@ -6,7 +6,7 @@ const Home = () => {
     <View
       style={{
         flex: 1,
-        backgroundColor: 'tomato',
+        backgroundColor: '#FFF',
         alignItems: 'center',
         justifyContent: 'center',
       }}>
