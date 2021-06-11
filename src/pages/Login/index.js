@@ -7,39 +7,30 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   Keyboard,
+  BackHandler,
 } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchLogin } from '../../redux/login/login-action';
 import Logo from '../../assets/logo.png';
 import Loading from '../components/Loading';
 import styles from './styles';
 
 const Login = ({ navigation }) => {
-  const dispatch = useDispatch();
-  const [matricula, setMatricula] = useState();
-  const [senha, setSenha] = useState();
+  const [matricula, setMatricula] = useState(null);
+  const [senha, setSenha] = useState(null);
   const [autenticacaoInvalida, setAutenticacaoInvalida] = useState(false);
   const [loading, setLoading] = useState(false);
-  const token = useSelector((state) => state.login);
 
   useEffect(() => {
-    if (!token.data) {
+    BackHandler.addEventListener('hardwareBackPress', () => {
+      return true;
+    });
+  }, []);
+  const logar = () => {
+    if (!matricula && !senha) {
       setAutenticacaoInvalida(true);
     } else {
       setAutenticacaoInvalida(false);
+      navigation.navigate('Home');
     }
-  }, [token]);
-
-  const logar = () => {
-    dispatch(fetchLogin({ matricula, senha }));
-    setLoading(true);
-
-    setTimeout(() => {
-      setLoading(false);
-      if (token.data) {
-        navigation.navigate('Home');
-      }
-    }, 2000);
   };
 
   return (
