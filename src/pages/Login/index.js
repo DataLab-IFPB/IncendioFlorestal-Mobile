@@ -25,12 +25,16 @@ const Login = ({ navigation }) => {
     });
   }, []);
   const logar = () => {
-    if (!matricula && !senha) {
-      setAutenticacaoInvalida(true);
-    } else {
-      setAutenticacaoInvalida(false);
-      navigation.navigate('Home');
-    }
+    setLoading(true);
+    setTimeout(() => {
+      if (!matricula && !senha) {
+        setAutenticacaoInvalida(true);
+      } else {
+        setAutenticacaoInvalida(false);
+        navigation.navigate('Home');
+      }
+      setLoading(false);
+    }, 2000);
   };
 
   return (
