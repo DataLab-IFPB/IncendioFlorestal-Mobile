@@ -27,7 +27,11 @@ const Login = ({ navigation }) => {
   const logar = () => {
     setLoading(true);
     setTimeout(() => {
-      if (!matricula && !senha) {
+      if (
+        (!matricula && !senha) ||
+        (matricula && !senha) ||
+        (senha && !matricula)
+      ) {
         setAutenticacaoInvalida(true);
       } else {
         setAutenticacaoInvalida(false);
