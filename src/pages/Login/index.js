@@ -7,38 +7,32 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   Keyboard,
-  BackHandler,
 } from 'react-native';
 import Logo from '../../assets/logo.png';
 import Loading from '../components/Loading';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchLogin } from '../../redux/login/login-action';
 import styles from './styles';
 
 const Login = ({ navigation }) => {
   const [matricula, setMatricula] = useState(null);
   const [senha, setSenha] = useState(null);
   const [autenticacaoInvalida, setAutenticacaoInvalida] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', () => {
-      return true;
-    });
-  }, []);
+  const loading = useSelector((state) => state.login.loading);
+  const dispatch = useDispatch();
   const logar = () => {
-    setLoading(true);
-    setTimeout(() => {
-      if (
-        (!matricula && !senha) ||
-        (matricula && !senha) ||
-        (senha && !matricula)
-      ) {
-        setAutenticacaoInvalida(true);
-      } else {
-        setAutenticacaoInvalida(false);
-        navigation.navigate('Home');
-      }
-      setLoading(false);
-    }, 2000);
+    if (
+      (!matricula && !senha) ||
+      (matricula && !senha) ||
+      (senha && !matricula)
+    ) {
+      setAutenticacaoInvalida(true);
+    } else {
+      setAutenticacaoInvalida(false);
+      dispatch(fetchLogin({ matricula, senha }));
+
+      // navigation.navigate('Home');
+    }
   };
 
   return (

@@ -1,9 +1,14 @@
-import React from 'react';
-import { Platform } from 'react-native';
+import React, { useEffect } from 'react';
+import { BackHandler, Platform } from 'react-native';
 import MapView, { UrlTile, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import styles from './styles';
 
 const Maps = () => {
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', () => {
+      return true;
+    });
+  }, []);
   return (
     <MapView
       initialRegion={{

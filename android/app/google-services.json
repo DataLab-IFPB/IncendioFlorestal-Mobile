@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "273734224174",
+    "project_id": "bombeiros-87716",
+    "storage_bucket": "bombeiros-87716.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:273734224174:android:3ce91bae63b1304a5992bf",
+        "android_client_info": {
+          "package_name": "com.projeto_combate_incendios"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "273734224174-0snsmep1sg9fhuq6ue8nm8rf7gp2jj39.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADFSCI_b-sl63gEy_9Wok_SKFm2whwrqY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "273734224174-0snsmep1sg9fhuq6ue8nm8rf7gp2jj39.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
