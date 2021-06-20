@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -14,12 +15,29 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchLogin } from '../../redux/login/login-action';
 import styles from './styles';
 
-const Login = ({ navigation }) => {
+const Login = () => {
+  const navigation = useNavigation();
   const [matricula, setMatricula] = useState(null);
   const [senha, setSenha] = useState(null);
   const [autenticacaoInvalida, setAutenticacaoInvalida] = useState(false);
   const loading = useSelector((state) => state.login.loading);
+  const user = useSelector((state) => state.login.data);
+  const error = useSelector((state) => state.login.error);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (user) {
+      navigation.navigate('Home');
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (error && !loading) {
+      setAutenticacaoInvalida(true);
+    } else {
+      setAutenticacaoInvalida(false);
+    }
+  }, [error]);
   const logar = () => {
     if (
       (!matricula && !senha) ||
@@ -30,8 +48,6 @@ const Login = ({ navigation }) => {
     } else {
       setAutenticacaoInvalida(false);
       dispatch(fetchLogin({ matricula, senha }));
-
-      // navigation.navigate('Home');
     }
   };
 
