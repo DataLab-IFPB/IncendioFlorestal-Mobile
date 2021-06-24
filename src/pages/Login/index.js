@@ -48,7 +48,6 @@ const Login = () => {
     } else {
       setAutenticacaoInvalida(false);
       dispatch(fetchLogin({ matricula, senha }));
-     
     }
   };
 

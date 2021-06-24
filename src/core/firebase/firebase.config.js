@@ -3,9 +3,7 @@ import 'firebase/auth';
 import 'firebase/firestore';
 
 export default function initFirebase() {
-  const firebaseConfig = {
-   
-  };
+  const firebaseConfig = {};
 
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
