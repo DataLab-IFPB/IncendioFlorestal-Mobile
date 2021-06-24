@@ -23,7 +23,7 @@ const VerifyAuthentication = () => {
     }
   }, [userLogged, loadingSession]);
 
-  if (!validateToken && loadingSession) {
+  if (!validateToken) {
     return <Loading loading={loadingSession} />;
   }
   return validateToken ? <Maps /> : <Login />;
