@@ -1,31 +1,45 @@
 import React, { useEffect, useState } from 'react';
 import Login from '../Login';
 import Maps from '../Maps';
-import { fetchVerifySession } from '../../redux/session/session-action';
-import { useDispatch, useSelector } from 'react-redux';
 import Loading from '../components/Loading';
-
+import { createStackNavigator } from '@react-navigation/stack';
+import firebase from 'firebase';
 const VerifyAuthentication = () => {
-  const dispatch = useDispatch();
+  const Stack = createStackNavigator();
   const [validateToken, setValidateToken] = useState(null);
-  const loadingSession = useSelector((state) => state.session.loading);
-  const userLogged = useSelector((state) => state.session.data);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    dispatch(fetchVerifySession());
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        setValidateToken(true);
+        setLoading(false);
+      } else {
+        setValidateToken(false);
+        setLoading(false);
+      }
+    });
   }, []);
 
-  useEffect(() => {
-    if (userLogged) {
-      setValidateToken(true);
-    } else {
-      setValidateToken(false);
-    }
-  }, [userLogged, loadingSession]);
-
   if (validateToken === null) {
-    return <Loading loading={loadingSession} />;
+    return <Loading loading={loading} />;
   }
-  return validateToken ? <Maps /> : <Login />;
+  return validateToken ? (
+    <Stack.Navigator>
+      <Stack.Screen
+        name={'Maps'}
+        component={Maps}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
+  ) : (
+    <Stack.Navigator>
+      <Stack.Screen
+        name={'Login'}
+        component={Login}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
+  );
 };
 export default VerifyAuthentication;

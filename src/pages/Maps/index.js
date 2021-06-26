@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { View, TouchableOpacity, Text } from 'react-native';
 import { BackHandler } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
+import MapboxGL from '@react-native-mapbox-gl/maps';
 import styles from './styles';
 
 const Maps = () => {
+  MapboxGL.setAccessToken(
+    'pk.eyJ1IjoiaXRhbG9hN3giLCJhIjoiY2txYjVxcndqMHd5aTJ1dDV0ZXBlM2kxaCJ9.P1_QYLu4AQbAX9u-V37_1Q',
+  );
+
   const [userGeolocation, setUserGeolocation] = useState({
     latitude: 0,
     longitude: 0,
@@ -64,27 +69,20 @@ const Maps = () => {
   return loadingValidateGeolocationUser ? (
     <View />
   ) : (
-    <MapView
-      initialRegion={{
-        latitude: userGeolocation.latitude,
-        longitude: userGeolocation.longitude,
-        latitudeDelta: 0.0033160984328199916,
-        longitudeDelta: 0.001997910439968109,
-      }}
-      mapType={'terrain'}
-      onRegionChangeComplete={(region) => {
-        setUserGeolocation({
-          latitude: region.latitude,
-          longitude: region.longitude,
-          latitudeDelta: region.latitudeDelta,
-          longitudeDelta: region.longitudeDelta,
-        });
-      }}
-      loadingEnabled={true}
-      showsMyLocationButton={true}
-      provider={PROVIDER_GOOGLE}
-      style={styles.containerMap}
-    />
+    <MapboxGL.MapView
+      styleURL={MapboxGL.StyleURL.SatelliteStreet}
+      zoomLevel={20}
+      logoEnabled={false}
+      attributionEnabled={false}
+      centerCoordinate={[userGeolocation.longitude, userGeolocation.latitude]}
+      style={styles.containerMap}>
+      <MapboxGL.Camera
+        zoomLevel={17}
+        centerCoordinate={[userGeolocation.longitude, userGeolocation.latitude]}
+        animationMode={'flyTo'}
+        animationDuration={0}
+      />
+    </MapboxGL.MapView>
   );
 };
 

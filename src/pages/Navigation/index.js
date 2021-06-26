@@ -7,7 +7,6 @@ import Maps from '../Maps';
 import VerifyAuthentication from '../VerifyAuthentication';
 const Navigation = () => {
   const Stack = createStackNavigator();
-
   return (
     <NavigationContainer>
       <Stack.Navigator>
