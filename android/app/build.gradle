@@ -190,8 +190,6 @@ dependencies {
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
-    implementation project(':react-native-svg')
-
     // google maps
     implementation(project(':react-native-maps')){
        exclude group: 'com.google.android.gms', module: 'play-services-base'
@@ -201,6 +199,11 @@ dependencies {
    implementation 'com.google.android.gms:play-services-maps:17.0.0'
 
     implementation platform('com.google.firebase:firebase-bom:28.1.0')
+
+
+    // VECTOR ICONS
+    compile project(':react-native-vector-icons')
+
 
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
@@ -233,3 +236,4 @@ task copyDownloadableDepsToLibs(type: Copy) {
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"

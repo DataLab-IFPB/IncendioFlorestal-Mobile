@@ -13,8 +13,10 @@ import Logo from '../../assets/logo.png';
 import Loading from '../components/Loading';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchLogin } from '../../redux/login/login-action';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { PERMISSION_LOCATION_USE } from '../../constants/keys';
 import styles from './styles';
-
+import MapboxGL from '@react-native-mapbox-gl/maps';
 const Login = () => {
   const navigation = useNavigation();
   const [matricula, setMatricula] = useState(null);
@@ -24,6 +26,20 @@ const Login = () => {
   const user = useSelector((state) => state.login.data);
   const error = useSelector((state) => state.login.error);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    async function verifyPermission() {
+      const permission = await requestPermission();
+
+      if (permission) {
+        await AsyncStorage.setItem(
+          PERMISSION_LOCATION_USE,
+          JSON.stringify(permission),
+        );
+      }
+    }
+    verifyPermission();
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -38,6 +54,11 @@ const Login = () => {
       setAutenticacaoInvalida(false);
     }
   }, [error]);
+
+  const requestPermission = async () => {
+    return await MapboxGL.requestAndroidLocationPermissions();
+  };
+
   const logar = () => {
     if (
       (!matricula && !senha) ||

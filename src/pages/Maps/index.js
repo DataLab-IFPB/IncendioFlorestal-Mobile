@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, TouchableOpacity, Text } from 'react-native';
 import { BackHandler } from 'react-native';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import { View, Text } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import MapboxGL from '@react-native-mapbox-gl/maps';
+import { PERMISSION_LOCATION_USE } from '../../constants/keys';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { coordinates } from '../../../fakeCoordinates';
+import IconAwesome from 'react-native-vector-icons/FontAwesome5';
 import styles from './styles';
 
 const Maps = () => {
@@ -24,6 +27,21 @@ const Maps = () => {
     BackHandler.addEventListener('hardwareBackPress', () => {
       return true;
     });
+  }, []);
+
+  useEffect(() => {
+    async function verifyPermission() {
+      const permission = await AsyncStorage.getItem(PERMISSION_LOCATION_USE);
+
+      if (!permission) {
+        const request = await MapboxGL.requestAndroidLocationPermissions();
+        await AsyncStorage.setItem(
+          PERMISSION_LOCATION_USE,
+          JSON.stringify(request),
+        );
+      }
+    }
+    verifyPermission();
   }, []);
 
   // load location user
@@ -66,22 +84,39 @@ const Maps = () => {
       setLoadingValidateGeolocationUser(false);
     }
   }, [userGeolocation]);
+
   return loadingValidateGeolocationUser ? (
     <View />
   ) : (
     <MapboxGL.MapView
-      styleURL={MapboxGL.StyleURL.SatelliteStreet}
+      styleURL={MapboxGL.StyleURL.Street}
       zoomLevel={20}
       logoEnabled={false}
       attributionEnabled={false}
       centerCoordinate={[userGeolocation.longitude, userGeolocation.latitude]}
       style={styles.containerMap}>
       <MapboxGL.Camera
-        zoomLevel={17}
+        zoomLevel={15}
         centerCoordinate={[userGeolocation.longitude, userGeolocation.latitude]}
         animationMode={'flyTo'}
-        animationDuration={0}
+        animationDuration={1100}
       />
+      {coordinates.map((coordinate) => {
+        return (
+          <MapboxGL.MarkerView
+            key={coordinate.id}
+            coordinate={[coordinate.longitude, coordinate.latitude]}
+            title={'AAA'}>
+            <View style={{ width: 100, height: 100 }}>
+              <IconAwesome
+                name='fire'
+                size={30}
+                color={coordinate.intensidade <= 5 ? '#F00' : '#ff4500'}
+              />
+            </View>
+          </MapboxGL.MarkerView>
+        );
+      })}
     </MapboxGL.MapView>
   );
 };
