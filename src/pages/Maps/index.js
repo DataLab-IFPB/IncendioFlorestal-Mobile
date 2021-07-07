@@ -6,7 +6,7 @@ import MapboxGL from '@react-native-mapbox-gl/maps';
 import { PERMISSION_LOCATION_USE } from '../../constants/keys';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { coordinates } from '../../../fakeCoordinates';
-import IconAwesome from 'react-native-vector-icons/FontAwesome5';
+import IconSimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import styles from './styles';
 
 const Maps = () => {
@@ -108,7 +108,7 @@ const Maps = () => {
             coordinate={[coordinate.longitude, coordinate.latitude]}
             title={'AAA'}>
             <View style={{ width: 100, height: 100 }}>
-              <IconAwesome
+              <IconSimpleLineIcons
                 name='fire'
                 size={30}
                 color={coordinate.intensidade <= 5 ? '#F00' : '#ff4500'}
