@@ -9,6 +9,7 @@ const FloatingMenu = ({ setMapStyle }) => {
   };
   return (
     <ActionButton
+      style={styles.container}
       renderIcon={() => handleIcon('layer-group')}
       verticalOrientation='down'
       position='left'

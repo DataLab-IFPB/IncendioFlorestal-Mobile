@@ -125,11 +125,8 @@ const Maps = () => {
     <View />
   ) : (
     <View style={styles.containerMapsAndButtons}>
-      {!loadingValidateGeolocationUser && (
-        <View style={styles.containerButtons}>
-          <FloatingMenu setMapStyle={setMapStyle} />
-        </View>
-      )}
+      <FloatingMenu setMapStyle={setMapStyle} />
+
       <MapboxGL.MapView
         styleURL={mapStyle}
         zoomLevel={20}
@@ -148,6 +145,7 @@ const Maps = () => {
           animationMode={'flyTo'}
           animationDuration={1100}
         />
+
         {indices &&
           indices.map((coordinate, index) => {
             return (
