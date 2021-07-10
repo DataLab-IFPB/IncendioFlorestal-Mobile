@@ -7,12 +7,14 @@ import { PERMISSION_LOCATION_USE } from '../../constants/keys';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { coordinates } from '../../../fakeCoordinates';
 import IconSimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import FloatingMenu from '../FloatingMenu';
 import styles from './styles';
 
 const Maps = () => {
   MapboxGL.setAccessToken(
     'pk.eyJ1IjoiaXRhbG9hN3giLCJhIjoiY2txYjVxcndqMHd5aTJ1dDV0ZXBlM2kxaCJ9.P1_QYLu4AQbAX9u-V37_1Q',
   );
+  const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Street);
 
   const [userGeolocation, setUserGeolocation] = useState({
     latitude: 0,
@@ -88,36 +90,46 @@ const Maps = () => {
   return loadingValidateGeolocationUser ? (
     <View />
   ) : (
-    <MapboxGL.MapView
-      styleURL={MapboxGL.StyleURL.Street}
-      zoomLevel={20}
-      logoEnabled={false}
-      attributionEnabled={false}
-      centerCoordinate={[userGeolocation.longitude, userGeolocation.latitude]}
-      style={styles.containerMap}>
-      <MapboxGL.Camera
-        zoomLevel={15}
+    <View style={styles.containerMapsAndButtons}>
+      {!loadingValidateGeolocationUser && (
+        <View style={styles.containerButtons}>
+          <FloatingMenu setMapStyle={setMapStyle} />
+        </View>
+      )}
+      <MapboxGL.MapView
+        styleURL={mapStyle}
+        zoomLevel={20}
+        logoEnabled={false}
+        attributionEnabled={false}
         centerCoordinate={[userGeolocation.longitude, userGeolocation.latitude]}
-        animationMode={'flyTo'}
-        animationDuration={1100}
-      />
-      {coordinates.map((coordinate) => {
-        return (
-          <MapboxGL.MarkerView
-            key={coordinate.id}
-            coordinate={[coordinate.longitude, coordinate.latitude]}
-            title={'AAA'}>
-            <View style={{ width: 100, height: 100 }}>
-              <IconSimpleLineIcons
-                name='fire'
-                size={30}
-                color={coordinate.intensidade <= 5 ? '#F00' : '#ff4500'}
-              />
-            </View>
-          </MapboxGL.MarkerView>
-        );
-      })}
-    </MapboxGL.MapView>
+        style={styles.containerMap}>
+        <MapboxGL.Camera
+          zoomLevel={15}
+          centerCoordinate={[
+            userGeolocation.longitude,
+            userGeolocation.latitude,
+          ]}
+          animationMode={'flyTo'}
+          animationDuration={1100}
+        />
+        {coordinates.map((coordinate) => {
+          return (
+            <MapboxGL.MarkerView
+              key={coordinate.id}
+              coordinate={[coordinate.longitude, coordinate.latitude]}
+              title={'AAA'}>
+              <View style={styles.containerIndexFire}>
+                <IconSimpleLineIcons
+                  name='fire'
+                  size={30}
+                  color={coordinate.intensidade <= 5 ? '#F00' : '#ff4500'}
+                />
+              </View>
+            </MapboxGL.MarkerView>
+          );
+        })}
+      </MapboxGL.MapView>
+    </View>
   );
 };
 
