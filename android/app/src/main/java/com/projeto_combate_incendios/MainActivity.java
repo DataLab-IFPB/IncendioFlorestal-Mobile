@@ -10,6 +10,6 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "projeto_combate_incendios";
+    return "Projeto Combate a incêndios";
   }
 }

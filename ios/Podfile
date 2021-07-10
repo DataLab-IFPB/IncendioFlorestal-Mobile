@@ -12,6 +12,7 @@ target 'projeto_combate_incendios' do
     :hermes_enabled => false
   )
 
+
   target 'projeto_combate_incendiosTests' do
     inherit! :complete
     # Pods for testing

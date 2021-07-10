@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -7,38 +8,68 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   Keyboard,
-  BackHandler,
 } from 'react-native';
 import Logo from '../../assets/logo.png';
 import Loading from '../components/Loading';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchLogin } from '../../redux/login/login-action';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { PERMISSION_LOCATION_USE } from '../../constants/keys';
 import styles from './styles';
-
-const Login = ({ navigation }) => {
+import MapboxGL from '@react-native-mapbox-gl/maps';
+const Login = () => {
+  const navigation = useNavigation();
   const [matricula, setMatricula] = useState(null);
   const [senha, setSenha] = useState(null);
   const [autenticacaoInvalida, setAutenticacaoInvalida] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const loading = useSelector((state) => state.login.loading);
+  const user = useSelector((state) => state.login.data);
+  const error = useSelector((state) => state.login.error);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', () => {
-      return true;
-    });
-  }, []);
-  const logar = () => {
-    setLoading(true);
-    setTimeout(() => {
-      if (
-        (!matricula && !senha) ||
-        (matricula && !senha) ||
-        (senha && !matricula)
-      ) {
-        setAutenticacaoInvalida(true);
-      } else {
-        setAutenticacaoInvalida(false);
-        navigation.navigate('Home');
+    async function verifyPermission() {
+      const permission = await requestPermission();
+
+      if (permission) {
+        await AsyncStorage.setItem(
+          PERMISSION_LOCATION_USE,
+          JSON.stringify(permission),
+        );
       }
-      setLoading(false);
-    }, 2000);
+    }
+    verifyPermission();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      navigation.navigate('Home');
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (error && !loading) {
+      setAutenticacaoInvalida(true);
+    } else {
+      setAutenticacaoInvalida(false);
+    }
+  }, [error]);
+
+  const requestPermission = async () => {
+    return await MapboxGL.requestAndroidLocationPermissions();
+  };
+
+  const logar = () => {
+    if (
+      (!matricula && !senha) ||
+      (matricula && !senha) ||
+      (senha && !matricula)
+    ) {
+      setAutenticacaoInvalida(true);
+    } else {
+      setAutenticacaoInvalida(false);
+      dispatch(fetchLogin({ matricula, senha }));
+    }
   };
 
   return (
