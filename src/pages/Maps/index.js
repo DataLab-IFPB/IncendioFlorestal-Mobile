@@ -5,7 +5,7 @@ import Geolocation from 'react-native-geolocation-service';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import { PERMISSION_LOCATION_USE } from '../../constants/keys';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { coordinates } from '../../../fakeCoordinates';
+import firebase from 'firebase';
 import IconSimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import FloatingMenu from '../FloatingMenu';
 import styles from './styles';
@@ -90,6 +90,37 @@ const Maps = () => {
     }
   }, [userGeolocation]);
 
+  // useEffect(() => {
+  //   firebase
+  //     .database()
+  //     .ref('coordinates')
+  //     .set(
+  //       {
+  //         latitude: '-7.0123',
+  //         longitude: '-39.0123',
+  //       },
+  //       (err) => {
+  //         if (err) {
+  //           console.log('erro ao salvar as coordenadas ', err);
+  //         } else {
+  //           console.log('coordenadas salvas');
+  //         }
+  //       },
+  //     );
+
+  //   firebase
+  //     .database()
+  //     .ref()
+  //     .child('coordinates')
+  //     .get()
+  //     .then((values) => {
+  //       if (values.exists()) {
+  //         console.log('possui coordenadas salvas');
+  //       } else {
+  //         console.log('não possui coordenadas salvas');
+  //       }
+  //     });
+  // }, []);
   return loadingValidateGeolocationUser ? (
     <View />
   ) : (
