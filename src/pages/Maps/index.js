@@ -10,11 +10,14 @@ import IconSimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import FloatingMenu from '../FloatingMenu';
 import styles from './styles';
 
+import { useSelector } from 'react-redux';
+
 const Maps = () => {
   MapboxGL.setAccessToken(
     'pk.eyJ1IjoiaXRhbG9hN3giLCJhIjoiY2txYjVxcndqMHd5aTJ1dDV0ZXBlM2kxaCJ9.P1_QYLu4AQbAX9u-V37_1Q',
   );
   const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Street);
+  const indices = useSelector((state) => state.indicesIncendios.data);
 
   const [userGeolocation, setUserGeolocation] = useState({
     latitude: 0,
@@ -105,6 +108,8 @@ const Maps = () => {
         style={styles.containerMap}>
         <MapboxGL.Camera
           zoomLevel={15}
+          minZoomLevel={10}
+          maxZoomLevel={20}
           centerCoordinate={[
             userGeolocation.longitude,
             userGeolocation.latitude,
@@ -112,22 +117,25 @@ const Maps = () => {
           animationMode={'flyTo'}
           animationDuration={1100}
         />
-        {coordinates.map((coordinate) => {
-          return (
-            <MapboxGL.MarkerView
-              key={coordinate.id}
-              coordinate={[coordinate.longitude, coordinate.latitude]}
-              title={'AAA'}>
-              <View style={styles.containerIndexFire}>
-                <IconSimpleLineIcons
-                  name='fire'
-                  size={30}
-                  color={coordinate.intensidade <= 5 ? '#F00' : '#ff4500'}
-                />
-              </View>
-            </MapboxGL.MarkerView>
-          );
-        })}
+        {indices &&
+          indices.map((coordinate, index) => {
+            return (
+              <MapboxGL.MarkerView
+                key={index}
+                coordinate={[
+                  Number(coordinate.longitude),
+                  Number(coordinate.latitude),
+                ]}>
+                <View style={styles.containerIndexFire}>
+                  <IconSimpleLineIcons
+                    name='fire'
+                    size={30}
+                    color={coordinate.brightness >= 500 ? '#F00' : '#ff4500'}
+                  />
+                </View>
+              </MapboxGL.MarkerView>
+            );
+          })}
       </MapboxGL.MapView>
     </View>
   );
