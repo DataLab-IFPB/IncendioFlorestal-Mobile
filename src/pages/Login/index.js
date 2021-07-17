@@ -81,7 +81,7 @@ const Login = () => {
         <TextInput
           value={matricula}
           onChangeText={setMatricula}
-          keyboardType='number-pad'
+          keyboardType='email-address'
           style={styles.input}
           placeholder={'Digite sua matrícula'}
         />

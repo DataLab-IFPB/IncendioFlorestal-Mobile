@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { BackHandler } from 'react-native';
-import { View, Text } from 'react-native';
+import { BackHandler, TouchableOpacity } from 'react-native';
+import { View, Text, Alert, Modal } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import { PERMISSION_LOCATION_USE } from '../../constants/keys';
@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import firebase from 'firebase';
 import IconSimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import FloatingMenu from '../FloatingMenu';
+import Loading from '../components/Loading';
 import styles from './styles';
 
 import { useSelector } from 'react-redux';
@@ -16,9 +17,13 @@ const Maps = () => {
   MapboxGL.setAccessToken(
     'pk.eyJ1IjoiaXRhbG9hN3giLCJhIjoiY2txYjVxcndqMHd5aTJ1dDV0ZXBlM2kxaCJ9.P1_QYLu4AQbAX9u-V37_1Q',
   );
-  const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Street);
+  const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Outdoors);
   const indices = useSelector((state) => state.indicesIncendios.data);
-
+  const loadingIndices = useSelector((state) => state.indicesIncendios.loading);
+  const errorsRequest = useSelector((state) => state.indicesIncendios.error);
+  const [indicesNotFound, setShowIndicesNotFound] = useState(false);
+  const [showMessageIndicesNotFound, setShowMessageIndicesNotFound] =
+    useState(false);
   const [userGeolocation, setUserGeolocation] = useState({
     latitude: 0,
     longitude: 0,
@@ -121,8 +126,20 @@ const Maps = () => {
   //       }
   //     });
   // }, []);
+
+  useEffect(() => {
+    if (
+      !loadingIndices &&
+      !loadingValidateGeolocationUser &&
+      indices === null
+    ) {
+      setShowIndicesNotFound(true);
+      setShowMessageIndicesNotFound(true);
+    }
+  }, [errorsRequest, indices]);
+
   return loadingValidateGeolocationUser ? (
-    <View />
+    <Loading loading={loadingValidateGeolocationUser || loadingIndices} />
   ) : (
     <View style={styles.containerMapsAndButtons}>
       <FloatingMenu setMapStyle={setMapStyle} />
@@ -136,7 +153,7 @@ const Maps = () => {
         style={styles.containerMap}>
         <MapboxGL.Camera
           zoomLevel={15}
-          minZoomLevel={10}
+          minZoomLevel={5}
           maxZoomLevel={20}
           centerCoordinate={[
             userGeolocation.longitude,
@@ -166,6 +183,49 @@ const Maps = () => {
             );
           })}
       </MapboxGL.MapView>
+      {indicesNotFound &&
+        !loadingIndices &&
+        !loadingValidateGeolocationUser &&
+        indices &&
+        indices === null && (
+          <Modal visible={showMessageIndicesNotFound} transparent={true}>
+            <View
+              style={{
+                width: 250,
+                height: 100,
+                backgroundColor: '#000',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'absolute',
+                elevation: 10,
+                zIndex: 2,
+                borderRadius: 30,
+                top: '40%',
+                left: '20%',
+              }}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: 16,
+                  fontWeight: 'bold',
+                  color: '#FFF',
+                }}>
+                {`${'!Ops.\nNão foi possível carregar os dados'}`}
+              </Text>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: '#fff',
+                  width: 80,
+                  height: 20,
+                  alignItems: 'center',
+                  borderRadius: 15,
+                }}
+                onPress={() => setShowMessageIndicesNotFound(false)}>
+                <Text>Ok</Text>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+        )}
     </View>
   );
 };

@@ -23,8 +23,10 @@ const _getData = (data) => {
 function* indicesIncendios() {
   try {
     const { data } = yield call(axios.get, URL_VIIRS_NOAA_20);
-    const result = yield _getData(data);
-    yield put(fetchIndicesIncendiosSuccess(result));
+    if (data) {
+      const result = yield _getData(data);
+      yield put(fetchIndicesIncendiosSuccess(result));
+    }
   } catch (error) {
     yield put(fetchIndicesIncendiosFail(error));
   }
