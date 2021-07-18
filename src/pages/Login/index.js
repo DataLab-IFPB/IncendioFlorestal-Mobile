@@ -9,6 +9,9 @@ import {
   TouchableOpacity,
   Keyboard,
 } from 'react-native';
+import packageJson from '../../../package.json';
+
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import Logo from '../../assets/logo.png';
 import Loading from '../components/Loading';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,6 +20,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PERMISSION_LOCATION_USE } from '../../constants/keys';
 import styles from './styles';
 import MapboxGL from '@react-native-mapbox-gl/maps';
+import { jsxAttribute } from '@babel/types';
 const Login = () => {
   const navigation = useNavigation();
   const [matricula, setMatricula] = useState(null);
@@ -71,7 +75,7 @@ const Login = () => {
       dispatch(fetchLogin({ matricula, senha }));
     }
   };
-
+  const [iconName, setIconName] = useState('eye-slash');
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -87,18 +91,35 @@ const Login = () => {
           autoCapitalize='none'
         />
         <Text style={styles.label}>Senha</Text>
-        <TextInput
-          value={senha}
-          onChangeText={setSenha}
-          style={styles.input}
-          secureTextEntry={true}
-          autoCapitalize='none'
-        />
+        <View style={styles.containerInputSenha}>
+          <TextInput
+            value={senha}
+            onChangeText={setSenha}
+            style={styles.input}
+            secureTextEntry={iconName === 'eye' ? false : true}
+            autoCapitalize='none'
+          />
+
+          <Icon
+            onPress={() =>
+              setIconName(iconName === 'eye' ? 'eye-slash' : 'eye')
+            }
+            name={iconName}
+            style={styles.iconViewSenha}
+            size={15}
+            color='#F00'
+          />
+        </View>
+
         <TouchableOpacity onPress={logar} style={styles.button}>
           <Text style={styles.labelEntrar}>Entrar</Text>
         </TouchableOpacity>
 
         {autenticacaoInvalida && <Text>Credenciais inválidas!</Text>}
+
+        <Text style={styles.textVersion}>
+          {`Version ${packageJson.version}`}
+        </Text>
       </View>
     </TouchableWithoutFeedback>
   );
