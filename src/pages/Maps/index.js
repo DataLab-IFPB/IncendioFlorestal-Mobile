@@ -30,7 +30,6 @@ const Maps = () => {
     latitudeDelta: 0,
     longitudeDelta: 0,
   });
-
   const [loadingValidateGeolocationUser, setLoadingValidateGeolocationUser] =
     useState(false);
   useEffect(() => {
@@ -95,38 +94,6 @@ const Maps = () => {
     }
   }, [userGeolocation]);
 
-  // useEffect(() => {
-  //   firebase
-  //     .database()
-  //     .ref('coordinates')
-  //     .set(
-  //       {
-  //         latitude: '-7.0123',
-  //         longitude: '-39.0123',
-  //       },
-  //       (err) => {
-  //         if (err) {
-  //           console.log('erro ao salvar as coordenadas ', err);
-  //         } else {
-  //           console.log('coordenadas salvas');
-  //         }
-  //       },
-  //     );
-
-  //   firebase
-  //     .database()
-  //     .ref()
-  //     .child('coordinates')
-  //     .get()
-  //     .then((values) => {
-  //       if (values.exists()) {
-  //         console.log('possui coordenadas salvas');
-  //       } else {
-  //         console.log('não possui coordenadas salvas');
-  //       }
-  //     });
-  // }, []);
-
   useEffect(() => {
     if (
       !loadingIndices &&
@@ -154,7 +121,7 @@ const Maps = () => {
         <MapboxGL.Camera
           zoomLevel={15}
           minZoomLevel={5}
-          maxZoomLevel={20}
+          maxZoomLevel={15}
           centerCoordinate={[
             userGeolocation.longitude,
             userGeolocation.latitude,
