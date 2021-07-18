@@ -84,6 +84,7 @@ const Login = () => {
           keyboardType='email-address'
           style={styles.input}
           placeholder={'Digite sua matrícula'}
+          autoCapitalize='none'
         />
         <Text style={styles.label}>Senha</Text>
         <TextInput
@@ -91,6 +92,7 @@ const Login = () => {
           onChangeText={setSenha}
           style={styles.input}
           secureTextEntry={true}
+          autoCapitalize='none'
         />
         <TouchableOpacity onPress={logar} style={styles.button}>
           <Text style={styles.labelEntrar}>Entrar</Text>
