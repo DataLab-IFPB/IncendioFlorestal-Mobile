@@ -44,14 +44,16 @@ export default StyleSheet.create({
     marginLeft: '10%',
   },
   iconViewSenha: {
-    marginLeft: '2%',
-    width: 25,
-    height: 25,
+    marginLeft: '3%',
+    width: width * 0.07,
+    height: width * 0.05,
   },
   textVersion: {
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
     position: 'absolute',
-    top: '97%',
+    top: '96%',
+    fontSize: width * 0.03,
   },
+  iconSize: width * 0.05,
 });

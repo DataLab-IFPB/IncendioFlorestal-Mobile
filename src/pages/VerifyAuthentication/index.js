@@ -4,20 +4,17 @@ import Maps from '../Maps';
 import Loading from '../components/Loading';
 import { createStackNavigator } from '@react-navigation/stack';
 import firebase from 'firebase';
-import { useDispatch } from 'react-redux';
-import { fetchIndicesIncendios } from '../../redux/indices-incendios/indices-incendios-action';
+
 const VerifyAuthentication = () => {
   const Stack = createStackNavigator();
   const [validateToken, setValidateToken] = useState(null);
   const [loading, setLoading] = useState(true);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         setValidateToken(true);
         setLoading(false);
-        dispatch(fetchIndicesIncendios());
       } else {
         setValidateToken(false);
         setLoading(false);

@@ -5,7 +5,7 @@ const { width } = Dimensions.get('window');
 export const styles = (theme) => {
   return StyleSheet.create({
     actionButtonIcon: {
-      fontSize: width * 0.05,
+      fontSize: width * 0.04,
       color: theme === 'dark' ? '#fff' : '#000',
     },
     container: {
@@ -14,7 +14,7 @@ export const styles = (theme) => {
       zIndex: 2,
     },
     menuColor: {
-      color: theme === 'dark' ? '#000' : '#FFF'
-    }
+      color: theme === 'dark' ? '#000' : '#FFF',
+    },
   });
 };

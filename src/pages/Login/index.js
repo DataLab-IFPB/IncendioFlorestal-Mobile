@@ -81,13 +81,13 @@ const Login = () => {
       <View style={styles.container}>
         <Loading loading={loading} />
         <Image style={styles.logo} source={Logo} />
-        <Text style={styles.label}>Matrícula</Text>
+        <Text style={styles.label}>E-mail</Text>
         <TextInput
           value={matricula}
           onChangeText={setMatricula}
           keyboardType='email-address'
           style={styles.input}
-          placeholder={'Digite sua matrícula'}
+          placeholder={'Digite seu e-mail'}
           autoCapitalize='none'
         />
         <Text style={styles.label}>Senha</Text>
@@ -106,7 +106,7 @@ const Login = () => {
             }
             name={iconName}
             style={styles.iconViewSenha}
-            size={15}
+            size={styles.iconSize}
             color='#F00'
           />
         </View>
@@ -115,7 +115,9 @@ const Login = () => {
           <Text style={styles.labelEntrar}>Entrar</Text>
         </TouchableOpacity>
 
-        {autenticacaoInvalida && <Text>Credenciais inválidas!</Text>}
+        {autenticacaoInvalida && (
+          <Text style={styles.label}>Credenciais inválidas!</Text>
+        )}
 
         <Text style={styles.textVersion}>
           {`Version ${packageJson.version}`}

@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { BackHandler, TouchableOpacity } from 'react-native';
-import { View, Text, Alert, Modal } from 'react-native';
+import { View, Text, Modal } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import { PERMISSION_LOCATION_USE } from '../../constants/keys';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import firebase from 'firebase';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import FloatingMenu from '../FloatingMenu';
 import Loading from '../components/Loading';
+import { fetchIndicesIncendios } from '../../redux/indices-incendios/indices-incendios-action';
 import styles from './styles';
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Maps = () => {
   MapboxGL.setAccessToken(
@@ -24,6 +24,7 @@ const Maps = () => {
   const [indicesNotFound, setShowIndicesNotFound] = useState(false);
   const [showMessageIndicesNotFound, setShowMessageIndicesNotFound] =
     useState(false);
+  const dispatch = useDispatch();
   const [userGeolocation, setUserGeolocation] = useState({
     latitude: 0,
     longitude: 0,
@@ -94,6 +95,10 @@ const Maps = () => {
   }, [userGeolocation]);
 
   useEffect(() => {
+    dispatch(fetchIndicesIncendios());
+  }, []);
+
+  useEffect(() => {
     if (
       !loadingIndices &&
       !loadingValidateGeolocationUser &&
@@ -122,7 +127,7 @@ const Maps = () => {
           // zoom pra cima
           minZoomLevel={6}
           // zoom pra baixo
-          maxZoomLevel={20}
+          maxZoomLevel={17}
           centerCoordinate={[
             userGeolocation.longitude,
             userGeolocation.latitude,
