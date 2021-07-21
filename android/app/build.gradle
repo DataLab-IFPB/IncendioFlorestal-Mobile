@@ -2,6 +2,7 @@ apply plugin: "com.android.application"
 apply plugin: 'com.google.gms.google-services'
 import com.android.build.OutputFile
 
+
 /**
  * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
  * and bundleReleaseJsAndAssets).
@@ -202,7 +203,7 @@ dependencies {
 
 
     // VECTOR ICONS
-    compile project(':react-native-vector-icons')
+    implementation project(':react-native-vector-icons')
 
 
 

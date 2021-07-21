@@ -37,4 +37,23 @@ export default StyleSheet.create({
     color: '#FFFF',
     fontSize: width * 0.04,
   },
+  containerInputSenha: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    marginLeft: '10%',
+  },
+  iconViewSenha: {
+    marginLeft: '3%',
+    width: width * 0.07,
+    height: width * 0.05,
+  },
+  textVersion: {
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    position: 'absolute',
+    top: '96%',
+    fontSize: width * 0.03,
+  },
+  iconSize: width * 0.05,
 });

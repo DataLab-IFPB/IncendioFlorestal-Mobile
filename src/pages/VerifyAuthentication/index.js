@@ -4,6 +4,7 @@ import Maps from '../Maps';
 import Loading from '../components/Loading';
 import { createStackNavigator } from '@react-navigation/stack';
 import firebase from 'firebase';
+
 const VerifyAuthentication = () => {
   const Stack = createStackNavigator();
   const [validateToken, setValidateToken] = useState(null);
