@@ -6,7 +6,7 @@ import MapboxGL from '@react-native-mapbox-gl/maps';
 import { PERMISSION_LOCATION_USE } from '../../constants/keys';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firebase from 'firebase';
-import IconSimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import FloatingMenu from '../FloatingMenu';
 import Loading from '../components/Loading';
 import styles from './styles';
@@ -52,7 +52,6 @@ const Maps = () => {
     }
     verifyPermission();
   }, []);
-
   // load location user
   useEffect(() => {
     const watchPosition = Geolocation.watchPosition(
@@ -119,9 +118,11 @@ const Maps = () => {
         centerCoordinate={[userGeolocation.longitude, userGeolocation.latitude]}
         style={styles.containerMap}>
         <MapboxGL.Camera
-          zoomLevel={15}
-          minZoomLevel={5}
-          maxZoomLevel={15}
+          zoomLevel={20}
+          // zoom pra cima
+          minZoomLevel={6}
+          // zoom pra baixo
+          maxZoomLevel={20}
           centerCoordinate={[
             userGeolocation.longitude,
             userGeolocation.latitude,
@@ -140,7 +141,7 @@ const Maps = () => {
                   Number(coordinate.latitude),
                 ]}>
                 <View style={styles.containerIndexFire}>
-                  <IconSimpleLineIcons
+                  <IconSimple
                     name='fire'
                     size={30}
                     color={coordinate.brightness >= 500 ? '#F00' : '#ff4500'}
@@ -156,37 +157,12 @@ const Maps = () => {
         indices &&
         indices === null && (
           <Modal visible={showMessageIndicesNotFound} transparent={true}>
-            <View
-              style={{
-                width: 250,
-                height: 100,
-                backgroundColor: '#000',
-                alignItems: 'center',
-                justifyContent: 'center',
-                position: 'absolute',
-                elevation: 10,
-                zIndex: 2,
-                borderRadius: 30,
-                top: '40%',
-                left: '20%',
-              }}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                  color: '#FFF',
-                }}>
+            <View style={styles.containerIndicesNotFound}>
+              <Text style={styles.labelIndiceNotFound}>
                 {`${'!Ops.\nNão foi possível carregar os dados'}`}
               </Text>
               <TouchableOpacity
-                style={{
-                  backgroundColor: '#fff',
-                  width: 80,
-                  height: 20,
-                  alignItems: 'center',
-                  borderRadius: 15,
-                }}
+                style={styles.btnOkIndiceNotFound}
                 onPress={() => setShowMessageIndicesNotFound(false)}>
                 <Text>Ok</Text>
               </TouchableOpacity>
