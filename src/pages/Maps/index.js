@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BackHandler, TouchableOpacity } from 'react-native';
-import { View, Text, Modal } from 'react-native';
+import { BackHandler, TouchableOpacity, View, Text, Modal } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import { PERMISSION_LOCATION_USE } from '../../constants/keys';
@@ -12,6 +11,7 @@ import { fetchIndicesIncendios } from '../../redux/indices-incendios/indices-inc
 import styles from './styles';
 
 import { useDispatch, useSelector } from 'react-redux';
+import Previsao from '../Previsao';
 
 const Maps = () => {
   MapboxGL.setAccessToken(
@@ -21,7 +21,6 @@ const Maps = () => {
   const indices = useSelector((state) => state.indicesIncendios.data);
   const loadingIndices = useSelector((state) => state.indicesIncendios.loading);
   const errorsRequest = useSelector((state) => state.indicesIncendios.error);
-  const [indicesNotFound, setShowIndicesNotFound] = useState(false);
   const [showMessageIndicesNotFound, setShowMessageIndicesNotFound] =
     useState(false);
   const dispatch = useDispatch();
@@ -104,7 +103,6 @@ const Maps = () => {
       !loadingValidateGeolocationUser &&
       indices === null
     ) {
-      setShowIndicesNotFound(true);
       setShowMessageIndicesNotFound(true);
     }
   }, [errorsRequest, indices]);
@@ -114,6 +112,8 @@ const Maps = () => {
   ) : (
     <View style={styles.containerMapsAndButtons}>
       <FloatingMenu setMapStyle={setMapStyle} />
+
+      <Previsao userCoordinates={userGeolocation} />
 
       <MapboxGL.MapView
         styleURL={mapStyle}
@@ -156,24 +156,22 @@ const Maps = () => {
             );
           })}
       </MapboxGL.MapView>
-      {indicesNotFound &&
-        !loadingIndices &&
-        !loadingValidateGeolocationUser &&
-        indices &&
-        indices === null && (
-          <Modal visible={showMessageIndicesNotFound} transparent={true}>
-            <View style={styles.containerIndicesNotFound}>
-              <Text style={styles.labelIndiceNotFound}>
-                {`${'!Ops.\nNão foi possível carregar os dados'}`}
+      {!loadingIndices && !loadingValidateGeolocationUser && indices === null && (
+        <Modal visible={showMessageIndicesNotFound} transparent={true}>
+          <View style={styles.containerIndicesNotFound}>
+            <Text style={styles.labelIndiceNotFound}>
+              {`${'!Ops.\nNão foi possível carregar os dados'}`}
+            </Text>
+            <TouchableOpacity
+              style={styles.btnOkIndiceNotFound}
+              onPress={() => setShowMessageIndicesNotFound(false)}>
+              <Text style={[styles.labelIndiceNotFound, styles.labelButtonOk]}>
+                Ok
               </Text>
-              <TouchableOpacity
-                style={styles.btnOkIndiceNotFound}
-                onPress={() => setShowMessageIndicesNotFound(false)}>
-                <Text>Ok</Text>
-              </TouchableOpacity>
-            </View>
-          </Modal>
-        )}
+            </TouchableOpacity>
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };

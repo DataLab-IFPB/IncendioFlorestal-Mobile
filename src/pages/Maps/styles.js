@@ -1,5 +1,6 @@
-import { StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 
+const { width } = Dimensions.get('window');
 export default StyleSheet.create({
   containerMap: {
     flex: 1,
@@ -29,7 +30,7 @@ export default StyleSheet.create({
   },
   labelIndiceNotFound: {
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: width * 0.05,
     fontWeight: 'bold',
     color: '#FFF',
   },
@@ -39,5 +40,10 @@ export default StyleSheet.create({
     height: 20,
     alignItems: 'center',
     borderRadius: 15,
+  },
+  labelButtonOk: {
+    fontSize: width * 0.04,
+    fontWeight: 'bold',
+    color: '#000',
   },
 });
