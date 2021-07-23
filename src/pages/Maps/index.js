@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { BackHandler, TouchableOpacity, View, Text, Modal } from 'react-native';
-import Geolocation from 'react-native-geolocation-service';
-import MapboxGL from '@react-native-mapbox-gl/maps';
-import { PERMISSION_LOCATION_USE } from '../../constants/keys';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import MapboxGL from '@react-native-mapbox-gl/maps';
+import React, { useEffect, useState } from 'react';
+import { BackHandler, Modal, Text, TouchableOpacity, View } from 'react-native';
+import Geolocation from 'react-native-geolocation-service';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
-import FloatingMenu from '../FloatingMenu';
-import Loading from '../components/Loading';
-import { fetchIndicesIncendios } from '../../redux/indices-incendios/indices-incendios-action';
-import styles from './styles';
-
 import { useDispatch, useSelector } from 'react-redux';
+import { PERMISSION_LOCATION_USE } from '../../constants/keys';
+import { fetchIndicesIncendios } from '../../redux/indices-incendios/indices-incendios-action';
+import Loading from '../components/Loading';
+import FloatingMenu from '../FloatingMenu';
 import Previsao from '../Previsao';
+import styles from './styles';
 
 const Maps = () => {
   MapboxGL.setAccessToken(
@@ -23,7 +22,6 @@ const Maps = () => {
   const errorsRequest = useSelector((state) => state.indicesIncendios.error);
   const [showMessageIndicesNotFound, setShowMessageIndicesNotFound] =
     useState(false);
-  const dispatch = useDispatch();
   const [userGeolocation, setUserGeolocation] = useState({
     latitude: 0,
     longitude: 0,
@@ -32,11 +30,14 @@ const Maps = () => {
   });
   const [loadingValidateGeolocationUser, setLoadingValidateGeolocationUser] =
     useState(false);
+  const dispatch = useDispatch();
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', () => {
       return true;
     });
   }, []);
+
+  console.log(indices);
 
   useEffect(() => {
     async function verifyPermission() {
@@ -87,15 +88,12 @@ const Maps = () => {
     return () => Geolocation.clearWatch(watchPosition);
   }, []);
 
+  console.log(indices);
   useEffect(() => {
     if (userGeolocation.latitude && userGeolocation.longitude) {
       setLoadingValidateGeolocationUser(false);
     }
   }, [userGeolocation]);
-
-  useEffect(() => {
-    dispatch(fetchIndicesIncendios());
-  }, []);
 
   useEffect(() => {
     if (
@@ -107,6 +105,9 @@ const Maps = () => {
     }
   }, [errorsRequest, indices]);
 
+  useEffect(() => {
+    dispatch(fetchIndicesIncendios());
+  }, [userGeolocation]);
   return loadingValidateGeolocationUser ? (
     <Loading loading={loadingValidateGeolocationUser || loadingIndices} />
   ) : (
@@ -125,7 +126,7 @@ const Maps = () => {
         <MapboxGL.Camera
           zoomLevel={20}
           // zoom pra cima
-          minZoomLevel={6}
+          minZoomLevel={8}
           // zoom pra baixo
           maxZoomLevel={17}
           centerCoordinate={[

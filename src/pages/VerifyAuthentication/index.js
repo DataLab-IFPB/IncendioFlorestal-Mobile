@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import Login from '../Login';
-import Maps from '../Maps';
-import Loading from '../components/Loading';
 import { createStackNavigator } from '@react-navigation/stack';
 import firebase from 'firebase';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import Loading from '../components/Loading';
+import Login from '../Login';
+import Maps from '../Maps';
 
 const VerifyAuthentication = () => {
   const Stack = createStackNavigator();
   const [validateToken, setValidateToken] = useState(null);
   const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {

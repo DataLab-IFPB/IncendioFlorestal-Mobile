@@ -1,10 +1,10 @@
-import { call, put, takeLatest } from '@redux-saga/core/effects';
-import {
-  fetchIndicesIncendiosSuccess,
-  fetchIndicesIncendiosFail,
-} from './indices-incendios-action';
+import { put } from '@redux-saga/core/effects';
 import firebase from 'firebase';
-
+import { takeLatest } from 'redux-saga/effects';
+import {
+  fetchIndicesIncendiosFail,
+  fetchIndicesIncendiosSuccess,
+} from './indices-incendios-action';
 import { FETCH_INDICES_INCENDIOS } from './indices-incendios-types';
 
 const _getData = () => {
@@ -23,9 +23,7 @@ const _getData = () => {
 function* indicesIncendios() {
   try {
     const data = yield _getData();
-    if (data) {
-      yield put(fetchIndicesIncendiosSuccess(Object.values(data)));
-    }
+    yield put(fetchIndicesIncendiosSuccess(Object.values(data)));
   } catch (error) {
     yield put(fetchIndicesIncendiosFail(error));
   }

@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import { View, Text, TouchableWithoutFeedback } from 'react-native';
+import { Text, TouchableWithoutFeedback, View } from 'react-native';
 import IconAwesome from 'react-native-vector-icons/FontAwesome5';
 import IOIcon from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPrevisao } from '../../redux/previsao/previsao-action';
+import LoadingPrevisao from './LoadingPrevisao';
 import styles from './styles';
 const Previsao = ({ userCoordinates }) => {
   const dispatch = useDispatch();
@@ -17,17 +18,29 @@ const Previsao = ({ userCoordinates }) => {
     <TouchableWithoutFeedback>
       <View style={styles.container}>
         <View style={styles.containerDetails}>
-          <IconAwesome name='wind' size={30} color='#010101' />
+          <IconAwesome name='wind' style={styles.iconSize} color='#010101' />
 
-          <Text>{previsao?.results.wind_speedy || '-'}</Text>
+          {previsao === null ? (
+            <LoadingPrevisao />
+          ) : (
+            <Text>{previsao?.results.wind_speedy}</Text>
+          )}
         </View>
         <View style={styles.containerDetails}>
-          <IOIcon name='water-outline' size={30} color='blue' />
-          <Text>{previsao?.results.humidity || '-'}</Text>
+          <IOIcon name='water-outline' style={styles.iconSize} color='blue' />
+          {previsao === null ? (
+            <LoadingPrevisao />
+          ) : (
+            <Text>{previsao?.results.humidity}</Text>
+          )}
         </View>
         <View style={styles.containerDetails}>
-          <IOIcon name='thermometer-outline' size={30} color='red' />
-          <Text>35º</Text>
+          <IOIcon
+            name='thermometer-outline'
+            style={styles.iconSize}
+            color='red'
+          />
+          {previsao === null ? <LoadingPrevisao /> : <Text>35º</Text>}
         </View>
       </View>
     </TouchableWithoutFeedback>

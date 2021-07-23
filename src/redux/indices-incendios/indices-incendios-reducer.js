@@ -1,7 +1,7 @@
 import * as types from './indices-incendios-types';
 
 const initialState = {
-  data: null,
+  data: [],
   error: null,
   loading: false,
 };
