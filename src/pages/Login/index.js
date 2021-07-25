@@ -20,7 +20,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PERMISSION_LOCATION_USE } from '../../constants/keys';
 import styles from './styles';
 import MapboxGL from '@react-native-mapbox-gl/maps';
-import { jsxAttribute } from '@babel/types';
 const Login = () => {
   const navigation = useNavigation();
   const [matricula, setMatricula] = useState(null);
@@ -89,6 +88,7 @@ const Login = () => {
           style={styles.input}
           placeholder={'Digite seu e-mail'}
           autoCapitalize='none'
+          
         />
         <Text style={styles.label}>Senha</Text>
         <View style={styles.containerInputSenha}>

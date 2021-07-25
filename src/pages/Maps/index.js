@@ -96,6 +96,10 @@ const Maps = () => {
   }, [userGeolocation]);
 
   useEffect(() => {
+    dispatch(fetchIndicesIncendios());
+  }, [userGeolocation]);
+
+  useEffect(() => {
     if (
       !loadingIndices &&
       !loadingValidateGeolocationUser &&
