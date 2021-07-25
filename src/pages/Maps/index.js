@@ -37,8 +37,6 @@ const Maps = () => {
     });
   }, []);
 
-  console.log(indices);
-
   useEffect(() => {
     async function verifyPermission() {
       const permission = await AsyncStorage.getItem(PERMISSION_LOCATION_USE);
@@ -88,7 +86,6 @@ const Maps = () => {
     return () => Geolocation.clearWatch(watchPosition);
   }, []);
 
-  console.log(indices);
   useEffect(() => {
     if (userGeolocation.latitude && userGeolocation.longitude) {
       setLoadingValidateGeolocationUser(false);

@@ -11,11 +11,25 @@ const Previsao = ({ userCoordinates }) => {
   const previsao = useSelector((state) => state.previsao.data);
 
   useEffect(() => {
-    dispatch(fetchPrevisao(userCoordinates));
-  }, [userCoordinates]);
+    dispatch(
+      fetchPrevisao({
+        latitude: userCoordinates.latitude,
+        longitude: userCoordinates.longitude,
+      }),
+    );
+  }, []);
+
+  function _updatePrevisao() {
+    dispatch(
+      fetchPrevisao({
+        latitude: userCoordinates.latitude,
+        longitude: userCoordinates.longitude,
+      }),
+    );
+  }
 
   return (
-    <TouchableWithoutFeedback>
+    <TouchableWithoutFeedback onPress={() => _updatePrevisao()}>
       <View style={styles.container}>
         <View style={styles.containerDetails}>
           <IconAwesome name='wind' style={styles.iconSize} color='#010101' />
@@ -40,7 +54,11 @@ const Previsao = ({ userCoordinates }) => {
             style={styles.iconSize}
             color='red'
           />
-          {previsao === null ? <LoadingPrevisao /> : <Text>35º</Text>}
+          {previsao === null ? (
+            <LoadingPrevisao />
+          ) : (
+            <Text>{previsao?.results.temp}</Text>
+          )}
         </View>
       </View>
     </TouchableWithoutFeedback>
