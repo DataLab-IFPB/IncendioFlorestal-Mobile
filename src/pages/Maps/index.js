@@ -127,7 +127,7 @@ const Maps = () => {
         <MapboxGL.Camera
           zoomLevel={20}
           // zoom pra cima
-          minZoomLevel={8}
+          minZoomLevel={9}
           // zoom pra baixo
           maxZoomLevel={17}
           centerCoordinate={[

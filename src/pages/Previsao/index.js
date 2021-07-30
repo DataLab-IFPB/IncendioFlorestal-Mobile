@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
-import { Text, TouchableWithoutFeedback, View } from 'react-native';
+import { Text, View } from 'react-native';
 import IconAwesome from 'react-native-vector-icons/FontAwesome5';
 import IOIcon from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPrevisao } from '../../redux/previsao/previsao-action';
 import LoadingPrevisao from './LoadingPrevisao';
+import { CONDICOES_, PREVISAO } from '../../utils/condicoes-clima';
 import styles from './styles';
 const Previsao = ({ userCoordinates }) => {
   const dispatch = useDispatch();
@@ -19,49 +20,85 @@ const Previsao = ({ userCoordinates }) => {
     );
   }, []);
 
-  function _updatePrevisao() {
-    dispatch(
-      fetchPrevisao({
-        latitude: userCoordinates.latitude,
-        longitude: userCoordinates.longitude,
-      }),
-    );
+  function _renderTipoTempo() {
+    let tipoTempo = '';
+    CONDICOES_.filter((value) => {
+      if (value.titulo === previsao?.results.condition_slug) {
+        tipoTempo = value.descricao;
+      }
+    });
+    return tipoTempo.trim();
   }
 
-  return (
-    <TouchableWithoutFeedback onPress={() => _updatePrevisao()}>
-      <View style={styles.container}>
-        <View style={styles.containerDetails}>
-          <IconAwesome name='wind' style={styles.iconSize} color='#010101' />
+  function _renderIcon() {
+    const tipoTempo = _renderTipoTempo();
+    let iconName = 'day';
+    if (tipoTempo && tipoTempo.includes('dia')) {
+      iconName = 'sunny-outline';
+    } else if (
+      tipoTempo &&
+      tipoTempo.includes('dia') &&
+      tipoTempo.includes('nublado')
+    ) {
+      iconName = 'partly-sunny-outline';
+    } else if (tipoTempo && tipoTempo.includes('noite')) {
+      iconName = 'cloudy-night';
+    } else if (
+      tipoTempo &&
+      tipoTempo.includes('noite') &&
+      tipoTempo.includes('nublado')
+    ) {
+      iconName = 'moon-outline';
+    }
 
-          {previsao === null ? (
-            <LoadingPrevisao />
-          ) : (
-            <Text>{previsao?.results.wind_speedy}</Text>
-          )}
-        </View>
-        <View style={styles.containerDetails}>
-          <IOIcon name='water-outline' style={styles.iconSize} color='blue' />
-          {previsao === null ? (
-            <LoadingPrevisao />
-          ) : (
-            <Text>{previsao?.results.humidity}</Text>
-          )}
-        </View>
-        <View style={styles.containerDetails}>
-          <IOIcon
-            name='thermometer-outline'
-            style={styles.iconSize}
-            color='red'
-          />
-          {previsao === null ? (
-            <LoadingPrevisao />
-          ) : (
-            <Text>{previsao?.results.temp}</Text>
-          )}
-        </View>
+    return <IOIcon name={iconName} style={styles.iconSize} color='#000' />;
+  }
+  return (
+    <View style={styles.container}>
+      <View style={styles.containerDetails}>
+        <IconAwesome name='wind' style={styles.iconSize} color='#010101' />
+
+        {previsao === null ? (
+          <LoadingPrevisao />
+        ) : (
+          <Text>{previsao?.results.wind_speedy}</Text>
+        )}
       </View>
-    </TouchableWithoutFeedback>
+      <View style={styles.containerDetails}>
+        <IOIcon name='water-outline' style={styles.iconSize} color='blue' />
+        {previsao === null ? (
+          <LoadingPrevisao />
+        ) : (
+          <Text>{previsao?.results.humidity}º</Text>
+        )}
+      </View>
+      <View style={styles.containerDetails}>
+        <IOIcon
+          name='thermometer-outline'
+          style={styles.iconSize}
+          color='red'
+        />
+        {previsao === null ? (
+          <LoadingPrevisao />
+        ) : (
+          <Text>{previsao?.results.temp}º</Text>
+        )}
+      </View>
+
+      <View
+        style={[styles.containerDetails, styles.marginTopContanerTipoTempo]}>
+        {previsao === null ? (
+          <LoadingPrevisao />
+        ) : (
+          <>
+            {_renderIcon()}
+            <Text style={styles.labelTipoTempo}>
+              {_renderTipoTempo().trim()}
+            </Text>
+          </>
+        )}
+      </View>
+    </View>
   );
 };
 

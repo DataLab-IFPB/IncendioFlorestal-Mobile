@@ -5,11 +5,11 @@ export default StyleSheet.create({
   container: {
     position: 'absolute',
     zIndex: 2,
-    width: width * 0.5,
+    width: width * 0.7,
     height: width * 0.2,
     alignItems: 'center',
     justifyContent: 'space-around',
-    marginLeft: '45%',
+    marginLeft: '28%',
     flexDirection: 'row',
     borderColor: 'tomato',
     top: '2%',
@@ -20,5 +20,12 @@ export default StyleSheet.create({
   },
   iconSize: {
     fontSize: width * 0.07,
+  },
+  labelTipoTempo: {
+    width: 50,
+    height: 50,
+  },
+  marginTopContanerTipoTempo: {
+    marginTop: '2%',
   },
 });
