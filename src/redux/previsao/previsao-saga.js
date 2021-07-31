@@ -1,7 +1,7 @@
-import { fetchPrevisaoSuccess, fetchPrevisaoFail } from './previsao-action';
-import { FETCH_PREVISAO } from './previsao-types';
-import { call, put, takeLatest } from 'redux-saga/effects';
 import axios from 'axios';
+import { call, put, takeLatest } from 'redux-saga/effects';
+import { fetchPrevisaoFail, fetchPrevisaoSuccess } from './previsao-action';
+import { FETCH_PREVISAO } from './previsao-types';
 
 function* previsao(action) {
   const API_KEY = 'key=a9fcb364';

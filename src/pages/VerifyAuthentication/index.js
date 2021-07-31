@@ -1,7 +1,8 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import firebase from 'firebase';
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchIndicesIncendios } from '../../redux/indices-incendios/indices-incendios-action';
 import Loading from '../components/Loading';
 import Login from '../Login';
 import Maps from '../Maps';
@@ -10,8 +11,8 @@ const VerifyAuthentication = () => {
   const Stack = createStackNavigator();
   const [validateToken, setValidateToken] = useState(null);
   const [loading, setLoading] = useState(true);
+  const loadingIndices = useSelector((state) => state.indicesIncendios.loading);
   const dispatch = useDispatch();
-
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -24,7 +25,11 @@ const VerifyAuthentication = () => {
     });
   }, []);
 
-  if (validateToken === null) {
+  useEffect(() => {
+    dispatch(fetchIndicesIncendios());
+  }, []);
+
+  if (validateToken === null && loadingIndices) {
     return <Loading loading={loading} />;
   }
   return validateToken ? (

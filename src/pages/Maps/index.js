@@ -18,7 +18,9 @@ const Maps = () => {
   );
   const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Outdoors);
   const indices = useSelector((state) => state.indicesIncendios.data);
+  // const [indices, setIndices] = useState([]);
   const loadingIndices = useSelector((state) => state.indicesIncendios.loading);
+  // const [loadingIndices, setLoadingIndices] = useState(false);
   const errorsRequest = useSelector((state) => state.indicesIncendios.error);
   const [showMessageIndicesNotFound, setShowMessageIndicesNotFound] =
     useState(false);
@@ -106,9 +108,6 @@ const Maps = () => {
     }
   }, [errorsRequest, indices]);
 
-  useEffect(() => {
-    dispatch(fetchIndicesIncendios());
-  }, [userGeolocation]);
   return loadingValidateGeolocationUser ? (
     <Loading loading={loadingValidateGeolocationUser || loadingIndices} />
   ) : (
@@ -127,9 +126,9 @@ const Maps = () => {
         <MapboxGL.Camera
           zoomLevel={20}
           // zoom pra cima
-          minZoomLevel={9}
+          minZoomLevel={10}
           // zoom pra baixo
-          maxZoomLevel={17}
+          maxZoomLevel={20}
           centerCoordinate={[
             userGeolocation.longitude,
             userGeolocation.latitude,
@@ -138,7 +137,7 @@ const Maps = () => {
           animationDuration={1100}
         />
 
-        {indices &&
+        {indices.length >= 0 &&
           indices.map((coordinate, index) => {
             return (
               <MapboxGL.MarkerView
