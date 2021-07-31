@@ -10,6 +10,7 @@ import styles from './styles';
 const Previsao = ({ userCoordinates }) => {
   const dispatch = useDispatch();
   const previsao = useSelector((state) => state.previsao.data);
+  const loading = useSelector((state) => state.previsao.loading);
 
   useEffect(() => {
     dispatch(
@@ -35,20 +36,26 @@ const Previsao = ({ userCoordinates }) => {
     let iconName = 'day';
     if (tipoTempo && tipoTempo.includes('dia')) {
       iconName = 'sunny-outline';
-    } else if (
+    }
+    if (
       tipoTempo &&
       tipoTempo.includes('dia') &&
       tipoTempo.includes('nublado')
     ) {
       iconName = 'partly-sunny-outline';
-    } else if (tipoTempo && tipoTempo.includes('noite')) {
+    }
+    if (tipoTempo && tipoTempo.includes('noite')) {
       iconName = 'cloudy-night';
-    } else if (
+    }
+    if (
       tipoTempo &&
       tipoTempo.includes('noite') &&
       tipoTempo.includes('nublado')
     ) {
       iconName = 'moon-outline';
+    }
+    if (tipoTempo.includes('nublado')) {
+      iconName = 'partly-sunny-outline';
     }
 
     return <IOIcon name={iconName} style={styles.iconSize} color='#000' />;
@@ -58,18 +65,18 @@ const Previsao = ({ userCoordinates }) => {
       <View style={styles.containerDetails}>
         <IconAwesome name='wind' style={styles.iconSize} color='#010101' />
 
-        {previsao === null ? (
+        {loading ? (
           <LoadingPrevisao />
         ) : (
-          <Text>{previsao?.results.wind_speedy}</Text>
+          <Text style={styles.labelInfo}>{previsao?.results.wind_speedy}</Text>
         )}
       </View>
       <View style={styles.containerDetails}>
         <IOIcon name='water-outline' style={styles.iconSize} color='blue' />
-        {previsao === null ? (
+        {loading ? (
           <LoadingPrevisao />
         ) : (
-          <Text>{previsao?.results.humidity}º</Text>
+          <Text style={styles.labelInfo}>{previsao?.results.humidity}%</Text>
         )}
       </View>
       <View style={styles.containerDetails}>
@@ -78,16 +85,16 @@ const Previsao = ({ userCoordinates }) => {
           style={styles.iconSize}
           color='red'
         />
-        {previsao === null ? (
+        {loading ? (
           <LoadingPrevisao />
         ) : (
-          <Text>{previsao?.results.temp}º</Text>
+          <Text style={styles.labelInfo}>{previsao?.results.temp}º</Text>
         )}
       </View>
 
       <View
         style={[styles.containerDetails, styles.marginTopContanerTipoTempo]}>
-        {previsao === null ? (
+        {loading ? (
           <LoadingPrevisao />
         ) : (
           <>

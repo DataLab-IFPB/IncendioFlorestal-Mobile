@@ -22,10 +22,15 @@ export default StyleSheet.create({
     fontSize: width * 0.07,
   },
   labelTipoTempo: {
-    width: 50,
-    height: 50,
+    width: width * 0.12,
+    height: width * 0.1,
+    textAlign: 'center',
+    fontSize: width * 0.03,
   },
   marginTopContanerTipoTempo: {
     marginTop: '2%',
+  },
+  labelInfo: {
+    fontSize: width * 0.04,
   },
 });
