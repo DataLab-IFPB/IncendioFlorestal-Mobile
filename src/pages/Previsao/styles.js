@@ -21,11 +21,14 @@ export default StyleSheet.create({
   iconSize: {
     fontSize: width * 0.07,
   },
-  labelTipoTempo: {
+  containerPrecipitacao: {
     width: width * 0.12,
     height: width * 0.1,
-    textAlign: 'center',
-    fontSize: width * 0.03,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  labelPrecipitacao: {
+    fontSize: width * 0.05,
   },
   marginTopContanerTipoTempo: {
     marginTop: '2%',

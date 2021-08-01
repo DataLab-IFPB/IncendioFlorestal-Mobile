@@ -4,7 +4,6 @@ import IconAwesome from 'react-native-vector-icons/FontAwesome5';
 import IOIcon from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPrevisao } from '../../redux/previsao/previsao-action';
-import { CONDICOES_ } from '../../utils/condicoes-clima';
 import LoadingPrevisao from './LoadingPrevisao';
 import styles from './styles';
 const Previsao = ({ userCoordinates }) => {
@@ -12,7 +11,6 @@ const Previsao = ({ userCoordinates }) => {
   const previsao = useSelector((state) => state.previsao.data);
   const loading = useSelector((state) => state.previsao.loading);
 
-  console.log(previsao);
   useEffect(() => {
     dispatch(
       fetchPrevisao({
@@ -21,50 +19,6 @@ const Previsao = ({ userCoordinates }) => {
       }),
     );
   }, []);
-
-  function _renderTipoTempo() {
-    let tipoTempo = '';
-    if (previsao === null) {
-      return tipoTempo;
-    }
-    CONDICOES_.filter((value) => {
-      if (value.titulo === previsao?.results.condition_slug) {
-        tipoTempo = value.descricao;
-      }
-    });
-    return tipoTempo.trim();
-  }
-
-  function _renderIcon() {
-    const tipoTempo = _renderTipoTempo();
-
-    let iconName = tipoTempo === '' ? 'alert-outline' : _renderTipoTempo();
-    if (tipoTempo && tipoTempo.includes('dia')) {
-      iconName = 'sunny-outline';
-    }
-    if (
-      tipoTempo &&
-      tipoTempo.includes('dia') &&
-      tipoTempo.includes('nublado')
-    ) {
-      iconName = 'partly-sunny-outline';
-    }
-    if (tipoTempo && tipoTempo.includes('noite')) {
-      iconName = 'cloudy-night';
-    }
-    if (
-      tipoTempo &&
-      tipoTempo.includes('noite') &&
-      tipoTempo.includes('nublado')
-    ) {
-      iconName = 'moon-outline';
-    }
-    if (tipoTempo.includes('nublado')) {
-      iconName = 'partly-sunny-outline';
-    }
-
-    return <IOIcon name={iconName} style={styles.iconSize} color='#000' />;
-  }
 
   function _renderInfo(info) {
     return info === null ? ' - ' : info;
@@ -78,7 +32,7 @@ const Previsao = ({ userCoordinates }) => {
           <LoadingPrevisao />
         ) : (
           <Text style={styles.labelInfo}>
-            {_renderInfo(previsao && previsao?.results.wind_speedy)}
+            {_renderInfo(previsao && previsao?.current.wind_kph)}
           </Text>
         )}
       </View>
@@ -88,7 +42,7 @@ const Previsao = ({ userCoordinates }) => {
           <LoadingPrevisao />
         ) : (
           <Text style={styles.labelInfo}>
-            {_renderInfo(previsao && previsao?.results.humidity)}
+            {_renderInfo(previsao && previsao?.current.humidity)}
           </Text>
         )}
       </View>
@@ -102,7 +56,7 @@ const Previsao = ({ userCoordinates }) => {
           <LoadingPrevisao />
         ) : (
           <Text style={styles.labelInfo}>
-            {_renderInfo(previsao && previsao.results.temp)}
+            {_renderInfo(previsao && previsao?.current.temp_c)}
           </Text>
         )}
       </View>
@@ -113,10 +67,14 @@ const Previsao = ({ userCoordinates }) => {
           <LoadingPrevisao />
         ) : (
           <>
-            {_renderIcon()}
-            <Text style={styles.labelTipoTempo}>
-              {_renderTipoTempo() || ' - '}
-            </Text>
+            <Text style={styles.containerDetails}>{'% de chuva'}</Text>
+            <View style={styles.containerPrecipitacao}>
+              <Text style={styles.labelPrecipitacao}>
+                {previsao && previsao?.current.precip_mm
+                  ? previsao?.current.precip_mm + '%'
+                  : ''}
+              </Text>
+            </View>
           </>
         )}
       </View>
