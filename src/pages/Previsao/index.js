@@ -70,9 +70,9 @@ const Previsao = ({ userCoordinates }) => {
             <Text style={styles.containerDetails}>{'% de chuva'}</Text>
             <View style={styles.containerPrecipitacao}>
               <Text style={styles.labelPrecipitacao}>
-                {previsao && previsao?.current.precip_mm
-                  ? previsao?.current.precip_mm + '%'
-                  : ''}
+                {previsao &&
+                  previsao?.current.precip_mm &&
+                  previsao?.current.precip_mm + '%'}
               </Text>
             </View>
           </>

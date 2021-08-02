@@ -126,7 +126,7 @@ const Maps = () => {
         <MapboxGL.Camera
           zoomLevel={20}
           // zoom pra cima
-          minZoomLevel={10}
+          minZoomLevel={9}
           // zoom pra baixo
           maxZoomLevel={20}
           centerCoordinate={[
@@ -139,22 +139,24 @@ const Maps = () => {
 
         {indices.length >= 0 &&
           indices.map((coordinate, index) => {
-            return (
-              <MapboxGL.MarkerView
-                key={index}
-                coordinate={[
-                  Number(coordinate.longitude),
-                  Number(coordinate.latitude),
-                ]}>
-                <View style={styles.containerIndexFire}>
-                  <IconSimple
-                    name='fire'
-                    size={30}
-                    color={coordinate.brightness >= 500 ? '#F00' : '#ff4500'}
-                  />
-                </View>
-              </MapboxGL.MarkerView>
-            );
+            if (coordinate.ativo) {
+              return (
+                <MapboxGL.MarkerView
+                  key={index}
+                  coordinate={[
+                    Number(coordinate.longitude),
+                    Number(coordinate.latitude),
+                  ]}>
+                  <View style={styles.containerIndexFire}>
+                    <IconSimple
+                      name='fire'
+                      size={30}
+                      color={coordinate.brightness >= 500 ? '#F00' : '#ff4500'}
+                    />
+                  </View>
+                </MapboxGL.MarkerView>
+              );
+            }
           })}
       </MapboxGL.MapView>
       {!loadingIndices && !loadingValidateGeolocationUser && indices === null && (
