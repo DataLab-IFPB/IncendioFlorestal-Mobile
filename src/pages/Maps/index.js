@@ -8,11 +8,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { PERMISSION_LOCATION_USE } from '../../constants/keys';
 import { fetchIndicesIncendios } from '../../redux/indices-incendios/indices-incendios-action';
 import Loading from '../components/Loading';
+import DetailIndice from '../DetailIndice';
 import FloatingMenu from '../FloatingMenu';
-import Previsao from '../Previsao';
 import styles from './styles';
 
 const Maps = () => {
+  const dispatch = useDispatch();
   MapboxGL.setAccessToken(
     'pk.eyJ1IjoiaXRhbG9hN3giLCJhIjoiY2txYjVxcndqMHd5aTJ1dDV0ZXBlM2kxaCJ9.P1_QYLu4AQbAX9u-V37_1Q',
   );
@@ -22,6 +23,10 @@ const Maps = () => {
   const loadingIndices = useSelector((state) => state.indicesIncendios.loading);
   // const [loadingIndices, setLoadingIndices] = useState(false);
   const errorsRequest = useSelector((state) => state.indicesIncendios.error);
+
+  const [showDetail, setShowDetail] = useState(false);
+  const [indiceCoords, setIndiceCoords] = useState();
+  const [indiceToShow, setIndiceToShow] = useState();
   const [showMessageIndicesNotFound, setShowMessageIndicesNotFound] =
     useState(false);
   const [userGeolocation, setUserGeolocation] = useState({
@@ -32,11 +37,16 @@ const Maps = () => {
   });
   const [loadingValidateGeolocationUser, setLoadingValidateGeolocationUser] =
     useState(false);
-  const dispatch = useDispatch();
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', () => {
       return true;
     });
+  }, []);
+
+  useEffect(() => {
+    if (indices === null) {
+      dispatch(fetchIndicesIncendios());
+    }
   }, []);
 
   useEffect(() => {
@@ -93,11 +103,6 @@ const Maps = () => {
       setLoadingValidateGeolocationUser(false);
     }
   }, [userGeolocation]);
-
-  useEffect(() => {
-    dispatch(fetchIndicesIncendios());
-  }, [userGeolocation]);
-
   useEffect(() => {
     if (
       !loadingIndices &&
@@ -113,9 +118,13 @@ const Maps = () => {
   ) : (
     <View style={styles.containerMapsAndButtons}>
       <FloatingMenu setMapStyle={setMapStyle} />
-
-      <Previsao userCoordinates={userGeolocation} />
-
+      <Modal transparent={true} visible={showDetail} animationType='slide'>
+        <DetailIndice
+          indice={indiceToShow}
+          indiceCoords={indiceCoords}
+          closeIndiceDetail={setShowDetail}
+        />
+      </Modal>
       <MapboxGL.MapView
         styleURL={mapStyle}
         zoomLevel={20}
@@ -124,9 +133,9 @@ const Maps = () => {
         centerCoordinate={[userGeolocation.longitude, userGeolocation.latitude]}
         style={styles.containerMap}>
         <MapboxGL.Camera
-          zoomLevel={20}
+          zoomLevel={10}
           // zoom pra cima
-          minZoomLevel={9}
+          minZoomLevel={7}
           // zoom pra baixo
           maxZoomLevel={20}
           centerCoordinate={[
@@ -137,7 +146,7 @@ const Maps = () => {
           animationDuration={1100}
         />
 
-        {indices.length >= 0 &&
+        {indices &&
           indices.map((coordinate, index) => {
             if (coordinate.ativo) {
               return (
@@ -149,6 +158,14 @@ const Maps = () => {
                   ]}>
                   <View style={styles.containerIndexFire}>
                     <IconSimple
+                      onPress={() => {
+                        setShowDetail(true);
+                        setIndiceCoords({
+                          latitude: coordinate.latitude,
+                          longitude: coordinate.longitude,
+                        });
+                        setIndiceToShow(coordinate);
+                      }}
                       name='fire'
                       size={30}
                       color={coordinate.brightness >= 500 ? '#F00' : '#ff4500'}

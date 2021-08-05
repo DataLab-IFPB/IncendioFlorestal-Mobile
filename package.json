@@ -1,6 +1,6 @@
 {
   "name": "projeto_combate_incendios",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -21,6 +21,7 @@
     "axios": "^0.21.1",
     "csvtojson": "^2.0.10",
     "firebase": "^8.6.8",
+    "moment": "^2.29.1",
     "react": "17.0.1",
     "react-native": "0.64.2",
     "react-native-action-button": "^2.8.5",

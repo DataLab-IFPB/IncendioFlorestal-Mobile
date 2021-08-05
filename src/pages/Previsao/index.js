@@ -32,7 +32,7 @@ const Previsao = ({ userCoordinates }) => {
           <LoadingPrevisao />
         ) : (
           <Text style={styles.labelInfo}>
-            {_renderInfo(previsao && previsao?.current.wind_kph)}
+            {_renderInfo(previsao && previsao.current.wind_kph)}
           </Text>
         )}
       </View>
@@ -42,7 +42,7 @@ const Previsao = ({ userCoordinates }) => {
           <LoadingPrevisao />
         ) : (
           <Text style={styles.labelInfo}>
-            {_renderInfo(previsao && previsao?.current.humidity)}
+            {_renderInfo(previsao && Math.floor(previsao?.current.humidity))}
           </Text>
         )}
       </View>
@@ -71,8 +71,8 @@ const Previsao = ({ userCoordinates }) => {
             <View style={styles.containerPrecipitacao}>
               <Text style={styles.labelPrecipitacao}>
                 {previsao &&
-                  previsao?.current.precip_mm &&
-                  previsao?.current.precip_mm + '%'}
+                  previsao?.current.pressure_in &&
+                  Math.floor(previsao?.current.pressure_in) + '%'}
               </Text>
             </View>
           </>

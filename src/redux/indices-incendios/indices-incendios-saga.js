@@ -15,7 +15,7 @@ const _getData = () => {
       .child('dados-firms')
       .get()
       .then((values) => {
-        resolve(values.val());
+        resolve(Object.values(values.val()));
       });
   });
 };
@@ -23,7 +23,7 @@ const _getData = () => {
 function* indicesIncendios() {
   try {
     const data = yield _getData();
-    yield put(fetchIndicesIncendiosSuccess(Object.values(data)));
+    yield put(fetchIndicesIncendiosSuccess(data));
   } catch (error) {
     yield put(fetchIndicesIncendiosFail(error));
   }
