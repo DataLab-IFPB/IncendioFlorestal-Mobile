@@ -61,7 +61,7 @@ const DetailIndice = ({
             <SimpleLineIcons
               name='fire'
               size={styles.iconIndiceSize}
-              color='#F00'
+              color={indice.userCreated ? '#FFF000' : '#F00'}
             />
             <Text style={styles.labelNoBold}>Registrado em:</Text>
             <Text style={styles.label}>

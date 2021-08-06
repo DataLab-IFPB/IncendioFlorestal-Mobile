@@ -17,6 +17,7 @@ import {
   fetchIndicesIncendios,
   fetchSaveIndice,
 } from '../../redux/indices-incendios/indices-incendios-action';
+import { fetchPrevisao } from '../../redux/previsao/previsao-action';
 import getMoment from '../../utils/getMoment';
 import Loading from '../components/Loading';
 import DetailIndice from '../DetailIndice';
@@ -131,6 +132,10 @@ const Maps = () => {
     }
   }, [errorsRequest, indices]);
 
+  useEffect(() => {
+    dispatch(fetchIndicesIncendios());
+  }, [indiceSaved]);
+
   function _saveIndice(value) {
     const coordinates = value.geometry.coordinates;
     const longitude = coordinates[0];
@@ -163,12 +168,17 @@ const Maps = () => {
       },
     };
 
+    const latitudeCoordisClickMap = value.geometry.coordinates[1];
+    const longitudeCoordisClickMap = value.geometry.coordinates[0];
+    dispatch(
+      fetchPrevisao({
+        latitude: latitudeCoordisClickMap,
+        longitude: longitudeCoordisClickMap,
+      }),
+    );
+
     if (previsaoNewIndice) {
       dispatch(fetchSaveIndice(indiceCreateToUser));
-    }
-
-    if (indiceSaved) {
-      dispatch(fetchIndicesIncendios());
     }
   }
   return loadingValidateGeolocationUser ? (
