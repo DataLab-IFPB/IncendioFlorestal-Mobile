@@ -1,12 +1,23 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import React, { useEffect, useState } from 'react';
-import { BackHandler, Modal, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  BackHandler,
+  Modal,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { PERMISSION_LOCATION_USE } from '../../constants/keys';
-import { fetchIndicesIncendios } from '../../redux/indices-incendios/indices-incendios-action';
+import {
+  fetchIndicesIncendios,
+  fetchSaveIndice,
+} from '../../redux/indices-incendios/indices-incendios-action';
+import getMoment from '../../utils/getMoment';
 import Loading from '../components/Loading';
 import DetailIndice from '../DetailIndice';
 import FloatingMenu from '../FloatingMenu';
@@ -24,9 +35,13 @@ const Maps = () => {
   // const [loadingIndices, setLoadingIndices] = useState(false);
   const errorsRequest = useSelector((state) => state.indicesIncendios.error);
 
+  const indiceSaved = useSelector(
+    (state) => state.indicesIncendios.indiceSaved,
+  );
+
   const [showDetail, setShowDetail] = useState(false);
   const [indiceCoords, setIndiceCoords] = useState();
-  const [indiceToShow, setIndiceToShow] = useState();
+  const [indiceToShow, setIndiceToShow] = useState(null);
   const [showMessageIndicesNotFound, setShowMessageIndicesNotFound] =
     useState(false);
   const [userGeolocation, setUserGeolocation] = useState({
@@ -37,6 +52,9 @@ const Maps = () => {
   });
   const [loadingValidateGeolocationUser, setLoadingValidateGeolocationUser] =
     useState(false);
+
+  const previsaoNewIndice = useSelector((state) => state.previsao.data);
+
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', () => {
       return true;
@@ -44,7 +62,7 @@ const Maps = () => {
   }, []);
 
   useEffect(() => {
-    if (indices === null) {
+    if (indices === null && !loadingIndices) {
       dispatch(fetchIndicesIncendios());
     }
   }, []);
@@ -113,6 +131,46 @@ const Maps = () => {
     }
   }, [errorsRequest, indices]);
 
+  function _saveIndice(value) {
+    const coordinates = value.geometry.coordinates;
+    const longitude = coordinates[0];
+    const latitude = coordinates[1];
+
+    const indiceCreateToUser = {
+      latitude: latitude,
+      longitude: longitude,
+      userCreated: true,
+      acq_date: new Date().toISOString(),
+      acq_datetime: null,
+      acq_time: null,
+      ativo: true,
+      brightness: null,
+      brightness_2: null,
+      confidence: null,
+      daynight: getMoment(),
+      frp: null,
+      point: [longitude, latitude],
+      satellite: '',
+      scan: '',
+      track: '',
+      version: '1',
+      temperature: {
+        temp_c: previsaoNewIndice && previsaoNewIndice.current.temp_c,
+        wind_kph: previsaoNewIndice && previsaoNewIndice.current.wind_kph,
+        humidity: previsaoNewIndice && previsaoNewIndice.current.humidity,
+        locale: previsaoNewIndice && previsaoNewIndice.location.name,
+        precip_in: previsaoNewIndice && previsaoNewIndice.current.precip_in,
+      },
+    };
+
+    if (previsaoNewIndice) {
+      dispatch(fetchSaveIndice(indiceCreateToUser));
+    }
+
+    if (indiceSaved) {
+      dispatch(fetchIndicesIncendios());
+    }
+  }
   return loadingValidateGeolocationUser ? (
     <Loading loading={loadingValidateGeolocationUser || loadingIndices} />
   ) : (
@@ -120,12 +178,28 @@ const Maps = () => {
       <FloatingMenu setMapStyle={setMapStyle} />
       <Modal transparent={true} visible={showDetail} animationType='slide'>
         <DetailIndice
+          resetIndiceToShow={setIndiceToShow}
           indice={indiceToShow}
           indiceCoords={indiceCoords}
           closeIndiceDetail={setShowDetail}
         />
       </Modal>
       <MapboxGL.MapView
+        onLongPress={(value) => {
+          if (indiceToShow === null) {
+            Alert.alert('', 'deseja registrar um novo foco de incêndio?', [
+              {
+                text: 'Não',
+                onPress: () => {},
+                style: 'cancel',
+              },
+              {
+                text: 'Sim',
+                onPress: () => _saveIndice(value),
+              },
+            ]);
+          }
+        }}
         styleURL={mapStyle}
         zoomLevel={20}
         logoEnabled={false}
@@ -156,21 +230,41 @@ const Maps = () => {
                     Number(coordinate.longitude),
                     Number(coordinate.latitude),
                   ]}>
-                  <View style={styles.containerIndexFire}>
-                    <IconSimple
-                      onPress={() => {
-                        setShowDetail(true);
-                        setIndiceCoords({
-                          latitude: coordinate.latitude,
-                          longitude: coordinate.longitude,
-                        });
-                        setIndiceToShow(coordinate);
-                      }}
-                      name='fire'
-                      size={30}
-                      color={coordinate.brightness >= 500 ? '#F00' : '#ff4500'}
-                    />
-                  </View>
+                  {coordinate.userCreated ? (
+                    <View style={styles.containerIndexFire}>
+                      <IconSimple
+                        onPress={() => {
+                          setShowDetail(true);
+                          setIndiceCoords({
+                            latitude: coordinate.latitude,
+                            longitude: coordinate.longitude,
+                          });
+                          setIndiceToShow(coordinate);
+                        }}
+                        name='fire'
+                        size={30}
+                        color={'#FFF000'}
+                      />
+                    </View>
+                  ) : (
+                    <View style={styles.containerIndexFire}>
+                      <IconSimple
+                        onPress={() => {
+                          setShowDetail(true);
+                          setIndiceCoords({
+                            latitude: coordinate.latitude,
+                            longitude: coordinate.longitude,
+                          });
+                          setIndiceToShow(coordinate);
+                        }}
+                        name='fire'
+                        size={30}
+                        color={
+                          coordinate.brightness >= 500 ? '#F00' : '#ff4500'
+                        }
+                      />
+                    </View>
+                  )}
                 </MapboxGL.MarkerView>
               );
             }

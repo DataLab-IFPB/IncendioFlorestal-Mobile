@@ -11,7 +11,12 @@ import { fetchPrevisao } from '../../redux/previsao/previsao-action';
 import formatDate from '../../utils/format-data';
 import styles from './styles';
 
-const DetailIndice = ({ indiceCoords, closeIndiceDetail, indice }) => {
+const DetailIndice = ({
+  indiceCoords,
+  closeIndiceDetail,
+  indice,
+  resetIndiceToShow,
+}) => {
   const dispatch = useDispatch();
   const previsao = useSelector((state) => state.previsao.data);
   const loading = useSelector((state) => state.previsao.loading);
@@ -36,7 +41,10 @@ const DetailIndice = ({ indiceCoords, closeIndiceDetail, indice }) => {
       {/* HEADER */}
       <View style={styles.header}>
         <IconAntDesign
-          onPress={() => closeIndiceDetail(false)}
+          onPress={() => {
+            closeIndiceDetail(false);
+            resetIndiceToShow(null);
+          }}
           name='closecircle'
           color={'#F00'}
           size={styles.iconCloseSize}
