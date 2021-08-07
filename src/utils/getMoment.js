@@ -8,7 +8,7 @@ export default function getMoment() {
 
   if (currentHour >= 3 && currentHour < 12) {
     momentType = 'D';
-  } else if (currentHour >= 20 && currentHour < 3) {
+  } else if (currentHour >= 20) {
     momentType = 'N';
   }
 

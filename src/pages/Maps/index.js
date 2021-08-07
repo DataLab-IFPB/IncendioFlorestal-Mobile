@@ -1,14 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import React, { useEffect, useState } from 'react';
-import {
-  Alert,
-  BackHandler,
-  Modal,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { BackHandler, Modal, Text, TouchableOpacity, View } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,6 +15,7 @@ import getMoment from '../../utils/getMoment';
 import Loading from '../components/Loading';
 import DetailIndice from '../DetailIndice';
 import FloatingMenu from '../FloatingMenu';
+import ModalNovoIndice from '../ModalNovoIndice';
 import styles from './styles';
 
 const Maps = () => {
@@ -55,6 +49,9 @@ const Maps = () => {
     useState(false);
 
   const previsaoNewIndice = useSelector((state) => state.previsao.data);
+
+  const [showModalNovoIndice, setShowModalNovoIndice] = useState(false);
+  const [coordsClickInMap, setCoordsClickInMap] = useState();
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', () => {
@@ -133,7 +130,10 @@ const Maps = () => {
   }, [errorsRequest, indices]);
 
   useEffect(() => {
-    dispatch(fetchIndicesIncendios());
+    if (indiceSaved) {
+      dispatch(fetchIndicesIncendios());
+      console.log('possui um novo registro ');
+    }
   }, [indiceSaved]);
 
   function _saveIndice(value) {
@@ -194,20 +194,17 @@ const Maps = () => {
           closeIndiceDetail={setShowDetail}
         />
       </Modal>
+
+      <ModalNovoIndice
+        visible={showModalNovoIndice}
+        onConfirm={() => _saveIndice(coordsClickInMap)}
+        onCancel={() => setShowModalNovoIndice(false)}
+      />
       <MapboxGL.MapView
         onLongPress={(value) => {
           if (indiceToShow === null) {
-            Alert.alert('', 'deseja registrar um novo foco de incêndio?', [
-              {
-                text: 'Não',
-                onPress: () => {},
-                style: 'cancel',
-              },
-              {
-                text: 'Sim',
-                onPress: () => _saveIndice(value),
-              },
-            ]);
+            setCoordsClickInMap(value);
+            setShowModalNovoIndice(true);
           }
         }}
         styleURL={mapStyle}
