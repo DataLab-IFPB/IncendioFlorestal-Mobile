@@ -67,7 +67,7 @@ const DetailIndice = ({
             <Text style={styles.label}>
               {indice && formatDate(indice.acq_date)}
             </Text>
-            <Text></Text>
+            <Text />
           </View>
           <Text style={styles.labelNoBold}>Ocorreu de:</Text>
           {indice && indice.daynight === 'D' ? (

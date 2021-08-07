@@ -1,8 +1,7 @@
-import { put, takeLatest } from 'redux-saga/effects';
-import { fetchLoginSuccess, fetchLoginFail } from './login-action';
-import { FETCH_LOGIN } from './login-types';
-
 import firebase from 'firebase';
+import { put, takeLatest } from 'redux-saga/effects';
+import { fetchLoginFail, fetchLoginSuccess } from './login-action';
+import { FETCH_LOGIN } from './login-types';
 
 function* login(action) {
   try {

@@ -88,7 +88,6 @@ const Login = () => {
           style={styles.input}
           placeholder={'Digite seu e-mail'}
           autoCapitalize='none'
-          
         />
         <Text style={styles.label}>Senha</Text>
         <View style={styles.containerInputSenha}>

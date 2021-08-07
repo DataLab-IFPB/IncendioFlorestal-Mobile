@@ -7,23 +7,13 @@ const initialState = {
   indiceSaved: false,
 };
 
-function _fetchStart(action, state) {
-  return {
-    ...state,
-    loading: true,
-  };
-}
-function _fetchFail(action, state) {
-  return {
-    ...state,
-    loading: false,
-    error: action.payload,
-  };
-}
 export default function (state = initialState, action) {
   switch (action.type) {
     case types.FETCH_INDICES_INCENDIOS:
-      return _fetchStart(action, state);
+      return {
+        ...state,
+        loading: true,
+      };
     case types.FETCH_INDICES_INCENDIOS_SUCCESS:
       return {
         ...state,
@@ -31,10 +21,17 @@ export default function (state = initialState, action) {
         loading: false,
       };
     case types.FETCH_INDICES_INCENDIOS_FAIL:
-      return _fetchFail(action, state);
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
 
     case types.FETCH_SAVE_INDICE:
-      return _fetchStart(action, state);
+      return {
+        ...state,
+        loading: true,
+      };
     case types.FETCH_SAVE_INDICE_SUCCESS:
       return {
         ...state,
@@ -42,7 +39,11 @@ export default function (state = initialState, action) {
         indiceSaved: action.payload,
       };
     case types.FETCH_SAVE_INDICE_FAIL:
-      return _fetchFail(action, state);
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
     default:
       return state;
   }

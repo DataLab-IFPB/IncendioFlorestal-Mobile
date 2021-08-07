@@ -176,10 +176,7 @@ const Maps = () => {
         longitude: longitudeCoordisClickMap,
       }),
     );
-
-    if (previsaoNewIndice) {
-      dispatch(fetchSaveIndice(indiceCreateToUser));
-    }
+    dispatch(fetchSaveIndice(indiceCreateToUser));
   }
   return loadingValidateGeolocationUser ? (
     <Loading loading={loadingValidateGeolocationUser || loadingIndices} />

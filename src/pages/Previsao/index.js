@@ -18,7 +18,7 @@ const Previsao = ({ userCoordinates }) => {
         longitude: userCoordinates.longitude,
       }),
     );
-  }, []);
+  });
 
   function _renderInfo(info) {
     return info === null ? ' - ' : info;
