@@ -17,3 +17,7 @@
 - react-native run-android, para rodar no Android
 
 - react-native run-ios, para rodar no IOS
+
+# Telas do projeto
+
+- Para visualizar as telas do app, clique <strong>aqui <a href="screens/READM.md"> </strong>
