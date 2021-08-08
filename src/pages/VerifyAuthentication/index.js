@@ -25,9 +25,6 @@ const VerifyAuthentication = () => {
     });
   }, []);
 
-  console.log('loading ', loading);
-  console.log('loading indices ', loadingIndices);
-
   useEffect(() => {
     dispatch(fetchIndicesIncendios());
   }, []);

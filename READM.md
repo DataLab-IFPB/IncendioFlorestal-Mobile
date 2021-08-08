@@ -20,4 +20,4 @@
 
 # Telas do projeto
 
-- Para visualizar as telas do app, clique <strong>aqui <a href="screens/READM.md"> </strong>
+- Para visualizar as telas do app, clique <strong>aqui <a href="https://github.com/DataLab-IFPB/IncendioFlorestal-Mobile/blob/feature/previsao_do_tempo/screens/READM.md" target="_blank"> </strong>
