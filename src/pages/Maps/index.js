@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { PERMISSION_LOCATION_USE } from '../../constants/keys';
 import {
   fetchIndicesIncendios,
-  fetchSaveIndice,
+  fetchSaveIndice
 } from '../../redux/indices-incendios/indices-incendios-action';
 import { fetchPrevisao } from '../../redux/previsao/previsao-action';
 import getMoment from '../../utils/getMoment';
@@ -132,7 +132,6 @@ const Maps = () => {
   useEffect(() => {
     if (indiceSaved) {
       dispatch(fetchIndicesIncendios());
-      console.log('possui um novo registro ');
     }
   }, [indiceSaved]);
 

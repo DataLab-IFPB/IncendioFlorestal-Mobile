@@ -25,12 +25,15 @@ const VerifyAuthentication = () => {
     });
   }, []);
 
+  console.log('loading ', loading);
+  console.log('loading indices ', loadingIndices);
+
   useEffect(() => {
     dispatch(fetchIndicesIncendios());
   }, []);
 
   if (validateToken === null && loadingIndices) {
-    return <Loading loading={loading} />;
+    return <Loading loading={loading || loadingIndices} />;
   }
   return validateToken ? (
     <Stack.Navigator>
