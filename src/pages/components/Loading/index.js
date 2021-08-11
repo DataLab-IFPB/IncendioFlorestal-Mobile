@@ -1,11 +1,11 @@
 import React from 'react';
-import { View, Modal, ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Modal, View } from 'react-native';
 import styles from './styles';
 const Loading = ({ loading }) => {
   return (
-    <Modal transparent visible={loading}>
+    <Modal transparent={true} visible={loading} animationType='none'>
       <View style={styles.container}>
-        <ActivityIndicator animating={true} size={'large'} color={'#F00'} />
+        <ActivityIndicator size='large' color='#F00' />
       </View>
     </Modal>
   );

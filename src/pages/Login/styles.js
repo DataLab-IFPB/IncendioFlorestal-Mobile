@@ -19,6 +19,7 @@ export default StyleSheet.create({
     backgroundColor: '#C1C1C1',
     textAlign: 'center',
     fontSize: width * 0.04,
+    color: '#000',
   },
   button: {
     width: width * 0.3,

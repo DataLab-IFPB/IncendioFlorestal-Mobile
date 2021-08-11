@@ -1,30 +1,44 @@
-import React, { useEffect, useState } from 'react';
-import { BackHandler, TouchableOpacity } from 'react-native';
-import { View, Text, Modal } from 'react-native';
-import Geolocation from 'react-native-geolocation-service';
-import MapboxGL from '@react-native-mapbox-gl/maps';
-import { PERMISSION_LOCATION_USE } from '../../constants/keys';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import MapboxGL from '@react-native-mapbox-gl/maps';
+import React, { useEffect, useState } from 'react';
+import { BackHandler, Modal, Text, TouchableOpacity, View } from 'react-native';
+import Geolocation from 'react-native-geolocation-service';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
-import FloatingMenu from '../FloatingMenu';
+import { useDispatch, useSelector } from 'react-redux';
+import { PERMISSION_LOCATION_USE } from '../../constants/keys';
+import {
+  fetchIndicesIncendios,
+  fetchSaveIndice
+} from '../../redux/indices-incendios/indices-incendios-action';
+import { fetchPrevisao } from '../../redux/previsao/previsao-action';
+import getMoment from '../../utils/getMoment';
 import Loading from '../components/Loading';
-import { fetchIndicesIncendios } from '../../redux/indices-incendios/indices-incendios-action';
+import DetailIndice from '../DetailIndice';
+import FloatingMenu from '../FloatingMenu';
+import ModalNovoIndice from '../ModalNovoIndice';
 import styles from './styles';
 
-import { useDispatch, useSelector } from 'react-redux';
-
 const Maps = () => {
+  const dispatch = useDispatch();
   MapboxGL.setAccessToken(
     'pk.eyJ1IjoiaXRhbG9hN3giLCJhIjoiY2txYjVxcndqMHd5aTJ1dDV0ZXBlM2kxaCJ9.P1_QYLu4AQbAX9u-V37_1Q',
   );
   const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Outdoors);
   const indices = useSelector((state) => state.indicesIncendios.data);
+  // const [indices, setIndices] = useState([]);
   const loadingIndices = useSelector((state) => state.indicesIncendios.loading);
+  // const [loadingIndices, setLoadingIndices] = useState(false);
   const errorsRequest = useSelector((state) => state.indicesIncendios.error);
-  const [indicesNotFound, setShowIndicesNotFound] = useState(false);
+
+  const indiceSaved = useSelector(
+    (state) => state.indicesIncendios.indiceSaved,
+  );
+
+  const [showDetail, setShowDetail] = useState(false);
+  const [indiceCoords, setIndiceCoords] = useState();
+  const [indiceToShow, setIndiceToShow] = useState(null);
   const [showMessageIndicesNotFound, setShowMessageIndicesNotFound] =
     useState(false);
-  const dispatch = useDispatch();
   const [userGeolocation, setUserGeolocation] = useState({
     latitude: 0,
     longitude: 0,
@@ -33,10 +47,22 @@ const Maps = () => {
   });
   const [loadingValidateGeolocationUser, setLoadingValidateGeolocationUser] =
     useState(false);
+
+  const previsaoNewIndice = useSelector((state) => state.previsao.data);
+
+  const [showModalNovoIndice, setShowModalNovoIndice] = useState(false);
+  const [coordsClickInMap, setCoordsClickInMap] = useState();
+
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', () => {
       return true;
     });
+  }, []);
+
+  useEffect(() => {
+    if (indices === null && !loadingIndices) {
+      dispatch(fetchIndicesIncendios());
+    }
   }, []);
 
   useEffect(() => {
@@ -93,29 +119,90 @@ const Maps = () => {
       setLoadingValidateGeolocationUser(false);
     }
   }, [userGeolocation]);
-
-  useEffect(() => {
-    dispatch(fetchIndicesIncendios());
-  }, []);
-
   useEffect(() => {
     if (
       !loadingIndices &&
       !loadingValidateGeolocationUser &&
       indices === null
     ) {
-      setShowIndicesNotFound(true);
       setShowMessageIndicesNotFound(true);
     }
   }, [errorsRequest, indices]);
 
+  useEffect(() => {
+    if (indiceSaved) {
+      dispatch(fetchIndicesIncendios());
+    }
+  }, [indiceSaved]);
+
+  function _saveIndice(value) {
+    const coordinates = value.geometry.coordinates;
+    const longitude = coordinates[0];
+    const latitude = coordinates[1];
+
+    const indiceCreateToUser = {
+      latitude: latitude,
+      longitude: longitude,
+      userCreated: true,
+      acq_date: new Date().toISOString(),
+      acq_datetime: null,
+      acq_time: null,
+      ativo: true,
+      brightness: null,
+      brightness_2: null,
+      confidence: null,
+      daynight: getMoment(),
+      frp: null,
+      point: [longitude, latitude],
+      satellite: '',
+      scan: '',
+      track: '',
+      version: '1',
+      temperature: {
+        temp_c: previsaoNewIndice && previsaoNewIndice.current.temp_c,
+        wind_kph: previsaoNewIndice && previsaoNewIndice.current.wind_kph,
+        humidity: previsaoNewIndice && previsaoNewIndice.current.humidity,
+        locale: previsaoNewIndice && previsaoNewIndice.location.name,
+        precip_in: previsaoNewIndice && previsaoNewIndice.current.precip_in,
+      },
+    };
+
+    const latitudeCoordisClickMap = value.geometry.coordinates[1];
+    const longitudeCoordisClickMap = value.geometry.coordinates[0];
+    dispatch(
+      fetchPrevisao({
+        latitude: latitudeCoordisClickMap,
+        longitude: longitudeCoordisClickMap,
+      }),
+    );
+    dispatch(fetchSaveIndice(indiceCreateToUser));
+  }
   return loadingValidateGeolocationUser ? (
     <Loading loading={loadingValidateGeolocationUser || loadingIndices} />
   ) : (
     <View style={styles.containerMapsAndButtons}>
       <FloatingMenu setMapStyle={setMapStyle} />
+      <Modal transparent={true} visible={showDetail} animationType='slide'>
+        <DetailIndice
+          resetIndiceToShow={setIndiceToShow}
+          indice={indiceToShow}
+          indiceCoords={indiceCoords}
+          closeIndiceDetail={setShowDetail}
+        />
+      </Modal>
 
+      <ModalNovoIndice
+        visible={showModalNovoIndice}
+        onConfirm={() => _saveIndice(coordsClickInMap)}
+        onCancel={() => setShowModalNovoIndice(false)}
+      />
       <MapboxGL.MapView
+        onLongPress={(value) => {
+          if (indiceToShow === null) {
+            setCoordsClickInMap(value);
+            setShowModalNovoIndice(true);
+          }
+        }}
         styleURL={mapStyle}
         zoomLevel={20}
         logoEnabled={false}
@@ -123,11 +210,11 @@ const Maps = () => {
         centerCoordinate={[userGeolocation.longitude, userGeolocation.latitude]}
         style={styles.containerMap}>
         <MapboxGL.Camera
-          zoomLevel={20}
+          zoomLevel={10}
           // zoom pra cima
-          minZoomLevel={6}
+          minZoomLevel={7}
           // zoom pra baixo
-          maxZoomLevel={17}
+          maxZoomLevel={20}
           centerCoordinate={[
             userGeolocation.longitude,
             userGeolocation.latitude,
@@ -138,42 +225,70 @@ const Maps = () => {
 
         {indices &&
           indices.map((coordinate, index) => {
-            return (
-              <MapboxGL.MarkerView
-                key={index}
-                coordinate={[
-                  Number(coordinate.longitude),
-                  Number(coordinate.latitude),
-                ]}>
-                <View style={styles.containerIndexFire}>
-                  <IconSimple
-                    name='fire'
-                    size={30}
-                    color={coordinate.brightness >= 500 ? '#F00' : '#ff4500'}
-                  />
-                </View>
-              </MapboxGL.MarkerView>
-            );
+            if (coordinate.ativo) {
+              return (
+                <MapboxGL.MarkerView
+                  key={index}
+                  coordinate={[
+                    Number(coordinate.longitude),
+                    Number(coordinate.latitude),
+                  ]}>
+                  {coordinate.userCreated ? (
+                    <View style={styles.containerIndexFire}>
+                      <IconSimple
+                        onPress={() => {
+                          setShowDetail(true);
+                          setIndiceCoords({
+                            latitude: coordinate.latitude,
+                            longitude: coordinate.longitude,
+                          });
+                          setIndiceToShow(coordinate);
+                        }}
+                        name='fire'
+                        size={30}
+                        color={'#FFF000'}
+                      />
+                    </View>
+                  ) : (
+                    <View style={styles.containerIndexFire}>
+                      <IconSimple
+                        onPress={() => {
+                          setShowDetail(true);
+                          setIndiceCoords({
+                            latitude: coordinate.latitude,
+                            longitude: coordinate.longitude,
+                          });
+                          setIndiceToShow(coordinate);
+                        }}
+                        name='fire'
+                        size={30}
+                        color={
+                          coordinate.brightness >= 500 ? '#F00' : '#ff4500'
+                        }
+                      />
+                    </View>
+                  )}
+                </MapboxGL.MarkerView>
+              );
+            }
           })}
       </MapboxGL.MapView>
-      {indicesNotFound &&
-        !loadingIndices &&
-        !loadingValidateGeolocationUser &&
-        indices &&
-        indices === null && (
-          <Modal visible={showMessageIndicesNotFound} transparent={true}>
-            <View style={styles.containerIndicesNotFound}>
-              <Text style={styles.labelIndiceNotFound}>
-                {`${'!Ops.\nNão foi possível carregar os dados'}`}
+      {!loadingIndices && !loadingValidateGeolocationUser && indices === null && (
+        <Modal visible={showMessageIndicesNotFound} transparent={true}>
+          <View style={styles.containerIndicesNotFound}>
+            <Text style={styles.labelIndiceNotFound}>
+              {`${'!Ops.\nNão foi possível carregar os dados'}`}
+            </Text>
+            <TouchableOpacity
+              style={styles.btnOkIndiceNotFound}
+              onPress={() => setShowMessageIndicesNotFound(false)}>
+              <Text style={[styles.labelIndiceNotFound, styles.labelButtonOk]}>
+                Ok
               </Text>
-              <TouchableOpacity
-                style={styles.btnOkIndiceNotFound}
-                onPress={() => setShowMessageIndicesNotFound(false)}>
-                <Text>Ok</Text>
-              </TouchableOpacity>
-            </View>
-          </Modal>
-        )}
+            </TouchableOpacity>
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };

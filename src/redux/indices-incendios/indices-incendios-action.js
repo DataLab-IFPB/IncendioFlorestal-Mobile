@@ -19,3 +19,24 @@ export const fetchIndicesIncendiosFail = (error) => {
     payload: error,
   };
 };
+
+export const fetchSaveIndice = (data) => {
+  return {
+    type: types.FETCH_SAVE_INDICE,
+    payload: data,
+  };
+};
+
+export const fetchSaveIndiceSuccess = (data) => {
+  return {
+    type: types.FETCH_SAVE_INDICE_SUCCESS,
+    payload: data,
+  };
+};
+
+export const fetchSaveIndiceFail = (error) => {
+  return {
+    type: types.FETCH_SAVE_INDICE_FAIL,
+    payload: error,
+  };
+};

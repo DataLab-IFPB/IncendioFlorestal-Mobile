@@ -1,21 +1,38 @@
-import { call, put, takeLatest } from '@redux-saga/core/effects';
-import {
-  fetchIndicesIncendiosSuccess,
-  fetchIndicesIncendiosFail,
-} from './indices-incendios-action';
+import { put } from '@redux-saga/core/effects';
 import firebase from 'firebase';
-
-import { FETCH_INDICES_INCENDIOS } from './indices-incendios-types';
+import { takeLatest } from 'redux-saga/effects';
+import {
+  fetchIndicesIncendiosFail,
+  fetchIndicesIncendiosSuccess,
+  fetchSaveIndiceFail,
+  fetchSaveIndiceSuccess,
+} from './indices-incendios-action';
+import {
+  FETCH_INDICES_INCENDIOS,
+  FETCH_SAVE_INDICE,
+} from './indices-incendios-types';
 
 const _getData = () => {
+  return new Promise((resolve, reject) => {
+    const indices = firebase.database().ref().child('dados-firms').get();
+
+    indices
+      .then((values) => {
+        resolve(values.val());
+      })
+      .catch((err) => reject(null));
+  });
+};
+
+const _save = (indiceDindiceDate) => {
   return new Promise((resolve) => {
     firebase
       .database()
       .ref()
       .child('dados-firms')
-      .get()
-      .then((values) => {
-        resolve(values.val());
+      .push(indiceDindiceDate)
+      .then(() => {
+        resolve(true);
       });
   });
 };
@@ -23,14 +40,27 @@ const _getData = () => {
 function* indicesIncendios() {
   try {
     const data = yield _getData();
-    if (data) {
-      yield put(fetchIndicesIncendiosSuccess(Object.values(data)));
-    }
+
+    yield put(fetchIndicesIncendiosSuccess(Object.values(data)));
   } catch (error) {
     yield put(fetchIndicesIncendiosFail(error));
   }
 }
 
-export function* indicesIncendiosSagas() {
-  yield takeLatest(FETCH_INDICES_INCENDIOS, indicesIncendios);
+function* saveIndice(action) {
+  try {
+    const indiceCreateToUser = action.payload;
+    const result = yield _save(indiceCreateToUser);
+
+    if (result) {
+      yield put(fetchSaveIndiceSuccess(result));
+    }
+  } catch (error) {
+    yield put(fetchSaveIndiceFail(error));
+  }
 }
+
+export const indicesSagas = [
+  takeLatest(FETCH_INDICES_INCENDIOS, indicesIncendios),
+  takeLatest(FETCH_SAVE_INDICE, saveIndice),
+];
