@@ -36,4 +36,8 @@ export default StyleSheet.create({
   labelInfo: {
     fontSize: width * 0.04,
   },
+  containerDetalhesPrevisao: {
+    alignItems: 'center'
+  }
+  iconCloseSize: width * 0.07,
 });

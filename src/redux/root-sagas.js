@@ -4,5 +4,5 @@ import { loginSaga } from './login/login-saga';
 import { previsaoSaga } from './previsao/previsao-saga';
 
 export default function* rootSaga() {
-  yield all([loginSaga(), ...indicesSagas, previsaoSaga()]);
+  yield all([loginSaga(), ...indicesSagas, ...previsaoSaga]);
 }

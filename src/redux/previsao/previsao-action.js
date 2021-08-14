@@ -18,3 +18,24 @@ export const fetchPrevisaoFail = (error) => {
     payload: error,
   };
 };
+
+export const fetchPrevisaoUsuarioLogado = (coordenadas) => {
+  console.log('fetch previsao usuario');
+  return {
+    type: types.FETCH_PREVISAO_USUARIO_LOGADO,
+    payload: coordenadas,
+  };
+};
+
+export const fetchPrevisaoUsuarioLogadoSucceess = (data) => {
+  return {
+    type: types.FETCH_PREVISAO_USUARIO_LOGADO_SUCCEES,
+    payload: data,
+  };
+};
+export const fetchPrevisaoUsuarioLogadoFail = (error) => {
+  return {
+    type: types.FETCH_PREVISAO_USUARIO_LOGADO_FAIL,
+    payload: error,
+  };
+};
