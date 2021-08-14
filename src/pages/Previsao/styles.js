@@ -13,6 +13,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     top: '2%',
     elevation: 3,
+    borderColor: '#000',
   },
   containerDetails: {
     alignItems: 'center',

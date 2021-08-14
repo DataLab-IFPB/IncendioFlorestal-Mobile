@@ -122,7 +122,7 @@ const Login = () => {
         </TouchableOpacity>
 
         {autenticacaoInvalida && (
-          <Text style={styles.label}>Credenciais inválidas!</Text>
+          <Text style={styles.label}>{'Credenciais inválidas!'}</Text>
         )}
 
         {showVersionLabel && (

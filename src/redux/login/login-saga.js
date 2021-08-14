@@ -5,33 +5,39 @@ import { put, takeLatest } from 'redux-saga/effects';
 import { fetchLoginFail, fetchLoginSuccess } from './login-action';
 import { FETCH_LOGIN } from './login-types';
 
-function* login(action) {
-  try {
-    const { matricula, senha } = action.payload;
-
-    const users = yield firebase
+const getUserInRealTime = (matricula) => {
+  return new Promise((resolve) => {
+    firebase
       .database()
       .ref()
       .child('users')
-      .orderByKey()
-      .get();
+      .orderByChild('matricula')
+      .equalTo(matricula)
+      .on('value', (value) => resolve(value.val()));
+  });
+};
+function* login(action) {
+  try {
+    const { matricula, senha } = action.payload;
+    const userRefInDb = yield getUserInRealTime(matricula);
 
-    const userInDb =
-      Object.values(users.val()).filter(
-        (user) => user.matricula == matricula,
-      )[0] || null;
+    const userData = Object.values(userRefInDb)[0];
+    if (userData === null) {
+      yield put(fetchLoginFail(new Error('Usuário não encontrado')));
+    } else {
+      if (!userData.isExcluido) {
+        const { user } = yield firebase
+          .auth()
+          .signInWithEmailAndPassword(userData.email, senha);
 
-    if (userInDb === null) {
-      yield put(fetchLoginFail(new Error('User not found')));
+        if (user) {
+          yield put(fetchLoginSuccess(user));
+        }
+        yield put(fetchLoginSuccess(null));
+      } else {
+        yield put(fetchLoginFail(new Error('Usuário excluído')));
+      }
     }
-    const { user } = yield firebase
-      .auth()
-      .signInWithEmailAndPassword(userInDb.email, senha);
-
-    if (user) {
-      yield put(fetchLoginSuccess(user));
-    }
-    yield put(fetchLoginSuccess(null));
   } catch (error) {
     yield put(fetchLoginFail(error));
   }
