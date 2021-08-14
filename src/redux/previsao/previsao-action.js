@@ -20,7 +20,6 @@ export const fetchPrevisaoFail = (error) => {
 };
 
 export const fetchPrevisaoUsuarioLogado = (coordenadas) => {
-  console.log('fetch previsao usuario');
   return {
     type: types.FETCH_PREVISAO_USUARIO_LOGADO,
     payload: coordenadas,

@@ -1,8 +1,13 @@
 {
   "name": "projeto_combate_incendios",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "license": "MIT",
+  "author": {
+    "name": "José Ítalo Alves da Silva",
+    "email": "jose.italo@academico.ifpb.edu.br",
+    "url": "www.github.com/italoa7x"
+  },
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",

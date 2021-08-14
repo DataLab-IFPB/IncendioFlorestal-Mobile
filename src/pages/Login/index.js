@@ -75,23 +75,30 @@ const Login = () => {
     }
   };
   const [iconName, setIconName] = useState('eye-slash');
+  const [showVersionLabel, setShowVersionLabel] = useState(true);
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+        setShowVersionLabel(true);
+      }}>
       <View style={styles.container}>
         <Loading loading={loading} />
         <Image style={styles.logo} source={Logo} />
-        <Text style={styles.label}>E-mail</Text>
+        <Text style={styles.label}>Matrícula</Text>
         <TextInput
+          onPressIn={() => setShowVersionLabel(false)}
           value={matricula}
-          onChangeText={setMatricula}
-          keyboardType='email-address'
+          onChangeText={(value) => setMatricula(parseInt(value))}
+          keyboardType='number-pad'
           style={styles.input}
-          placeholder={'Digite seu e-mail'}
+          placeholder={'Digite sua matrícula'}
           autoCapitalize='none'
         />
         <Text style={styles.label}>Senha</Text>
         <View style={styles.containerInputSenha}>
           <TextInput
+            onPressIn={() => setShowVersionLabel(false)}
             value={senha}
             onChangeText={setSenha}
             style={styles.input}
@@ -118,9 +125,11 @@ const Login = () => {
           <Text style={styles.label}>Credenciais inválidas!</Text>
         )}
 
-        <Text style={styles.textVersion}>
-          {`Version ${packageJson.version}`}
-        </Text>
+        {showVersionLabel && (
+          <Text style={styles.textVersion}>
+            {`Version ${packageJson.version}`}
+          </Text>
+        )}
       </View>
     </TouchableWithoutFeedback>
   );

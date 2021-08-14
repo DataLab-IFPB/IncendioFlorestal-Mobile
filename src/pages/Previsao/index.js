@@ -79,7 +79,7 @@ const Previsao = ({ userCoordinates }) => {
       ) : (
         _renderComponent(
           <IOIcon name='thunderstorm-outline' size={styles.iconCloseSize} />,
-          <Text style={styles.labelNoBold}>{`${
+          <Text style={styles.labelInfo}>{`${
             previsao && previsao.current.precip_in
           }%`}</Text>,
         )

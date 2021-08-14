@@ -33,7 +33,7 @@ const FloatingMenu = ({ setMapStyle }) => {
       <ActionButton.Item
         buttonColor={style.menuColor.color}
         title='Tráfego'
-        onPress={() => setMapStyle(MapboxGL.StyleURL.TrafficNight)}>
+        onPress={() => setMapStyle(MapboxGL.StyleURL.TrafficDay)}>
         {handleIcon('car')}
       </ActionButton.Item>
 
