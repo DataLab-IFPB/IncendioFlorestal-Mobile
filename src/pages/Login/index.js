@@ -46,7 +46,13 @@ const Login = () => {
 
   useEffect(() => {
     if (user) {
-      navigation.navigate('Home');
+      if (user.novoUsuario) {
+        navigation.navigate('FirstLogin', {
+          usuario: user,
+        });
+      } else {
+        navigation.navigate('Home');
+      }
     }
   }, [user]);
 
@@ -89,7 +95,7 @@ const Login = () => {
         <TextInput
           onPressIn={() => setShowVersionLabel(false)}
           value={matricula}
-          onChangeText={(value) => setMatricula(parseInt(value))}
+          onChangeText={(value) => setMatricula(parseInt(value, 10))}
           keyboardType='number-pad'
           style={styles.input}
           placeholder={'Digite sua matrícula'}
