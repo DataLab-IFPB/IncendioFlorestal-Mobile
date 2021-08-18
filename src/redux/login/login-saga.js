@@ -1,5 +1,5 @@
 import firebase from 'firebase';
-
+import moment from 'moment';
 import { put, takeLatest } from 'redux-saga/effects';
 import {
   fetchLoginFail,
@@ -15,19 +15,21 @@ const getUserInRealTime = (matricula) => {
       .database()
       .ref()
       .child('users')
-      .orderByChild('matricula')
-      .equalTo(matricula)
+      .orderByChild('registration')
+      .equalTo(parseInt(matricula))
       .on('value', (value) => resolve(value.val()));
   });
 };
 
-const updateUserInRealTime = (user, statusNovoUsuario) => {
+const updateUserInRealTime = (user) => {
+  const dateNow = moment(new Date());
   return new Promise((resolve) => {
     const userRef = firebase
       .database()
       .ref('users/' + user.ref)
       .update({
-        novoUsuario: statusNovoUsuario,
+        firstLoginAt: dateNow.format('dd/MM/yyyy HH:MM:SS'),
+        firstLogin: false,
       });
     resolve(userRef);
   });
@@ -35,14 +37,14 @@ const updateUserInRealTime = (user, statusNovoUsuario) => {
 
 const mountUser = (data, userRef) => {
   return {
+    name: data.name,
     email: data.email,
-    ref: userRef,
+    registration: data.registration,
+    isDeleted: data.isDeleted,
     isAdmin: data.isAdmin,
-    isExcluido: data.isExcluido,
-    matricula: data.matricula,
-    nome: data.nome,
-    novoUsuario: data.novoUsuario,
-    uid: data.uid,
+    firstLoginAt: data.firstLoginAt,
+    ref: userRef,
+    birthDate: data.birthDate,
   };
 };
 
@@ -51,25 +53,29 @@ function* login(action) {
     const { matricula, senha } = action.payload;
     const userRefInDb = yield getUserInRealTime(matricula);
 
-    const valuesUser = Object.values(userRefInDb)[0];
-    const userRef = Object.keys(userRefInDb)[0];
-    const userData = mountUser(valuesUser, userRef);
-
-    if (userData === null) {
+    if (!userRefInDb) {
       yield put(fetchLoginFail(new Error('Usuário não encontrado')));
     } else {
-      if (!userData.isExcluido) {
-        if (userData.novoUsuario) {
+      const valuesUser = Object.values(userRefInDb)[0];
+      const userRef = Object.keys(userRefInDb)[0];
+      const userData = mountUser(valuesUser, userRef);
+
+      if (!userData.isDeleted) {
+        if (userData.firstLogin) {
           // é um novo usuario, então retorna ele para a tela de login
           // para ele ser redirecionado para a tela de alterar senha
           yield put(fetchLoginSuccess(userData));
         } else {
-          const { user } = yield firebase
-            .auth()
-            .signInWithEmailAndPassword(userData.email, senha);
+          if (toString(senha) === toString(userData.birthDate)) {
+            const { user } = yield firebase
+              .auth()
+              .signInWithEmailAndPassword(userData.email, senha);
 
-          if (user) {
-            yield put(fetchLoginSuccess(user));
+            if (user) {
+              yield put(fetchLoginSuccess(user));
+            }
+          } else {
+            yield put(fetchLoginFail(new Error('Senha inválida')));
           }
         }
       } else {
@@ -85,7 +91,7 @@ function* createNewUser(action) {
   try {
     const { senha, user } = action.payload;
 
-    yield updateUserInRealTime(user, false);
+    yield updateUserInRealTime(user);
 
     const newUser = yield firebase
       .auth()

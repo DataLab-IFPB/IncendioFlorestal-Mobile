@@ -40,14 +40,7 @@ const FirstLogin = ({ route, navigation }) => {
   // o usuário será redirecionado para o login novamente.
   useEffect(() => {
     if (!loadingNewUser && newUser !== null) {
-      navigation.reset({
-        index: 0,
-        routes: [
-          {
-            name: 'Login',
-          },
-        ],
-      });
+      navigation.replace('Login');
     }
   }, [newUser]);
 

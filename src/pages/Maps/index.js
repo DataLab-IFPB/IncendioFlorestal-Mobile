@@ -238,7 +238,7 @@ const Maps = () => {
                   {coordinate.userCreated ? (
                     <View style={styles.containerIndexFire}>
                       <IconSimple
-                        onPress={() => {
+                        onLongPress={() => {
                           setShowDetail(true);
                           setIndiceCoords({
                             latitude: coordinate.latitude,

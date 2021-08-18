@@ -8,6 +8,7 @@ export const fetchLogin = (userData) => {
 };
 
 export const fetchLoginSuccess = (userData) => {
+  console.log('success ', userData);
   return {
     type: types.FETCH_LOGIN_SUCCESS,
     payload: userData,
@@ -15,6 +16,7 @@ export const fetchLoginSuccess = (userData) => {
 };
 
 export const fetchLoginFail = (error) => {
+  console.log('login fail ', error);
   return {
     type: types.FETCH_LOGIN_FAIL,
     payload: error,
