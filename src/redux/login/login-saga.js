@@ -8,7 +8,7 @@ import {
   fetchNewUserSuccess,
 } from './login-action';
 import { FETCH_LOGIN, FETCH_NEW_USER } from './login-types';
-
+import { DOMAIN_EMAIL } from '../../constants/keys';
 const getUserInRealTime = (matricula) => {
   return new Promise((resolve) => {
     firebase
@@ -28,11 +28,15 @@ const updateUserInRealTime = (user) => {
       .database()
       .ref('users/' + user.ref)
       .update({
-        firstLoginAt: dateNow.format('DD/MM/yyyy HH:MM:SS').toString(),
+        firstLoginAt: dateNow.format('DD/MM/yyyy hh:mm:ss').toString(),
         firstLogin: false,
       });
     resolve(userRef);
   });
+};
+
+const mountEmailUser = (name) => {
+  return `${name}${DOMAIN_EMAIL}`;
 };
 
 const mountUser = (data, userRef) => {
@@ -91,7 +95,7 @@ function* createNewUser(action) {
 
     const newUser = yield firebase
       .auth()
-      .createUserWithEmailAndPassword(user.email, senha);
+      .createUserWithEmailAndPassword(mountEmailUser(user.name), senha);
 
     if (newUser) {
       yield put(fetchNewUserSuccess(newUser));

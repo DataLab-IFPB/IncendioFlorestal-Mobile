@@ -40,9 +40,9 @@ const FirstLogin = ({ route, navigation }) => {
   // o usuário será redirecionado para o login novamente.
   useEffect(() => {
     if (!loadingNewUser && newUser !== null) {
-      navigation.replace('Login');
+      navigation.replace('Home');
     }
-  }, [newUser]);
+  }, [loadingNewUser, navigation, newUser]);
 
   function conferirSenhas() {
     if (senha !== confirmacaoSenha) {
@@ -82,15 +82,15 @@ const FirstLogin = ({ route, navigation }) => {
               styles.descriptionMessage
             }>{`${renderUserName()}, esse é seu primeiro login.\nPor favor,\naltere sua senha\n para poder prosseguir.`}</Text>
 
+          <Text style={styles.descriptionMessage}>Nova senha</Text>
           <TextInput
-            placeholder={'Digite sua nova senha'}
             style={styles.input}
             secureTextEntry={true}
             onChangeText={setSenha}
           />
+          <Text style={styles.descriptionMessage}>Confirme sua nova senha</Text>
 
           <TextInput
-            placeholder={'Confirme sua nova senha'}
             style={styles.input}
             secureTextEntry={true}
             onChangeText={setConfirmacaoSenha}

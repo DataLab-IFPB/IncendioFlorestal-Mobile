@@ -54,7 +54,7 @@ const Login = () => {
         navigation.navigate('Home');
       }
     }
-  }, [user]);
+  }, [navigation, user]);
 
   useEffect(() => {
     if (error && !loading) {
@@ -62,7 +62,7 @@ const Login = () => {
     } else {
       setAutenticacaoInvalida(false);
     }
-  }, [error]);
+  }, [error, loading]);
 
   const requestPermission = async () => {
     return await MapboxGL.requestAndroidLocationPermissions();
