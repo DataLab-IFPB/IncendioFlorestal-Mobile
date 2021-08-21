@@ -78,7 +78,7 @@ const Login = () => {
     } else {
       setAutenticacaoInvalida(false);
       setMatricula(matricula);
-      dispatch(fetchLogin({ matricula, senha }));
+      dispatch(fetchLogin({ matricula, senha: parseInt(senha, 10) }));
     }
   };
   const [iconName, setIconName] = useState('eye-slash');

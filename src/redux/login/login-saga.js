@@ -28,7 +28,7 @@ const updateUserInRealTime = (user) => {
       .database()
       .ref('users/' + user.ref)
       .update({
-        firstLoginAt: dateNow.format('dd/MM/yyyy HH:MM:SS'),
+        firstLoginAt: dateNow.format('DD/MM/yyyy HH:MM:SS').toString(),
         firstLogin: false,
       });
     resolve(userRef);
@@ -43,6 +43,7 @@ const mountUser = (data, userRef) => {
     isDeleted: data.isDeleted,
     isAdmin: data.isAdmin,
     firstLoginAt: data.firstLoginAt,
+    firstLogin: data.firstLogin,
     ref: userRef,
     birthDate: data.birthDate,
   };
@@ -52,34 +53,29 @@ function* login(action) {
   try {
     const { matricula, senha } = action.payload;
     const userRefInDb = yield getUserInRealTime(matricula);
+    const formatUserData = Object.values(userRefInDb)[0];
 
-    if (!userRefInDb) {
+    if (formatUserData.birthDate !== senha) {
       yield put(fetchLoginFail(new Error('Usuário não encontrado')));
     } else {
       const valuesUser = Object.values(userRefInDb)[0];
       const userRef = Object.keys(userRefInDb)[0];
       const userData = mountUser(valuesUser, userRef);
 
-      if (!userData.isDeleted) {
-        if (userData.firstLogin) {
-          // é um novo usuario, então retorna ele para a tela de login
-          // para ele ser redirecionado para a tela de alterar senha
-          yield put(fetchLoginSuccess(userData));
-        } else {
-          if (toString(senha) === toString(userData.birthDate)) {
-            const { user } = yield firebase
-              .auth()
-              .signInWithEmailAndPassword(userData.email, senha);
+      if (!userData.isDeleted && userData.firstLogin) {
+        yield put(fetchLoginSuccess(userData));
+      } else if (!userData.isDeleted && senha === userData.birthDate) {
+        const { user } = yield firebase
+          .auth()
+          .signInWithEmailAndPassword(userData.email, toString(senha));
 
-            if (user) {
-              yield put(fetchLoginSuccess(user));
-            }
-          } else {
-            yield put(fetchLoginFail(new Error('Senha inválida')));
-          }
+        if (user) {
+          yield put(fetchLoginSuccess(user));
         }
-      } else {
-        yield put(fetchLoginFail(new Error('Usuário excluído')));
+      } else if (userData.isDeleted) {
+        yield put(fetchLoginFail(new Error('Usuário excluido')));
+      } else if (senha !== userData.birthDate) {
+        yield put(fetchLoginFail('Senha inválida'));
       }
     }
   } catch (error) {

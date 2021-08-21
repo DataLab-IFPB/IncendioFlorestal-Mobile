@@ -67,15 +67,20 @@ const FirstLogin = ({ route, navigation }) => {
       );
     }
   }
+
+  function renderUserName() {
+    return (novoUsuario && novoUsuario.name) || '';
+  }
   return (
     <>
       <Loading loading={loadingNewUser} />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
           <Image source={Logo} style={styles.logo} />
-          <Text style={styles.descriptionMessage}>{`${
-            novoUsuario && novoUsuario.nome
-          }, esse é seu primeiro login.\nPor favor,\naltere sua senha\n para poder prosseguir.`}</Text>
+          <Text
+            style={
+              styles.descriptionMessage
+            }>{`${renderUserName()}, esse é seu primeiro login.\nPor favor,\naltere sua senha\n para poder prosseguir.`}</Text>
 
           <TextInput
             placeholder={'Digite sua nova senha'}
