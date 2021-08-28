@@ -4,6 +4,8 @@ const initialState = {
   data: null,
   loading: false,
   error: null,
+  newUser: null,
+  loadingNewUser: false,
 };
 
 export default function (state = initialState, action) {
@@ -27,22 +29,22 @@ export default function (state = initialState, action) {
         loading: false,
       };
 
-    case types.FETCH_VERIFY_SESSION:
+    case types.FETCH_NEW_USER:
       return {
         ...state,
-        loading: true,
+        loadingNewUser: true,
       };
-    case types.FETCH_VERIFY_SESSION_SUCCESS:
+    case types.FETCH_NEW_USER_SUCCESS:
       return {
         ...state,
-        data: action.payload,
-        loading: false,
+        loadingNewUser: false,
+        newUser: action.payload,
       };
-    case types.FETCH_VERIFY_SESSION_FAIL:
+    case types.FETCH_NEW_USER_FAIL:
       return {
         ...state,
+        loadingNewUser: false,
         error: action.payload,
-        loading: false,
       };
     default:
       return state;

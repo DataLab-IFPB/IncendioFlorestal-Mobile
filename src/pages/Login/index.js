@@ -46,9 +46,15 @@ const Login = () => {
 
   useEffect(() => {
     if (user) {
-      navigation.navigate('Home');
+      if (user.firstLogin) {
+        navigation.navigate('FirstLogin', {
+          usuario: user,
+        });
+      } else {
+        navigation.navigate('Home');
+      }
     }
-  }, [user]);
+  }, [navigation, user]);
 
   useEffect(() => {
     if (error && !loading) {
@@ -56,7 +62,7 @@ const Login = () => {
     } else {
       setAutenticacaoInvalida(false);
     }
-  }, [error]);
+  }, [error, loading]);
 
   const requestPermission = async () => {
     return await MapboxGL.requestAndroidLocationPermissions();
@@ -71,27 +77,35 @@ const Login = () => {
       setAutenticacaoInvalida(true);
     } else {
       setAutenticacaoInvalida(false);
-      dispatch(fetchLogin({ matricula, senha }));
+      setMatricula(matricula);
+      dispatch(fetchLogin({ matricula, senha: parseInt(senha, 10) }));
     }
   };
   const [iconName, setIconName] = useState('eye-slash');
+  const [showVersionLabel, setShowVersionLabel] = useState(true);
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+        setShowVersionLabel(true);
+      }}>
       <View style={styles.container}>
         <Loading loading={loading} />
         <Image style={styles.logo} source={Logo} />
-        <Text style={styles.label}>E-mail</Text>
+        <Text style={styles.label}>Matrícula</Text>
         <TextInput
+          onPressIn={() => setShowVersionLabel(false)}
           value={matricula}
           onChangeText={setMatricula}
-          keyboardType='email-address'
+          keyboardType='number-pad'
           style={styles.input}
-          placeholder={'Digite seu e-mail'}
+          placeholder={'Digite sua matrícula'}
           autoCapitalize='none'
         />
         <Text style={styles.label}>Senha</Text>
         <View style={styles.containerInputSenha}>
           <TextInput
+            onPressIn={() => setShowVersionLabel(false)}
             value={senha}
             onChangeText={setSenha}
             style={styles.input}
@@ -115,12 +129,14 @@ const Login = () => {
         </TouchableOpacity>
 
         {autenticacaoInvalida && (
-          <Text style={styles.label}>Credenciais inválidas!</Text>
+          <Text style={styles.label}>{'Credenciais inválidas!'}</Text>
         )}
 
-        <Text style={styles.textVersion}>
-          {`Version ${packageJson.version}`}
-        </Text>
+        {showVersionLabel && (
+          <Text style={styles.textVersion}>
+            {`Version ${packageJson.version}`}
+          </Text>
+        )}
       </View>
     </TouchableWithoutFeedback>
   );

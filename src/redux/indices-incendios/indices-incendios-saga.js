@@ -13,14 +13,12 @@ import {
 } from './indices-incendios-types';
 
 const _getData = () => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const indices = firebase.database().ref().child('dados-firms').get();
 
-    indices
-      .then((values) => {
-        resolve(values.val());
-      })
-      .catch((err) => reject(null));
+    indices.then((values) => {
+      resolve(values.val());
+    });
   });
 };
 

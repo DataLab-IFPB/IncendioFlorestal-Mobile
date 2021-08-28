@@ -8,8 +8,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { PERMISSION_LOCATION_USE } from '../../constants/keys';
 import {
   fetchIndicesIncendios,
-  fetchSaveIndice
+  fetchSaveIndice,
 } from '../../redux/indices-incendios/indices-incendios-action';
+import Previsao from '../Previsao';
 import { fetchPrevisao } from '../../redux/previsao/previsao-action';
 import getMoment from '../../utils/getMoment';
 import Loading from '../components/Loading';
@@ -182,6 +183,7 @@ const Maps = () => {
   ) : (
     <View style={styles.containerMapsAndButtons}>
       <FloatingMenu setMapStyle={setMapStyle} />
+      <Previsao userCoordinates={userGeolocation} />
       <Modal transparent={true} visible={showDetail} animationType='slide'>
         <DetailIndice
           resetIndiceToShow={setIndiceToShow}
@@ -236,7 +238,7 @@ const Maps = () => {
                   {coordinate.userCreated ? (
                     <View style={styles.containerIndexFire}>
                       <IconSimple
-                        onPress={() => {
+                        onLongPress={() => {
                           setShowDetail(true);
                           setIndiceCoords({
                             latitude: coordinate.latitude,

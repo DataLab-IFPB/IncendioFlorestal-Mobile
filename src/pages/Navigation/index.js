@@ -4,6 +4,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import Login from '../Login';
 import Home from '../Home';
 import Maps from '../Maps';
+import FirstLogin from '../FirstLogin';
+
 import VerifyAuthentication from '../VerifyAuthentication';
 const Navigation = () => {
   const Stack = createStackNavigator();
@@ -15,6 +17,13 @@ const Navigation = () => {
           component={VerifyAuthentication}
           options={{ headerShown: false }}
         />
+
+        <Stack.Screen
+          name='FirstLogin'
+          component={FirstLogin}
+          options={{ headerShown: false }}
+        />
+
         <Stack.Screen
           name='Login'
           component={Login}

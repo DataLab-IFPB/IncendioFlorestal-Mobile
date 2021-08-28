@@ -26,8 +26,10 @@ const VerifyAuthentication = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(fetchIndicesIncendios());
-  }, []);
+    if (validateToken) {
+      dispatch(fetchIndicesIncendios());
+    }
+  }, [validateToken]);
 
   if (validateToken === null && loadingIndices) {
     return <Loading loading={loading || loadingIndices} />;
