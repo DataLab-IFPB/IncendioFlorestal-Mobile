@@ -9,8 +9,8 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPrevisao } from '../../redux/previsao/previsao-action';
 import formatDate from '../../utils/format-data';
+import PickerImage from '../components/PickerImage';
 import styles from './styles';
-
 const DetailIndice = ({
   indiceCoords,
   closeIndiceDetail,
@@ -128,6 +128,8 @@ const DetailIndice = ({
               )}
             </View>
           </View>
+
+          <PickerImage />
         </>
       )}
     </View>
