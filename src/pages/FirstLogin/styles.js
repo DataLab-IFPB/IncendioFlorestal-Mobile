@@ -57,4 +57,7 @@ export default StyleSheet.create({
     fontSize: width * 0.04,
     marginTop: '4%',
   },
+  labelTamanhoSenha: {
+    fontSize: width * 0.03,
+  },
 });

@@ -1,27 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  Image,
   BackHandler,
-  TextInput,
-  TouchableWithoutFeedback,
+  Image,
   Keyboard,
+  Text,
+  TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
 } from 'react-native';
-import Loading from '../components/Loading';
+import { useDispatch, useSelector } from 'react-redux';
 import Logo from '../../assets/logo.png';
-import styles from './styles';
-import { useSelector, useDispatch } from 'react-redux';
 import { fetchNewUser } from '../../redux/login/login-action';
+import Loading from '../components/Loading';
+import styles from './styles';
 
 const FirstLogin = ({ route, navigation }) => {
   const dispatch = useDispatch();
-  const [novoUsuario, setNovoUsuario] = useState(null);
-  const [senha, setSenha] = useState(null);
-  const [confirmacaoSenha, setConfirmacaoSenha] = useState(null);
+  const [senha, setSenha] = useState('');
+  const [confirmacaoSenha, setConfirmacaoSenha] = useState('');
   const [senhasInvalidas, setSenhasInvalidas] = useState(false);
-
+  const [novoUser, setNovoUser] = useState(null);
   const loadingNewUser = useSelector((state) => state.login.loadingNewUser);
   const newUser = useSelector((state) => state.login.newUser);
   useEffect(() => {
@@ -30,19 +29,19 @@ const FirstLogin = ({ route, navigation }) => {
     });
   }, []);
 
-  useEffect(() => {
-    if (route?.params?.usuario) {
-      setNovoUsuario(route.params.usuario);
-    }
-  }, [route]);
-
   // quando o novo usuario tiver sido cadastrado no authenticator
   // o usuário será redirecionado para o login novamente.
   useEffect(() => {
     if (!loadingNewUser && newUser !== null) {
-      navigation.replace('Home');
+      navigation.navigate('Home');
     }
   }, [loadingNewUser, navigation, newUser]);
+
+  useEffect(() => {
+    if (route?.params?.usuario) {
+      setNovoUser(route.params.usuario);
+    }
+  }, [route]);
 
   function conferirSenhas() {
     if (senha !== confirmacaoSenha) {
@@ -57,30 +56,27 @@ const FirstLogin = ({ route, navigation }) => {
 
   function alterarSenhas() {
     conferirSenhas();
-
     if (!senhasInvalidas) {
       dispatch(
         fetchNewUser({
           senha: senha,
-          user: novoUsuario,
+          userData: novoUser,
         }),
       );
     }
   }
 
-  function renderUserName() {
-    return (novoUsuario && novoUsuario.name) || '';
-  }
   return (
     <>
       <Loading loading={loadingNewUser} />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
           <Image source={Logo} style={styles.logo} />
-          <Text
-            style={
-              styles.descriptionMessage
-            }>{`${renderUserName()}, esse é seu primeiro login.\nPor favor,\naltere sua senha\n para poder prosseguir.`}</Text>
+          <Text style={styles.descriptionMessage}>
+            {
+              'esse é seu primeiro login.\nPor favor,\naltere sua senha\n para poder prosseguir.'
+            }
+          </Text>
 
           <Text style={styles.descriptionMessage}>Nova senha</Text>
           <TextInput
@@ -95,6 +91,10 @@ const FirstLogin = ({ route, navigation }) => {
             secureTextEntry={true}
             onChangeText={setConfirmacaoSenha}
           />
+
+          <Text style={[styles.labelSenhasInvalidas, styles.labelTamanhoSenha]}>
+            Insira uma senha com mais de 3 caracteres.
+          </Text>
 
           {senhasInvalidas && (
             <Text style={styles.labelSenhasInvalidas}>

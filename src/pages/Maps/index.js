@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MapboxGL from '@react-native-mapbox-gl/maps';
+import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { BackHandler, Modal, Text, TouchableOpacity, View } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
@@ -10,13 +11,13 @@ import {
   fetchIndicesIncendios,
   fetchSaveIndice,
 } from '../../redux/indices-incendios/indices-incendios-action';
-import Previsao from '../Previsao';
 import { fetchPrevisao } from '../../redux/previsao/previsao-action';
 import getMoment from '../../utils/getMoment';
 import Loading from '../components/Loading';
 import DetailIndice from '../DetailIndice';
 import FloatingMenu from '../FloatingMenu';
 import ModalNovoIndice from '../ModalNovoIndice';
+import Previsao from '../Previsao';
 import styles from './styles';
 
 const Maps = () => {
@@ -54,6 +55,8 @@ const Maps = () => {
   const [showModalNovoIndice, setShowModalNovoIndice] = useState(false);
   const [coordsClickInMap, setCoordsClickInMap] = useState();
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', () => {
       return true;
@@ -61,10 +64,10 @@ const Maps = () => {
   }, []);
 
   useEffect(() => {
-    if (indices === null && !loadingIndices) {
+    if (indices === null && loadingIndices) {
       dispatch(fetchIndicesIncendios());
     }
-  }, []);
+  }, [indices, loadingIndices]);
 
   useEffect(() => {
     async function verifyPermission() {
@@ -275,22 +278,26 @@ const Maps = () => {
             }
           })}
       </MapboxGL.MapView>
-      {!loadingIndices && !loadingValidateGeolocationUser && indices === null && (
-        <Modal visible={showMessageIndicesNotFound} transparent={true}>
-          <View style={styles.containerIndicesNotFound}>
-            <Text style={styles.labelIndiceNotFound}>
-              {`${'!Ops.\nNão foi possível carregar os dados'}`}
-            </Text>
-            <TouchableOpacity
-              style={styles.btnOkIndiceNotFound}
-              onPress={() => setShowMessageIndicesNotFound(false)}>
-              <Text style={[styles.labelIndiceNotFound, styles.labelButtonOk]}>
-                Ok
+      {!loadingIndices &&
+        !loadingValidateGeolocationUser &&
+        indices === null &&
+        isFocused && (
+          <Modal visible={showMessageIndicesNotFound} transparent={true}>
+            <View style={styles.containerIndicesNotFound}>
+              <Text style={styles.labelIndiceNotFound}>
+                {`${'!Ops.\nNão foi possível carregar os dados'}`}
               </Text>
-            </TouchableOpacity>
-          </View>
-        </Modal>
-      )}
+              <TouchableOpacity
+                style={styles.btnOkIndiceNotFound}
+                onPress={() => setShowMessageIndicesNotFound(false)}>
+                <Text
+                  style={[styles.labelIndiceNotFound, styles.labelButtonOk]}>
+                  Ok
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+        )}
     </View>
   );
 };

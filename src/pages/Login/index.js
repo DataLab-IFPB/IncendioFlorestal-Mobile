@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import MapboxGL from '@react-native-mapbox-gl/maps';
 import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
+  Image,
+  Keyboard,
   Text,
   TextInput,
-  Image,
-  TouchableWithoutFeedback,
   TouchableOpacity,
-  Keyboard,
+  TouchableWithoutFeedback,
+  View
 } from 'react-native';
-import packageJson from '../../../package.json';
-
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import Logo from '../../assets/logo.png';
-import Loading from '../components/Loading';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchLogin } from '../../redux/login/login-action';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import packageJson from '../../../package.json';
+import Logo from '../../assets/logo.png';
 import { PERMISSION_LOCATION_USE } from '../../constants/keys';
+import { fetchLogin } from '../../redux/login/login-action';
+import Loading from '../components/Loading';
 import styles from './styles';
-import MapboxGL from '@react-native-mapbox-gl/maps';
+
 const Login = () => {
   const navigation = useNavigation();
   const [matricula, setMatricula] = useState(null);
@@ -46,15 +46,16 @@ const Login = () => {
 
   useEffect(() => {
     if (user) {
-      if (user.firstLogin) {
+      console.log('voltou pra tela de login ', user);
+      if (user.birthDate !== '') {
         navigation.navigate('FirstLogin', {
           usuario: user,
         });
-      } else {
+      } else if (user.birthDate === '') {
         navigation.navigate('Home');
       }
     }
-  }, [navigation, user]);
+  }, [user]);
 
   useEffect(() => {
     if (error && !loading) {
@@ -97,10 +98,10 @@ const Login = () => {
           onPressIn={() => setShowVersionLabel(false)}
           value={matricula}
           onChangeText={setMatricula}
-          keyboardType='number-pad'
+          keyboardType="number-pad"
           style={styles.input}
           placeholder={'Digite sua matrícula'}
-          autoCapitalize='none'
+          autoCapitalize="none"
         />
         <Text style={styles.label}>Senha</Text>
         <View style={styles.containerInputSenha}>
@@ -110,7 +111,7 @@ const Login = () => {
             onChangeText={setSenha}
             style={styles.input}
             secureTextEntry={iconName === 'eye' ? false : true}
-            autoCapitalize='none'
+            autoCapitalize="none"
           />
 
           <Icon
@@ -120,7 +121,7 @@ const Login = () => {
             name={iconName}
             style={styles.iconViewSenha}
             size={styles.iconSize}
-            color='#F00'
+            color="#F00"
           />
         </View>
 

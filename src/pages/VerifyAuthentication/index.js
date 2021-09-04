@@ -18,7 +18,7 @@ const VerifyAuthentication = () => {
       if (user) {
         setValidateToken(true);
         setLoading(false);
-      } else {
+      } else if (user === null) {
         setValidateToken(false);
         setLoading(false);
       }
@@ -29,10 +29,12 @@ const VerifyAuthentication = () => {
     if (validateToken) {
       dispatch(fetchIndicesIncendios());
     }
-  }, [validateToken]);
+  }, [dispatch, validateToken]);
 
-  if (validateToken === null && loadingIndices) {
-    return <Loading loading={loading || loadingIndices} />;
+  if (validateToken === null) {
+    return (
+      <Loading loading={loading || loadingIndices || validateToken === null} />
+    );
   }
   return validateToken ? (
     <Stack.Navigator>

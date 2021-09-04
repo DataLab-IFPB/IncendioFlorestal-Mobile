@@ -14,11 +14,12 @@ import {
 
 const _getData = () => {
   return new Promise((resolve) => {
-    const indices = firebase.database().ref().child('dados-firms').get();
-
-    indices.then((values) => {
-      resolve(values.val());
-    });
+    firebase
+      .database()
+      .ref()
+      .child('dados-firms')
+      .get()
+      .then((values) => resolve(values.val()));
   });
 };
 
