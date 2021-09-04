@@ -9,7 +9,7 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View
+  View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,6 +27,7 @@ const Login = () => {
   const [autenticacaoInvalida, setAutenticacaoInvalida] = useState(false);
   const loading = useSelector((state) => state.login.loading);
   const user = useSelector((state) => state.login.data);
+  const newUser = useSelector((state) => state.login.newUser);
   const error = useSelector((state) => state.login.error);
   const dispatch = useDispatch();
 
@@ -45,17 +46,16 @@ const Login = () => {
   }, []);
 
   useEffect(() => {
-    if (user) {
-      console.log('voltou pra tela de login ', user);
-      if (user.birthDate !== '') {
-        navigation.navigate('FirstLogin', {
-          usuario: user,
-        });
-      } else if (user.birthDate === '') {
-        navigation.navigate('Home');
-      }
+    if (user && user.firstLogin && newUser === null) {
+      redirectToConfigurePassword();
+    } else if (user && user.birthDate === '') {
+      navigation.navigate('Home');
     }
-  }, [user]);
+
+    if (newUser) {
+      navigation.navigate('Home');
+    }
+  }, [user, newUser]);
 
   useEffect(() => {
     if (error && !loading) {
@@ -69,6 +69,12 @@ const Login = () => {
     return await MapboxGL.requestAndroidLocationPermissions();
   };
 
+  const redirectToConfigurePassword = () => {
+    navigation.navigate('FirstLogin', {
+      usuario: user.userData,
+    });
+  };
+
   const logar = () => {
     if (
       (!matricula && !senha) ||
@@ -78,8 +84,7 @@ const Login = () => {
       setAutenticacaoInvalida(true);
     } else {
       setAutenticacaoInvalida(false);
-      setMatricula(matricula);
-      dispatch(fetchLogin({ matricula, senha: parseInt(senha, 10) }));
+      dispatch(fetchLogin({ matricula, senha }));
     }
   };
   const [iconName, setIconName] = useState('eye-slash');
@@ -98,10 +103,10 @@ const Login = () => {
           onPressIn={() => setShowVersionLabel(false)}
           value={matricula}
           onChangeText={setMatricula}
-          keyboardType="number-pad"
+          keyboardType='number-pad'
           style={styles.input}
           placeholder={'Digite sua matrícula'}
-          autoCapitalize="none"
+          autoCapitalize='none'
         />
         <Text style={styles.label}>Senha</Text>
         <View style={styles.containerInputSenha}>
@@ -111,7 +116,7 @@ const Login = () => {
             onChangeText={setSenha}
             style={styles.input}
             secureTextEntry={iconName === 'eye' ? false : true}
-            autoCapitalize="none"
+            autoCapitalize='none'
           />
 
           <Icon
@@ -121,7 +126,7 @@ const Login = () => {
             name={iconName}
             style={styles.iconViewSenha}
             size={styles.iconSize}
-            color="#F00"
+            color='#F00'
           />
         </View>
 

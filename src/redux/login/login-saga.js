@@ -15,7 +15,7 @@ const getUserInRealTime = (matricula) => {
       .ref()
       .child('users')
       .orderByChild('registration')
-      .equalTo(parseInt(matricula))
+      .equalTo(matricula)
       .on('value', (value) => resolve(value.val()));
   });
 };
@@ -54,6 +54,7 @@ function updateUserUidAndEmail(user, ref) {
         uid: user.uid,
         email: user.email,
         birthDate: '',
+        registration: '',
       });
     resolve(userRef);
   });
@@ -66,16 +67,24 @@ function* login(action) {
     const userRefInDb = yield getUserInRealTime(matricula);
     const formatUserData = Object.values(userRefInDb)[0];
     const senhaParse = senha.toString();
-    console.log('user ', formatUserData.email, senhaParse);
-    if (formatUserData.birthDate !== senhaParse) {
+
+    if (
+      formatUserData.birthDate !== senhaParse &&
+      formatUserData.birthDate !== ''
+    ) {
       yield put(fetchLoginFail(new Error('Usuário não encontrado')));
     } else {
       const userRef = Object.keys(userRefInDb)[0];
       const userData = mountUser(formatUserData, userRef);
       if (formatUserData.birthDate !== '') {
-        yield put(fetchLoginSuccess(userData));
-      } else if (formatUserData.birthDate === '') {
-        console.log('login ', userData);
+        yield put(
+          fetchLoginSuccess({
+            userData,
+            firstLogin: true,
+          }),
+        );
+      }
+      if (formatUserData.birthDate === '') {
         const { user } = yield firebase
           .auth()
           .signInWithEmailAndPassword(formatUserData.email, senhaParse);
@@ -95,6 +104,7 @@ function* login(action) {
 function* createNewUser(action) {
   try {
     const { senha, userData } = action.payload;
+
     const { user } = yield firebase
       .auth()
       .createUserWithEmailAndPassword(
