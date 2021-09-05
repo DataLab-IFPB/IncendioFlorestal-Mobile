@@ -14,3 +14,6 @@ export const CAM_CONFIG_RECORD = {
   videoQuality: 'medium',
   durationLimit: 60000,
 };
+
+export const DB_URI =
+  'https://combate-incendios-dev-default-rtdb.firebaseio.com';

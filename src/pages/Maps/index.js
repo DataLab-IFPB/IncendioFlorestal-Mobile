@@ -7,6 +7,7 @@ import Geolocation from 'react-native-geolocation-service';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { PERMISSION_LOCATION_USE } from '../../constants/keys';
+import useNotify from '../../hooks/useNotify';
 import {
   fetchIndicesIncendios,
   fetchSaveIndice,
@@ -54,20 +55,14 @@ const Maps = () => {
 
   const [showModalNovoIndice, setShowModalNovoIndice] = useState(false);
   const [coordsClickInMap, setCoordsClickInMap] = useState();
-
   const isFocused = useIsFocused();
+  const notifyEvidenceUploaded = useNotify();
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', () => {
       return true;
     });
   }, []);
-
-  useEffect(() => {
-    if (indices === null && loadingIndices) {
-      dispatch(fetchIndicesIncendios());
-    }
-  }, [indices, loadingIndices]);
 
   useEffect(() => {
     async function verifyPermission() {
@@ -181,6 +176,15 @@ const Maps = () => {
     );
     dispatch(fetchSaveIndice(indiceCreateToUser));
   }
+
+  function showIndiceDetail(coordinate) {
+    setShowDetail(true);
+    setIndiceCoords({
+      latitude: coordinate.latitude,
+      longitude: coordinate.longitude,
+    });
+    setIndiceToShow(coordinate);
+  }
   return loadingValidateGeolocationUser ? (
     <Loading loading={loadingValidateGeolocationUser || loadingIndices} />
   ) : (
@@ -241,14 +245,7 @@ const Maps = () => {
                   {coordinate.userCreated ? (
                     <View style={styles.containerIndexFire}>
                       <IconSimple
-                        onLongPress={() => {
-                          setShowDetail(true);
-                          setIndiceCoords({
-                            latitude: coordinate.latitude,
-                            longitude: coordinate.longitude,
-                          });
-                          setIndiceToShow(coordinate);
-                        }}
+                        onLongPress={() => showIndiceDetail(coordinate)}
                         name='fire'
                         size={30}
                         color={'#FFF000'}
@@ -257,14 +254,7 @@ const Maps = () => {
                   ) : (
                     <View style={styles.containerIndexFire}>
                       <IconSimple
-                        onPress={() => {
-                          setShowDetail(true);
-                          setIndiceCoords({
-                            latitude: coordinate.latitude,
-                            longitude: coordinate.longitude,
-                          });
-                          setIndiceToShow(coordinate);
-                        }}
+                        onPress={() => showIndiceDetail(coordinate)}
                         name='fire'
                         size={30}
                         color={
@@ -298,6 +288,8 @@ const Maps = () => {
             </View>
           </Modal>
         )}
+
+      {notifyEvidenceUploaded}
     </View>
   );
 };

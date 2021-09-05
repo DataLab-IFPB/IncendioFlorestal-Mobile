@@ -40,3 +40,24 @@ export const fetchSaveIndiceFail = (error) => {
     payload: error,
   };
 };
+
+export const fetchAddEvidence = (evidence) => {
+  return {
+    type: types.FETCH_ADD_EVIDENCE,
+    payload: evidence,
+  };
+};
+
+export const fetchAddEvidenceSuccess = (data) => {
+  return {
+    type: types.FETCH_ADD_EVIDENCE_SUCCESS,
+    payload: data,
+  };
+};
+
+export const fetchAddEvidenceFail = (error) => {
+  return {
+    type: types.FETCH_ADD_EVIDENCE_FAIL,
+    payload: error,
+  };
+};

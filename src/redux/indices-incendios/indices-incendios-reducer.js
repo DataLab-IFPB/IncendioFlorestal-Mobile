@@ -5,6 +5,9 @@ const initialState = {
   error: null,
   loading: false,
   indiceSaved: false,
+  loadingAddEvidence: false,
+  evidenceSaved: null,
+  errorSaveEvidence: null,
 };
 
 export default function (state = initialState, action) {
@@ -43,6 +46,23 @@ export default function (state = initialState, action) {
         ...state,
         loading: false,
         error: action.payload,
+      };
+
+    case types.FETCH_ADD_EVIDENCE:
+      return {
+        ...state,
+        loadingAddEvidence: true,
+      };
+    case types.FETCH_ADD_EVIDENCE_SUCCESS:
+      return {
+        ...state,
+        evidenceSaved: action.payload,
+        loadingAddEvidence: false,
+      };
+    case types.FETCH_ADD_EVIDENCE_FAIL:
+      return {
+        ...state,
+        errorSaveEvidence: action.payload,
       };
     default:
       return state;

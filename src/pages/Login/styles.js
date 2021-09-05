@@ -31,8 +31,8 @@ export default StyleSheet.create({
     marginTop: 15,
   },
   logo: {
-    width: width * 0.3,
-    height: width * 0.3,
+    width: width * 0.33,
+    height: width * 0.32,
   },
   labelEntrar: {
     color: '#FFFF',

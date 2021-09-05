@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import {
-  ActivityIndicator,
-  Modal,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Modal, Text, TouchableOpacity, View } from 'react-native';
 import { launchCamera } from 'react-native-image-picker';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { CAM_CONFIG, CAM_CONFIG_RECORD } from '../../../constants/keys';
 import styles from './styles';
 
-const PickerImage = () => {
+const PickerImage = ({ indice }) => {
   const [file, setFile] = useState(null);
   const [confirmUpload, setConfirmUpload] = useState(false);
   const [loadingUpload, setLoadingUpload] = useState(false);
@@ -32,10 +26,15 @@ const PickerImage = () => {
   function uploadFile() {
     setConfirmUpload(false);
     setLoadingUpload(true);
-    setTimeout(() => {
-      setLoadingUpload(false);
-    }, 3000);
-    console.log('upload file');
+    console.log(indice);
+    // firebase
+    //   .database()
+    //   .ref('dados-firms/' + indiceId)
+    //   .update({
+    //     evidences: {
+    //       evidence,
+    //     },
+    //   });
   }
   useEffect(() => {
     if (file && !file.didCancel) {
@@ -85,12 +84,6 @@ const PickerImage = () => {
             name='video-camera'
             style={styles.icon}
           />
-
-          {loadingUpload && (
-            <View style={{ position: 'absolute', left: '60%' }}>
-              <ActivityIndicator color={'#F00'} size='small' />
-            </View>
-          )}
         </View>
       </View>
     </>

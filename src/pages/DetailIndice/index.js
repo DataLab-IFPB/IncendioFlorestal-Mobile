@@ -129,7 +129,7 @@ const DetailIndice = ({
             </View>
           </View>
 
-          <PickerImage />
+          <PickerImage indice={indice} />
         </>
       )}
     </View>
