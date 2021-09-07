@@ -82,7 +82,9 @@ const DetailIndice = ({
 
           <View style={styles.containerPrevisao}>
             <Text style={styles.labelNoBold}>
-              {`Local: ${previsao && _renderInfo(previsao.location.name)}`}
+              {`Local: ${
+                previsao && _renderInfo(previsao.location.name || '')
+              }`}
             </Text>
             <View style={styles.containerOrientation}>
               {_renderComponent(

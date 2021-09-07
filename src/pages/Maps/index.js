@@ -245,7 +245,7 @@ const Maps = () => {
                   {coordinate.userCreated ? (
                     <View style={styles.containerIndexFire}>
                       <IconSimple
-                        onLongPress={() => showIndiceDetail(coordinate)}
+                        onPress={() => showIndiceDetail(coordinate)}
                         name='fire'
                         size={30}
                         color={'#FFF000'}
