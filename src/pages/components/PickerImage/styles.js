@@ -5,6 +5,7 @@ export default StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    width: '100%',
   },
   label: {
     fontSize: width * 0.04,
@@ -14,7 +15,8 @@ export default StyleSheet.create({
   containerIcons: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    width: '80%',
   },
   icon: {
     fontSize: width * 0.06,
@@ -59,5 +61,11 @@ export default StyleSheet.create({
     fontSize: 15,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  btn: {
+    borderWidth: 1,
+    alignItems: 'center',
+    borderRadius: 10,
+    padding: 2,
   },
 });

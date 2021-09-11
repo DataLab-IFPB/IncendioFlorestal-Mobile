@@ -21,11 +21,14 @@ export const GALLERY_CONFIG = {
   selectionLimit: 1,
   videoQuality: 'medium',
 };
-export const DB_URI =
-  'https://combate-incendios-dev-default-rtdb.firebaseio.com';
 
 export const UPLOAD_TYPES = Object.freeze({
-  CAM: 'CAM',
-  RECORD: 'RECORD',
-  GALLERY: 'GALLERY',
+  CAM: 'base64',
+  RECORD: 'mp4',
+  GALLERY: 'base64',
 });
+
+export const UPLOAD_TYPE = {
+  IMAGE: 'IMAGE',
+  VIDEO: 'VIDEO',
+};

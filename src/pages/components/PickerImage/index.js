@@ -1,18 +1,21 @@
-import storage from '@react-native-firebase/storage';
-import firebase from 'firebase';
 import React, { useEffect, useState } from 'react';
 import { Modal, Text, TouchableOpacity, View } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { UPLOAD_TYPES } from '../../../constants/keys';
+import { useDispatch } from 'react-redux';
+import { UPLOAD_TYPE, UPLOAD_TYPES } from '../../../constants/keys';
+import { fetchAddEvidence } from '../../../redux/indices-incendios/indices-incendios-action';
 import styles from './styles';
 
 const PickerImage = ({ indice }) => {
   const [file, setFile] = useState(null);
   const [confirmUpload, setConfirmUpload] = useState(false);
   const [uploadType, setUploadType] = useState(null);
+  const [mediaTypeSend, setMediaTypeSend] = useState(null);
+  const dispatch = useDispatch();
   function openPickerCam() {
     setUploadType(UPLOAD_TYPES.CAM);
+    setMediaTypeSend(UPLOAD_TYPE.IMAGE);
     ImagePicker.openCamera({
       width: 300,
       height: 400,
@@ -24,6 +27,7 @@ const PickerImage = ({ indice }) => {
 
   function openPickerCamRecord() {
     setUploadType(UPLOAD_TYPES.RECORD);
+    setMediaTypeSend(UPLOAD_TYPE.VIDEO);
     ImagePicker.openCamera({
       width: 300,
       height: 400,
@@ -33,6 +37,7 @@ const PickerImage = ({ indice }) => {
 
   function openGallery() {
     setUploadType(UPLOAD_TYPES.GALLERY);
+    setMediaTypeSend(UPLOAD_TYPE.IMAGE);
     ImagePicker.openPicker({
       width: 300,
       height: 400,
@@ -46,52 +51,20 @@ const PickerImage = ({ indice }) => {
   function invalidateFile() {
     setFile(null);
   }
+
   async function uploadFile() {
+    const MEDIA_TYPE = uploadType;
     setConfirmUpload(false);
 
-    const fileToUpload = mountData();
-    const evidenceName = `evidences/${fileToUpload.fileName}`;
-    await storage()
-      .ref(evidenceName)
-      .putString(file.data, 'base64')
-      .then((value) => console.log('arquivo enviado'))
-      .catch((err) => console.log('err ', err));
-
-    const evidenceUrl = await storage().ref(evidenceName).getDownloadURL();
-
-    firebase
-      .database()
-      .ref('dados-firms/' + indice.uid)
-      .update({
-        evidences: evidenceUrl,
-      })
-      .then((value) => console.log('evidencia atualizada ', value))
-      .catch((err) => console.log('err ', err));
-  }
-
-  function mountData() {
-    let data = null;
-    if (uploadType === UPLOAD_TYPES.CAM) {
-      data = {
-        path: file.data,
-        type: file.mime,
-      };
-    } else if (uploadType === UPLOAD_TYPES.RECORD) {
-      data = {
-        path: file.data,
-        type: file.mime,
-      };
-    } else if (uploadType === UPLOAD_TYPES.GALLERY) {
-      data = {
-        path: file.data,
-        type: file.mime,
-      };
-    }
-    data = {
-      ...data,
-      fileName: file.path.substring(file.path.lastIndexOf('/') + 1),
-    };
-    return data;
+    dispatch(
+      fetchAddEvidence({
+        evidence: mediaTypeSend === UPLOAD_TYPE.VIDEO ? file.path : file.data,
+        evidenceFileName: file.path,
+        mediaType: MEDIA_TYPE,
+        indiceId: indice.uid,
+        uploadType: mediaTypeSend,
+      }),
+    );
   }
 
   useEffect(() => {
@@ -130,19 +103,17 @@ const PickerImage = ({ indice }) => {
         <Text style={styles.label}>Adicionar evidência</Text>
 
         <View style={styles.containerIcons}>
-          <FontAwesome
-            onPress={openPickerCam}
-            name='camera'
-            style={styles.icon}
-          />
+          <TouchableOpacity onPress={openPickerCam} style={styles.btn}>
+            <FontAwesome name='camera' style={styles.icon} />
+          </TouchableOpacity>
 
-          <FontAwesome
-            onPress={openPickerCamRecord}
-            name='video-camera'
-            style={styles.icon}
-          />
+          <TouchableOpacity onPress={openPickerCamRecord} style={styles.btn}>
+            <FontAwesome name='video-camera' style={styles.icon} />
+          </TouchableOpacity>
 
-          <FontAwesome onPress={openGallery} name='image' style={styles.icon} />
+          <TouchableOpacity onPress={openGallery} style={styles.btn}>
+            <FontAwesome name='image' style={styles.icon} />
+          </TouchableOpacity>
         </View>
       </View>
     </>

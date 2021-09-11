@@ -39,7 +39,10 @@ const Previsao = ({ userCoordinates }) => {
         <LoadingPrevisao />
       ) : (
         _renderComponent(
-          <IconAwesome name='wind' style={styles.iconSize} color='#010101' />,
+          <IconAwesome
+            name='wind'
+            style={[styles.iconSize, styles.iconWhite]}
+          />,
           <Text style={styles.labelInfo}>
             {_renderInfo(previsao && previsao.current.wind_kph) + 'KM/H'}
           </Text>,
@@ -50,7 +53,10 @@ const Previsao = ({ userCoordinates }) => {
         <LoadingPrevisao />
       ) : (
         _renderComponent(
-          <IOIcon name='water-outline' style={styles.iconSize} color='blue' />,
+          <IOIcon
+            name='water-outline'
+            style={[styles.iconSize, styles.iconSkyBlue]}
+          />,
           <Text style={styles.labelInfo}>
             {_renderInfo(
               previsao && Math.floor(previsao?.current.humidity) + '%',
@@ -65,8 +71,7 @@ const Previsao = ({ userCoordinates }) => {
         _renderComponent(
           <IOIcon
             name='thermometer-outline'
-            style={styles.iconSize}
-            color='red'
+            style={[styles.iconSize, styles.iconRed]}
           />,
           <Text style={styles.labelInfo}>
             {_renderInfo(previsao && previsao?.current.temp_c) + 'º'}
@@ -78,7 +83,11 @@ const Previsao = ({ userCoordinates }) => {
         <LoadingPrevisao />
       ) : (
         _renderComponent(
-          <IOIcon name='thunderstorm-outline' size={styles.iconCloseSize} />,
+          <IOIcon
+            name='thunderstorm-outline'
+            size={styles.iconCloseSize}
+            color={'#FFF'}
+          />,
           <Text style={styles.labelInfo}>{`${_renderInfo(
             previsao && previsao?.current.precip_in,
           )}%`}</Text>,

@@ -62,6 +62,7 @@ export default function (state = initialState, action) {
     case types.FETCH_ADD_EVIDENCE_FAIL:
       return {
         ...state,
+        loadingAddEvidence: false,
         errorSaveEvidence: action.payload,
       };
     default:

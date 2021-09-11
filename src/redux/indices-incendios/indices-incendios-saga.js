@@ -1,8 +1,10 @@
+import storage from '@react-native-firebase/storage';
 import { call, put } from '@redux-saga/core/effects';
 import axios from 'axios';
 import firebase from 'firebase';
 import { takeLatest } from 'redux-saga/effects';
-import { DB_URI } from '../../constants/keys';
+import { DB_URI } from '../../config/keys';
+import { UPLOAD_TYPE } from '../../constants/keys';
 import {
   fetchAddEvidenceFail,
   fetchAddEvidenceSuccess,
@@ -32,20 +34,6 @@ const _save = (indiceDindiceDate) => {
   });
 };
 
-const updateAndAddEvidence = (evidence, indiceId) => {
-  return new Promise((resolve) => {
-    const evidenceSaved = firebase
-      .database()
-      .ref('dados-firms/' + indiceId)
-      .update({
-        evidences: {
-          evidence,
-        },
-      });
-    resolve(evidenceSaved);
-  });
-};
-
 const mountData = (data) => {
   const indices = Object.values(data);
   const keys = Object.keys(data);
@@ -56,6 +44,32 @@ const mountData = (data) => {
       uid: keys[index],
     };
   });
+};
+
+const sendEvidence = (pathSaveIndice, data, mediaType, uploadType) => {
+  if (uploadType === UPLOAD_TYPE.IMAGE) {
+    return new Promise((resolve) => {
+      storage()
+        .ref(pathSaveIndice)
+        .putString(data, mediaType)
+        .then((_) => {
+          resolve(true);
+        });
+    });
+  } else if (uploadType === UPLOAD_TYPE.VIDEO) {
+    return new Promise((resolve, reject) => {
+      storage()
+        .ref(pathSaveIndice)
+        .putFile(data, { contentType: `video/${mediaType}` })
+        .then((value) => {
+          resolve(true);
+        })
+        .catch((err) => {
+          console.log('reject ', err);
+          reject(err);
+        });
+    });
+  }
 };
 
 function* indicesIncendios() {
@@ -88,14 +102,52 @@ function* saveIndice(action) {
   }
 }
 
+const mounteEvidenceName = (name) => {
+  return name.substring(name.lastIndexOf('/') + 1);
+};
+const urlEvidenceUploaded = async (evidenceName) => {
+  return await storage().ref(evidenceName).getDownloadURL();
+};
+
+const updateListEvidences = (indiceUID, evidenceUrl) => {
+  return new Promise((resolve, reject) => {
+    firebase
+      .database()
+      .ref('dados-firms/' + indiceUID)
+      .child('evidences')
+      .push(evidenceUrl)
+      .then((value) => {
+        resolve(true);
+      })
+      .catch((err) => reject(err));
+  });
+};
+
 function* addEvidence(action) {
   try {
-    const { evidence, indiceId } = action.payload;
+    const { evidence, mediaType, indiceId, evidenceFileName, uploadType } =
+      action.payload;
+    const fileName = mounteEvidenceName(evidenceFileName);
+    const pathToSaveEvidence = `evidences/${fileName}`;
 
-    const evidenceSaved = yield updateAndAddEvidence(evidence, indiceId);
+    console.log(indiceId);
+    const evidenceSaved = yield sendEvidence(
+      pathToSaveEvidence,
+      evidence,
+      mediaType,
+      uploadType,
+    );
 
     if (evidenceSaved) {
-      yield put(fetchAddEvidenceSuccess(evidenceSaved));
+      const evidenceUrl = yield urlEvidenceUploaded(pathToSaveEvidence);
+
+      if (evidenceUrl) {
+        yield updateListEvidences(indiceId, evidenceUrl);
+
+        yield put(fetchAddEvidenceSuccess(evidenceUrl));
+      }
+    } else {
+      yield put(fetchAddEvidenceFail(new Error('Erro ao enviar evidência')));
     }
   } catch (error) {
     yield put(fetchAddEvidenceFail(error));
