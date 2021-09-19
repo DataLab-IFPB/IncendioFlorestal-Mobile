@@ -12,6 +12,7 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     paddingBottom: '2%',
   },
+
   containerIcons: {
     flexDirection: 'row',
     alignItems: 'center',

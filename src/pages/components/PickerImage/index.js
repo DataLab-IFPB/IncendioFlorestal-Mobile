@@ -3,7 +3,11 @@ import { Modal, Text, TouchableOpacity, View } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useDispatch } from 'react-redux';
-import { UPLOAD_TYPE, UPLOAD_TYPES } from '../../../constants/keys';
+import {
+  QUALITY_IMAGE_AND_VIDEO,
+  UPLOAD_TYPE,
+  UPLOAD_TYPES,
+} from '../../../constants/keys';
 import { fetchAddEvidence } from '../../../redux/indices-incendios/indices-incendios-action';
 import styles from './styles';
 
@@ -17,30 +21,42 @@ const PickerImage = ({ indice }) => {
     setUploadType(UPLOAD_TYPES.CAM);
     setMediaTypeSend(UPLOAD_TYPE.IMAGE);
     ImagePicker.openCamera({
-      width: 300,
-      height: 400,
+      width: QUALITY_IMAGE_AND_VIDEO.width,
+      height: QUALITY_IMAGE_AND_VIDEO.height,
       cropping: true,
       includeBase64: true,
       mediaType: 'photo',
+      compressImageQuality: 1,
     }).then((image) => setFile(image));
   }
 
   function openPickerCamRecord() {
     setUploadType(UPLOAD_TYPES.RECORD);
     setMediaTypeSend(UPLOAD_TYPE.VIDEO);
+
     ImagePicker.openCamera({
-      width: 300,
-      height: 400,
+      width: QUALITY_IMAGE_AND_VIDEO.width,
+      height: QUALITY_IMAGE_AND_VIDEO.height,
       mediaType: 'video',
-    }).then((image) => setFile(image));
+    }).then((image) => {
+      // const duracao = Math.round(image.duration / 1000 / 60);
+      const validateLenghtRecord = validateLenghtFile(image.duration);
+      if (validateLenghtRecord) {
+        setFile(image);
+      }
+    });
+  }
+
+  function validateLenghtFile(duration) {
+    return Math.round(duration / 1000) <= 300;
   }
 
   function openGallery() {
     setUploadType(UPLOAD_TYPES.GALLERY);
     setMediaTypeSend(UPLOAD_TYPE.IMAGE);
     ImagePicker.openPicker({
-      width: 300,
-      height: 400,
+      width: QUALITY_IMAGE_AND_VIDEO.width,
+      height: QUALITY_IMAGE_AND_VIDEO.height,
       cropping: true,
       includeBase64: true,
       mediaType: 'any',
@@ -55,7 +71,7 @@ const PickerImage = ({ indice }) => {
   async function uploadFile() {
     const MEDIA_TYPE = uploadType;
     setConfirmUpload(false);
-
+    console.log(indice.uid);
     dispatch(
       fetchAddEvidence({
         evidence: mediaTypeSend === UPLOAD_TYPE.VIDEO ? file.path : file.data,

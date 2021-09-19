@@ -26,7 +26,7 @@ const Maps = () => {
   MapboxGL.setAccessToken(
     'pk.eyJ1IjoiaXRhbG9hN3giLCJhIjoiY2txYjVxcndqMHd5aTJ1dDV0ZXBlM2kxaCJ9.P1_QYLu4AQbAX9u-V37_1Q',
   );
-  const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Outdoors);
+  const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Street);
   const indices = useSelector((state) => state.indicesIncendios.data);
   // const [indices, setIndices] = useState([]);
   const loadingIndices = useSelector((state) => state.indicesIncendios.loading);

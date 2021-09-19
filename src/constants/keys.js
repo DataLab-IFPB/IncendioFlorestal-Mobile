@@ -32,3 +32,8 @@ export const UPLOAD_TYPE = {
   IMAGE: 'IMAGE',
   VIDEO: 'VIDEO',
 };
+
+export const QUALITY_IMAGE_AND_VIDEO = {
+  width: 1280,
+  height: 720,
+};
