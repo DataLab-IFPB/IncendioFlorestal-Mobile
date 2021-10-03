@@ -48,5 +48,13 @@ export default StyleSheet.create({
   },
   iconCloseSize: width * 0.07,
   iconIndiceSize: width * 0.15,
-  iconOcorreuEmSize: width * 0.08,
+
+  iconColorBlack: {
+    color: '#000',
+    fontSize: width * 0.08,
+  },
+  containerRenderComponents: {
+    alignItems: 'center'
+  },
+  
 });

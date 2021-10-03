@@ -242,7 +242,7 @@ const Maps = () => {
                     Number(coordinate.longitude),
                     Number(coordinate.latitude),
                   ]}>
-                  {coordinate.userCreated ? (
+                  {coordinate && coordinate.hasOwnProperty('userCreated') && coordinate.userCreated ? (
                     <View style={styles.containerIndexFire}>
                       <IconSimple
                         onPress={() => showIndiceDetail(coordinate)}

@@ -1,4 +1,5 @@
 export const PERMISSION_LOCATION_USE = '@BOMBEIROS/PERMISSION_LOCATION_USE';
+export const USER_REGISTRATION = '@BOMBEIROS/USER_REGISTRATION';
 export const DOMAIN_EMAIL = '@bombeirospb.gov';
 export const CAM_CONFIG = {
   mediaType: 'photo',

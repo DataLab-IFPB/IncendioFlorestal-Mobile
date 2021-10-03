@@ -7,8 +7,13 @@ import {
   QUALITY_IMAGE_AND_VIDEO,
   UPLOAD_TYPE,
   UPLOAD_TYPES,
+  USER_REGISTRATION,
 } from '../../../constants/keys';
-import { fetchAddEvidence } from '../../../redux/indices-incendios/indices-incendios-action';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  fetchAddEvidence,
+  // fetchIndicesIncendios,
+} from '../../../redux/indices-incendios/indices-incendios-action';
 import styles from './styles';
 
 const PickerImage = ({ indice }) => {
@@ -16,14 +21,23 @@ const PickerImage = ({ indice }) => {
   const [confirmUpload, setConfirmUpload] = useState(false);
   const [uploadType, setUploadType] = useState(null);
   const [mediaTypeSend, setMediaTypeSend] = useState(null);
+
   const dispatch = useDispatch();
+  const [registrationUser, setRegistrationUser] = useState('');
+
+  useEffect(() => {
+    AsyncStorage.getItem(USER_REGISTRATION).then((value) => {
+      setRegistrationUser(value);
+    });
+  }, []);
+
   function openPickerCam() {
     setUploadType(UPLOAD_TYPES.CAM);
     setMediaTypeSend(UPLOAD_TYPE.IMAGE);
     ImagePicker.openCamera({
       width: QUALITY_IMAGE_AND_VIDEO.width,
       height: QUALITY_IMAGE_AND_VIDEO.height,
-      cropping: true,
+      cropping: false,
       includeBase64: true,
       mediaType: 'photo',
       compressImageQuality: 1,
@@ -39,7 +53,6 @@ const PickerImage = ({ indice }) => {
       height: QUALITY_IMAGE_AND_VIDEO.height,
       mediaType: 'video',
     }).then((image) => {
-      // const duracao = Math.round(image.duration / 1000 / 60);
       const validateLenghtRecord = validateLenghtFile(image.duration);
       if (validateLenghtRecord) {
         setFile(image);
@@ -57,7 +70,7 @@ const PickerImage = ({ indice }) => {
     ImagePicker.openPicker({
       width: QUALITY_IMAGE_AND_VIDEO.width,
       height: QUALITY_IMAGE_AND_VIDEO.height,
-      cropping: true,
+      cropping: false,
       includeBase64: true,
       mediaType: 'any',
       compressImageQuality: 1,
@@ -79,6 +92,7 @@ const PickerImage = ({ indice }) => {
         mediaType: MEDIA_TYPE,
         indiceId: indice.uid,
         uploadType: mediaTypeSend,
+        registrationUser,
       }),
     );
   }

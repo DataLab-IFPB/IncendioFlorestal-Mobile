@@ -2,6 +2,7 @@ import storage from '@react-native-firebase/storage';
 import { call, put } from '@redux-saga/core/effects';
 import axios from 'axios';
 import firebase from 'firebase';
+import moment from 'moment';
 import { takeLatest } from 'redux-saga/effects';
 import { DB_URI } from '../../config/keys';
 import { UPLOAD_TYPE } from '../../constants/keys';
@@ -109,13 +110,23 @@ const urlEvidenceUploaded = async (evidenceName) => {
   return await storage().ref(evidenceName).getDownloadURL();
 };
 
-const updateListEvidences = (indiceUID, evidenceUrl) => {
+const updateListEvidences = (
+  indiceUID,
+  evidenceUrl,
+  mediaType,
+  registrationUser,
+) => {
   return new Promise((resolve, reject) => {
     firebase
       .database()
       .ref('dados-firms/' + indiceUID)
       .child('evidences')
-      .push(evidenceUrl)
+      .push({
+        uri: evidenceUrl,
+        created_at: moment().format('DD/MM/yyyy'),
+        registration_for: registrationUser,
+        media_type: mediaType,
+      })
       .then((value) => {
         resolve(true);
       })
@@ -125,8 +136,14 @@ const updateListEvidences = (indiceUID, evidenceUrl) => {
 
 function* addEvidence(action) {
   try {
-    const { evidence, mediaType, indiceId, evidenceFileName, uploadType } =
-      action.payload;
+    const {
+      evidence,
+      mediaType,
+      indiceId,
+      evidenceFileName,
+      uploadType,
+      registrationUser,
+    } = action.payload;
     const fileName = mounteEvidenceName(evidenceFileName);
     const pathToSaveEvidence = `evidences/${fileName}`;
 
@@ -140,9 +157,14 @@ function* addEvidence(action) {
 
     if (evidenceSaved) {
       const evidenceUrl = yield urlEvidenceUploaded(pathToSaveEvidence);
-
+      console.log(evidenceUrl);
       if (evidenceUrl) {
-        yield updateListEvidences(indiceId, evidenceUrl);
+        yield updateListEvidences(
+          indiceId,
+          evidenceUrl,
+          mediaType,
+          registrationUser,
+        );
 
         yield put(fetchAddEvidenceSuccess(evidenceUrl));
       }

@@ -1,15 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import IconAwesome from 'react-native-vector-icons/FontAwesome5';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import IOIcon from 'react-native-vector-icons/Ionicons';
+
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPrevisao } from '../../redux/previsao/previsao-action';
 import formatDate from '../../utils/format-data';
 import PickerImage from '../components/PickerImage';
+import Galery from '../components/Galery';
 import styles from './styles';
 const DetailIndice = ({
   indiceCoords,
@@ -20,9 +22,23 @@ const DetailIndice = ({
   const dispatch = useDispatch();
   const previsao = useSelector((state) => state.previsao.data);
   const loading = useSelector((state) => state.previsao.loading);
+  const [containsEvidences, setContainsEvidenceces] = useState({
+    contain: false,
+    evidences: null,
+  });
+
   useEffect(() => {
     dispatch(fetchPrevisao(indiceCoords));
   }, [indiceCoords]);
+
+  useEffect(() => {
+    if (indice && indice.hasOwnProperty('evidences')) {
+      setContainsEvidenceces({
+        contain: true,
+        evidences: Object.values(indice.evidences),
+      });
+    }
+  }, [indice]);
 
   function _renderInfo(info) {
     return info === null ? ' - ' : info;
@@ -30,7 +46,7 @@ const DetailIndice = ({
 
   function _renderComponent(icon, data) {
     return (
-      <View style={{ alignItems: 'center' }}>
+      <View style={styles.containerRenderComponents}>
         {icon}
         {data}
       </View>
@@ -71,13 +87,9 @@ const DetailIndice = ({
           </View>
           <Text style={styles.labelNoBold}>Ocorreu de:</Text>
           {indice && indice.daynight === 'D' ? (
-            <Fontisto
-              name='day-sunny'
-              size={styles.iconOcorreuEmSize}
-              color='#000'
-            />
+            <Fontisto name='day-sunny' style={styles.iconColorBlack} />
           ) : (
-            <Feather name='moon' color='#000' size={styles.iconOcorreuEmSize} />
+            <Feather name='moon' style={styles.iconColorBlack} />
           )}
 
           <View style={styles.containerPrevisao}>
@@ -132,6 +144,10 @@ const DetailIndice = ({
           </View>
 
           <PickerImage indice={indice} />
+
+          {containsEvidences.contain && (
+            <Galery evidences={containsEvidences.evidences} />
+          )}
         </>
       )}
     </View>

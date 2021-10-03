@@ -1,6 +1,6 @@
 import firebase from 'firebase';
 import { put, takeLatest } from 'redux-saga/effects';
-import { DOMAIN_EMAIL } from '../../constants/keys';
+import { DOMAIN_EMAIL, USER_REGISTRATION } from '../../constants/keys';
 import {
   fetchLoginFail,
   fetchLoginSuccess,
@@ -8,6 +8,7 @@ import {
   fetchNewUserSuccess,
 } from './login-action';
 import { FETCH_LOGIN, FETCH_NEW_USER } from './login-types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const getUserInRealTime = (matricula) => {
   return new Promise((resolve) => {
     firebase
@@ -67,7 +68,7 @@ function* login(action) {
     const userRefInDb = yield getUserInRealTime(matricula);
     const formatUserData = Object.values(userRefInDb)[0];
     const senhaParse = senha.toString();
-
+    yield AsyncStorage.setItem(USER_REGISTRATION, matricula);
     if (
       formatUserData.birthDate !== senhaParse &&
       formatUserData.birthDate !== ''
