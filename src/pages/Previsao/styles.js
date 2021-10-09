@@ -9,14 +9,14 @@ export default StyleSheet.create({
     height: width * 0.12,
     alignItems: 'center',
     justifyContent: 'space-around',
-    marginLeft: '47%',
+    marginLeft: '45%',
     flexDirection: 'row',
-    top: '4%',
     elevation: 3,
     borderColor: '#F00',
     borderRadius: 15,
     borderWidth: 1,
     backgroundColor: '#000',
+    top: '2%'
   },
   containerDetails: {
     alignItems: 'center',

@@ -8,13 +8,15 @@ export const styles = (theme) => {
       fontSize: width * 0.04,
       color: '#FFFF',
     },
-    container: {
-      position: 'absolute',
-      elevation: 10,
-      zIndex: 2,
-    },
+
     menuColor: {
       color: '#000',
+    },
+    containerFloatingMenu: {
+      position: 'absolute',
+      zIndex: 2,
+      elevation: 10,
+      top: '8%'
     },
   });
 };

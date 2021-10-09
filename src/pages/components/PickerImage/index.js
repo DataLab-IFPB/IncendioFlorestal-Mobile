@@ -145,6 +145,7 @@ const PickerImage = ({ indice }) => {
             <FontAwesome name='image' style={styles.icon} />
           </TouchableOpacity>
         </View>
+       
       </View>
     </>
   );

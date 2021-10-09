@@ -1,10 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import { useIsFocused } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { BackHandler, Modal, Text, TouchableOpacity, View } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
+import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { PERMISSION_LOCATION_USE } from '../../constants/keys';
 import useNotify from '../../hooks/useNotify';
@@ -32,7 +33,7 @@ const Maps = () => {
   const loadingIndices = useSelector((state) => state.indicesIncendios.loading);
   // const [loadingIndices, setLoadingIndices] = useState(false);
   const errorsRequest = useSelector((state) => state.indicesIncendios.error);
-
+  const mapRef = useRef();
   const indiceSaved = useSelector(
     (state) => state.indicesIncendios.indiceSaved,
   );
@@ -177,6 +178,16 @@ const Maps = () => {
     dispatch(fetchSaveIndice(indiceCreateToUser));
   }
 
+  function returnToLocale() {
+    mapRef.current.moveTo([
+      userGeolocation.longitude,
+      userGeolocation.latitude,
+    ]);
+    // mapRef.current.animateToRegion([
+    //   Number(userGeolocation.longitude),
+    //   Number(userGeolocation.latitude),
+    // ])
+  }
   function showIndiceDetail(coordinate) {
     setShowDetail(true);
     setIndiceCoords({
@@ -185,12 +196,21 @@ const Maps = () => {
     });
     setIndiceToShow(coordinate);
   }
+
   return loadingValidateGeolocationUser ? (
     <Loading loading={loadingValidateGeolocationUser || loadingIndices} />
   ) : (
     <View style={styles.containerMapsAndButtons}>
-      <FloatingMenu setMapStyle={setMapStyle} />
       <Previsao userCoordinates={userGeolocation} />
+      <FloatingMenu setMapStyle={setMapStyle} />
+      <View style={styles.containerIconLocation}>
+        <IconMaterial
+          onPress={() => returnToLocale()}
+          name={'my-location'}
+          style={styles.styleIcon}
+        />
+      </View>
+
       <Modal transparent={true} visible={showDetail} animationType='slide'>
         <DetailIndice
           resetIndiceToShow={setIndiceToShow}
@@ -219,6 +239,7 @@ const Maps = () => {
         centerCoordinate={[userGeolocation.longitude, userGeolocation.latitude]}
         style={styles.containerMap}>
         <MapboxGL.Camera
+          ref={mapRef}
           zoomLevel={10}
           // zoom pra cima
           minZoomLevel={7}
@@ -232,6 +253,12 @@ const Maps = () => {
           animationDuration={1100}
         />
 
+        <MapboxGL.UserLocation
+          showsUserHeadingIndicator={true}
+          visible={true}
+          renderMode='native'
+        />
+
         {indices &&
           indices.map((coordinate, index) => {
             if (coordinate.ativo) {
@@ -242,7 +269,9 @@ const Maps = () => {
                     Number(coordinate.longitude),
                     Number(coordinate.latitude),
                   ]}>
-                  {coordinate && coordinate.hasOwnProperty('userCreated') && coordinate.userCreated ? (
+                  {coordinate &&
+                  coordinate.hasOwnProperty('userCreated') &&
+                  coordinate.userCreated ? (
                     <View style={styles.containerIndexFire}>
                       <IconSimple
                         onPress={() => showIndiceDetail(coordinate)}

@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
   FlatList,
-  TouchableOpacity,
-  Modal,
   Image,
+  Modal,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Video, { FilterType } from 'react-native-video';
+import Video from 'react-native-video';
 import styles from './styles';
 const Galery = ({ evidences }) => {
   const [visibleGalery, setVisibleGalery] = useState(false);
@@ -31,6 +31,7 @@ const Galery = ({ evidences }) => {
             activeOpacity={1}>
             <FontAwesome name='video-camera' style={styles.icon} />
           </TouchableOpacity>
+          <Text>{'Toque para visualizar o vídeo'}</Text>
         </View>
 
         <Modal
@@ -103,8 +104,11 @@ const Galery = ({ evidences }) => {
   return (
     <View>
       <TouchableOpacity onPress={() => setVisibleGalery(true)}>
-        <Text style={styles.labelGalery}>{'Galeria de evidências'}</Text>
-
+     <View style={{alignItems: 'center', flexDirection: 'column', bottom: '5%'}}>
+     <Text style={styles.labelGalery}>{'Visualizar galeria'}</Text>
+     
+      <FontAwesome name='image' style={styles.icon} />
+       </View>
         <Modal transparent={true} visible={visibleGalery} animationType='slide'>
           {renderHeaderGalery()}
           <View style={styles.containerGalery}>
@@ -112,6 +116,7 @@ const Galery = ({ evidences }) => {
               contentContainerStyle={{
                 paddingBottom: 20,
               }}
+              
               horizontal={false}
               renderItem={renderEvidence}
               keyExtractor={(_, index) => String(index)}

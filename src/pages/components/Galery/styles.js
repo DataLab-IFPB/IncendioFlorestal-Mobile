@@ -11,7 +11,7 @@ export default StyleSheet.create({
     height: width * 0.45,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: '3%',
+    marginTop: '4%',
   },
   containerCreatedAt: {
     justifyContent: 'space-between',
@@ -25,8 +25,8 @@ export default StyleSheet.create({
   },
   imageEvidence: {
     width: width * 0.95,
-    height: width * 0.35,
-    resizeMode: 'cover',
+    height: width * 0.4,
+    resizeMode: 'contain',
   },
   videoEvidence: {
     width: width * 0.95,
@@ -45,7 +45,7 @@ export default StyleSheet.create({
   labelGalery: {
     fontWeight: 'bold',
     fontSize: width * 0.03,
-    color: 'skyblue',
+    color: '#000',
   },
   containerGalery: {
     flex: 1,
@@ -53,9 +53,10 @@ export default StyleSheet.create({
   },
   iconClose: width * 0.07,
   icon: {
-    fontSize: width * 0.1,
+    fontSize: width * 0.08,
     color: '#000',
     marginHorizontal: '7%',
+    alignItems: 'center',
   },
   containerEvidenceVideo: {
     width: '100%',
@@ -69,11 +70,17 @@ export default StyleSheet.create({
     backgroundColor: '#000',
     alignItems: 'center',
     flexDirection: 'column',
+   
   },
   headerCOntainerVIsualizationEvidenceVideo: {
     width: '100%',
     justifyContent: 'flex-start',
     paddingLeft: '2%',
     paddingTop: '2%',
+  },
+  label: {
+    fontSize: width * 0.04,
+    fontWeight: 'bold',
+    paddingBottom: '2%',
   },
 });
