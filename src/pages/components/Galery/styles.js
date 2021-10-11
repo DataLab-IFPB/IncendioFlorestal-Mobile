@@ -8,16 +8,18 @@ export default StyleSheet.create({
   },
   containerEvidence: {
     width: '100%',
-    height: width * 0.45,
+    height: width * 0.5,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: '4%',
+    backgroundColor: '#c1c1c1',
+    borderRadius: 15,
   },
   containerCreatedAt: {
     justifyContent: 'space-between',
     width: '100%',
     paddingHorizontal: '2%',
-    flexDirection: 'row',
+    // flexDirection: 'row',
   },
   labelCreatedAt: {
     color: '#000',
@@ -25,7 +27,7 @@ export default StyleSheet.create({
   },
   imageEvidence: {
     width: width * 0.95,
-    height: width * 0.4,
+    height: width * 0.33,
     resizeMode: 'contain',
   },
   videoEvidence: {
@@ -60,7 +62,7 @@ export default StyleSheet.create({
   },
   containerEvidenceVideo: {
     width: '100%',
-    height: width * 0.45,
+    height: width * 0.3,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: '3%',
@@ -70,7 +72,6 @@ export default StyleSheet.create({
     backgroundColor: '#000',
     alignItems: 'center',
     flexDirection: 'column',
-   
   },
   headerCOntainerVIsualizationEvidenceVideo: {
     width: '100%',
@@ -82,5 +83,16 @@ export default StyleSheet.create({
     fontSize: width * 0.04,
     fontWeight: 'bold',
     paddingBottom: '2%',
+  },
+  containerIconTrash: {
+    width: '100%',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    paddingRight: '2%',
+  },
+  labelVisualizationGallery: {
+    alignItems: 'center',
+    flexDirection: 'column',
+    bottom: '5%',
   },
 });

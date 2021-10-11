@@ -33,12 +33,26 @@ const DetailIndice = ({
 
   useEffect(() => {
     if (indice && indice.hasOwnProperty('evidences')) {
+      const evidencesData = mountEvidencecData();
       setContainsEvidenceces({
         contain: true,
-        evidences: Object.values(indice.evidences),
+        evidences: evidencesData,
       });
     }
   }, [indice]);
+
+  function mountEvidencecData() {
+    const keys = Object.keys(indice.evidences);
+
+    const evidencesData = Object.values(indice.evidences);
+
+    return evidencesData.map((evidence, index) => {
+      return {
+        uid: keys[index],
+        ...evidence,
+      };
+    });
+  }
 
   function _renderInfo(info) {
     return info === null ? ' - ' : info;
@@ -146,7 +160,10 @@ const DetailIndice = ({
           <PickerImage indice={indice} />
 
           {containsEvidences.contain && (
-            <Galery evidences={containsEvidences.evidences} />
+            <Galery
+              evidences={containsEvidences.evidences}
+              indiceUid={indice.uid}
+            />
           )}
         </>
       )}

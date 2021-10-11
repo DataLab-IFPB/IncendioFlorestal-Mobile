@@ -5,7 +5,8 @@ import firebase from 'firebase';
 import moment from 'moment';
 import { takeLatest } from 'redux-saga/effects';
 import { DB_URI } from '../../config/keys';
-import { UPLOAD_TYPE } from '../../constants/keys';
+import { UPLOAD_TYPE, USER_REGISTRATION } from '../../constants/keys';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   fetchAddEvidenceFail,
   fetchAddEvidenceSuccess,
@@ -13,11 +14,14 @@ import {
   fetchIndicesIncendiosSuccess,
   fetchSaveIndiceFail,
   fetchSaveIndiceSuccess,
+  fetchRemoveEvidenceSuccess,
+  fetchRemoveEvidenceFail,
 } from './indices-incendios-action';
 import {
   FETCH_ADD_EVIDENCE,
   FETCH_INDICES_INCENDIOS,
   FETCH_SAVE_INDICE,
+  FETCH_REMOVE_EVIDENCE,
 } from './indices-incendios-types';
 
 const COLECTION_NAME = 'dados-firms';
@@ -176,8 +180,60 @@ function* addEvidence(action) {
   }
 }
 
+const removeAndUpdateEvidences = (evidences, evidenceToRemove, indiceUid) => {
+  const evidencesFilters = evidences.filter(
+    (evidence) => evidence.uid !== evidenceToRemove.item.uid,
+  );
+
+  return new Promise((resolve, reject) => {
+    firebase
+      .database()
+      .ref('dados-firms/' + indiceUid)
+      .child('evidences')
+      .set(evidencesFilters)
+      .then((value) => {
+        resolve(true);
+      })
+      .catch((err) => reject(err));
+  });
+};
+
+function* removeEvidence(action) {
+  try {
+    const { evidence, allEvidences, indiceUid } = action.payload;
+
+    const userRegistration = yield AsyncStorage.getItem(USER_REGISTRATION);
+
+    const userRegistrationParser = parseInt(JSON.parse(userRegistration), 10);
+
+    const evidenceRegistrationForParser = parseInt(
+      evidence.item.registration_for,
+      10,
+    );
+
+    if (userRegistrationParser !== evidenceRegistrationForParser) {
+      yield put(
+        fetchRemoveEvidenceFail(
+          new Error('Erro ao remover evidência. Usuário sem permissão!'),
+        ),
+      );
+    } else {
+      const evidenceRemoved = yield removeAndUpdateEvidences(
+        allEvidences,
+        evidence,
+        indiceUid,
+      );
+
+      yield put(fetchRemoveEvidenceSuccess(evidenceRemoved));
+    }
+  } catch (error) {
+    yield put(fetchRemoveEvidenceFail(error));
+  }
+}
+
 export const indicesSagas = [
   takeLatest(FETCH_INDICES_INCENDIOS, indicesIncendios),
   takeLatest(FETCH_SAVE_INDICE, saveIndice),
   takeLatest(FETCH_ADD_EVIDENCE, addEvidence),
+  takeLatest(FETCH_REMOVE_EVIDENCE, removeEvidence),
 ];

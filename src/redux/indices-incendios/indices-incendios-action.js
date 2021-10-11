@@ -61,3 +61,24 @@ export const fetchAddEvidenceFail = (error) => {
     payload: error,
   };
 };
+
+export const fetchRemoveEvidence = (evidence) => {
+  return {
+    type: types.FETCH_REMOVE_EVIDENCE,
+    payload: evidence,
+  };
+};
+
+export const fetchRemoveEvidenceSuccess = (data) => {
+  return {
+    type: types.FETCH_REMOVE_EVIDENCE_SUCCESS,
+    payload: data,
+  };
+};
+
+export const fetchRemoveEvidenceFail = (error) => {
+  return {
+    type: types.FETCH_REMOVE_EVIDENCE_FAIL,
+    payload: error,
+  };
+};

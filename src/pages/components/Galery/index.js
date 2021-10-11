@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   FlatList,
   Image,
@@ -8,12 +9,31 @@ import {
   View,
 } from 'react-native';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import Loading from '../../components/Loading';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Video from 'react-native-video';
 import styles from './styles';
-const Galery = ({ evidences }) => {
+import {
+  fetchRemoveEvidence,
+  fetchIndicesIncendios,
+} from '../../../redux/indices-incendios/indices-incendios-action';
+const Galery = ({ evidences, indiceUid }) => {
   const [visibleGalery, setVisibleGalery] = useState(false);
+  const dispatch = useDispatch();
+  const loadingRemoveIndice = useSelector(
+    (state) => state.indicesIncendios.loadingRemoveEvidence,
+  );
 
+  const evidenceRemoved = useSelector(
+    (state) => state.indicesIncendios.evidenceRemoved,
+  );
+
+  useEffect(() => {
+    if (evidenceRemoved) {
+      setVisibleGalery(false);
+      dispatch(fetchIndicesIncendios());
+    }
+  }, [dispatch, evidenceRemoved]);
   function renderCreatedAt(date) {
     return date !== '' ? `Registrado em: ${date}` : '';
   }
@@ -71,6 +91,17 @@ const Galery = ({ evidences }) => {
     );
   }
   const [showVideoEvidence, setShowVideoEvidence] = useState(false);
+
+  function deleteEvidence(evidence) {
+    console.log(indiceUid);
+    dispatch(
+      fetchRemoveEvidence({
+        allEvidences: evidences,
+        evidence,
+        indiceUid,
+      }),
+    );
+  }
   function renderEvidence(evidence) {
     return evidence.item.media_type ? (
       <View style={styles.containerEvidence}>
@@ -81,6 +112,15 @@ const Galery = ({ evidences }) => {
           <Text style={styles.labelCreatedAt}>
             {renderRegisterBy(evidence.item.registration_for)}
           </Text>
+        </View>
+
+        <View style={styles.containerIconTrash}>
+          <FontAwesome
+            name={'trash-o'}
+            size={30}
+            color={'#000'}
+            onPress={() => deleteEvidence(evidence)}
+          />
         </View>
 
         {renderEvidenceData(evidence)}
@@ -104,19 +144,19 @@ const Galery = ({ evidences }) => {
   return (
     <View>
       <TouchableOpacity onPress={() => setVisibleGalery(true)}>
-     <View style={{alignItems: 'center', flexDirection: 'column', bottom: '5%'}}>
-     <Text style={styles.labelGalery}>{'Visualizar galeria'}</Text>
-     
-      <FontAwesome name='image' style={styles.icon} />
-       </View>
+        <View style={styles.labelVisualizationGallery}>
+          <Text style={styles.labelGalery}>{'Visualizar galeria'}</Text>
+
+          <FontAwesome name='image' style={styles.icon} />
+        </View>
         <Modal transparent={true} visible={visibleGalery} animationType='slide'>
           {renderHeaderGalery()}
           <View style={styles.containerGalery}>
+            <Loading loading={loadingRemoveIndice} />
             <FlatList
               contentContainerStyle={{
                 paddingBottom: 20,
               }}
-              
               horizontal={false}
               renderItem={renderEvidence}
               keyExtractor={(_, index) => String(index)}
