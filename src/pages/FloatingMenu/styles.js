@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -16,7 +16,10 @@ export const styles = (theme) => {
       position: 'absolute',
       zIndex: 2,
       elevation: 10,
-      top: '8%'
+      top: '8%',
+      // marginLeft: '2%',
+      marginLeft: '-5%',
     },
+    menuSize: width * 0.1,
   });
 };

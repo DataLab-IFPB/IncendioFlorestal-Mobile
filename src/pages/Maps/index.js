@@ -1,11 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import { useIsFocused } from '@react-navigation/native';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BackHandler, Modal, Text, TouchableOpacity, View } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
-import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
+import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { PERMISSION_LOCATION_USE } from '../../constants/keys';
 import useNotify from '../../hooks/useNotify';
@@ -183,10 +183,6 @@ const Maps = () => {
       userGeolocation.longitude,
       userGeolocation.latitude,
     ]);
-    // mapRef.current.animateToRegion([
-    //   Number(userGeolocation.longitude),
-    //   Number(userGeolocation.latitude),
-    // ])
   }
   function showIndiceDetail(coordinate) {
     setShowDetail(true);

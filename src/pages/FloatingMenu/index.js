@@ -12,40 +12,39 @@ const FloatingMenu = ({ setMapStyle }) => {
   };
 
   return (
-
-      <ActionButton
+    <ActionButton
       style={style.containerFloatingMenu}
-        renderIcon={() => handleIcon('layer-group')}
-        verticalOrientation='down'
-        position='left'
-        buttonColor={style.menuColor.color}>
-        <ActionButton.Item
-          buttonColor={style.menuColor.color}
-          title='Satélite'
-          onPress={() => setMapStyle(MapboxGL.StyleURL.Satellite)}>
-          {handleIcon('satellite')}
-        </ActionButton.Item>
-        <ActionButton.Item
-          buttonColor={style.menuColor.color}
-          title='Rua'
-          onPress={() => setMapStyle(MapboxGL.StyleURL.Street)}>
-          {handleIcon('city')}
-        </ActionButton.Item>
-        <ActionButton.Item
-          buttonColor={style.menuColor.color}
-          title='Tráfego'
-          onPress={() => setMapStyle(MapboxGL.StyleURL.TrafficDay)}>
-          {handleIcon('car')}
-        </ActionButton.Item>
+      renderIcon={() => handleIcon('layer-group')}
+      verticalOrientation='down'
+      size={style.menuSize}
+      position='left'
+      buttonColor={style.menuColor.color}>
+      <ActionButton.Item
+        buttonColor={style.menuColor.color}
+        title='Satélite'
+        onPress={() => setMapStyle(MapboxGL.StyleURL.Satellite)}>
+        {handleIcon('satellite')}
+      </ActionButton.Item>
+      <ActionButton.Item
+        buttonColor={style.menuColor.color}
+        title='Rua'
+        onPress={() => setMapStyle(MapboxGL.StyleURL.Street)}>
+        {handleIcon('city')}
+      </ActionButton.Item>
+      <ActionButton.Item
+        buttonColor={style.menuColor.color}
+        title='Tráfego'
+        onPress={() => setMapStyle(MapboxGL.StyleURL.TrafficDay)}>
+        {handleIcon('car')}
+      </ActionButton.Item>
 
-        <ActionButton.Item
-          buttonColor={style.menuColor.color}
-          title='Geográfico'
-          onPress={() => setMapStyle(MapboxGL.StyleURL.Outdoors)}>
-          {handleIcon('tree')}
-        </ActionButton.Item>
-      </ActionButton>
-   
+      <ActionButton.Item
+        buttonColor={style.menuColor.color}
+        title='Geográfico'
+        onPress={() => setMapStyle(MapboxGL.StyleURL.Outdoors)}>
+        {handleIcon('tree')}
+      </ActionButton.Item>
+    </ActionButton>
   );
 };
 

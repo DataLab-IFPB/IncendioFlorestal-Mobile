@@ -51,18 +51,19 @@ export default StyleSheet.create({
   containerIconLocation: {
     position: 'absolute',
     zIndex: 2,
-    marginLeft: '8%',
-    top: '3%',
+    marginLeft: '3.4%',
+    top: '5%',
     backgroundColor: '#000',
     borderRadius: 30,
-    height: '7%',
-    width: '7%',
+    height: width * 0.1,
+    width: width * 0.07,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#000',
   },
   styleIcon: {
-    fontSize: width * 0.065,
-    color: '#FFF'
+    fontSize: width * 0.07,
+    color: '#FFF',
   },
- 
 });
