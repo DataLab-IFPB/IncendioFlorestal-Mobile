@@ -6,11 +6,10 @@ export default StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFF',
-    height: width * 1.3,
+    height: width * 1.2,
     marginHorizontal: '10%',
     marginVertical: '20%',
     borderRadius: 15,
-    top: '10%',
   },
   header: {
     top: '0%',
@@ -54,7 +53,6 @@ export default StyleSheet.create({
     fontSize: width * 0.08,
   },
   containerRenderComponents: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
-  
 });

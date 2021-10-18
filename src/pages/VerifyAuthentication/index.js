@@ -13,6 +13,7 @@ const VerifyAuthentication = () => {
   const [loading, setLoading] = useState(true);
   const loadingIndices = useSelector((state) => state.indicesIncendios.loading);
   const dispatch = useDispatch();
+
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -23,6 +24,7 @@ const VerifyAuthentication = () => {
         setLoading(false);
       }
     });
+    return () => {};
   }, []);
 
   useEffect(() => {

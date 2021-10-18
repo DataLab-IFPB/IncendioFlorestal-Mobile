@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 import {
   FlatList,
   Image,
@@ -9,18 +8,21 @@ import {
   View,
 } from 'react-native';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import Loading from '../../components/Loading';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Video from 'react-native-video';
-import styles from './styles';
+import { useDispatch, useSelector } from 'react-redux';
 import {
-  fetchRemoveEvidence,
   fetchIndicesIncendios,
+  fetchRemoveEvidence,
 } from '../../../redux/indices-incendios/indices-incendios-action';
+import CustomModal from '../CustomModal';
+import styles from './styles';
 const Galery = ({ evidences, indiceUid }) => {
   const [visibleGalery, setVisibleGalery] = useState(false);
   const dispatch = useDispatch();
-  const loadingRemoveIndice = useSelector(
+  const [showModal, setShowModal] = useState(false);
+  const [evidenceToRemove, setEvidenceToRemove] = useState(null);
+  const loadingRemoveEvidence = useSelector(
     (state) => state.indicesIncendios.loadingRemoveEvidence,
   );
 
@@ -45,14 +47,15 @@ const Galery = ({ evidences, indiceUid }) => {
   function renderVisualizationVideoEvidence(evidence) {
     return (
       <>
-        <View style={styles.containerEvidenceVideo}>
-          <TouchableOpacity
-            onPress={() => setShowVideoEvidence(true)}
-            activeOpacity={1}>
-            <FontAwesome name='video-camera' style={styles.icon} />
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.containerEvidenceVideo}
+          onPress={() => {
+            setShowVideoEvidence(true);
+          }}
+          activeOpacity={1}>
+          <FontAwesome name='video-camera' style={styles.icon} />
           <Text>{'Toque para visualizar o vídeo'}</Text>
-        </View>
+        </TouchableOpacity>
 
         <Modal
           visible={showVideoEvidence}
@@ -93,38 +96,42 @@ const Galery = ({ evidences, indiceUid }) => {
   const [showVideoEvidence, setShowVideoEvidence] = useState(false);
 
   function deleteEvidence(evidence) {
-    console.log(indiceUid);
-    dispatch(
-      fetchRemoveEvidence({
-        allEvidences: evidences,
-        evidence,
-        indiceUid,
-      }),
-    );
+    if (evidenceToRemove) {
+      dispatch(
+        fetchRemoveEvidence({
+          allEvidences: evidences,
+          evidence,
+          indiceUid,
+        }),
+      );
+    }
+  }
+
+  function cancelButton() {
+    setShowModal(false);
   }
   function renderEvidence(evidence) {
     return evidence.item.media_type ? (
-      <View style={styles.containerEvidence}>
-        <View style={styles.containerCreatedAt}>
-          <Text style={styles.labelCreatedAt}>
-            {renderCreatedAt(evidence.item.created_at)}
-          </Text>
-          <Text style={styles.labelCreatedAt}>
-            {renderRegisterBy(evidence.item.registration_for)}
-          </Text>
-        </View>
+      <TouchableOpacity
+        onLongPress={() => {
+          if (evidence !== null) {
+            setEvidenceToRemove(evidence);
+            setShowModal(true);
+          }
+        }}>
+        <View style={styles.containerEvidence}>
+          <View style={styles.containerCreatedAt}>
+            <Text style={styles.labelCreatedAt}>
+              {renderCreatedAt(evidence.item.created_at)}
+            </Text>
+            <Text style={styles.labelCreatedAt}>
+              {renderRegisterBy(evidence.item.registration_for)}
+            </Text>
+          </View>
 
-        <View style={styles.containerIconTrash}>
-          <FontAwesome
-            name={'trash-o'}
-            size={30}
-            color={'#000'}
-            onPress={() => deleteEvidence(evidence)}
-          />
+          {renderEvidenceData(evidence)}
         </View>
-
-        {renderEvidenceData(evidence)}
-      </View>
+      </TouchableOpacity>
     ) : null;
   }
   function renderHeaderGalery() {
@@ -142,30 +149,41 @@ const Galery = ({ evidences, indiceUid }) => {
     );
   }
   return (
-    <View>
-      <TouchableOpacity onPress={() => setVisibleGalery(true)}>
-        <View style={styles.labelVisualizationGallery}>
-          <Text style={styles.labelGalery}>{'Visualizar galeria'}</Text>
+    <>
+      <CustomModal
+        message={'Deseja excluir essa evidência?'}
+        loading={loadingRemoveEvidence}
+        onClose={cancelButton}
+        onConfirm={() => deleteEvidence(evidenceToRemove)}
+        visible={showModal}
+      />
+      <View>
+        <TouchableOpacity onPress={() => setVisibleGalery(true)}>
+          <View style={styles.labelVisualizationGallery}>
+            <Text style={styles.labelGalery}>{'Visualizar galeria'}</Text>
 
-          <FontAwesome name='image' style={styles.icon} />
-        </View>
-        <Modal transparent={true} visible={visibleGalery} animationType='slide'>
-          {renderHeaderGalery()}
-          <View style={styles.containerGalery}>
-            <Loading loading={loadingRemoveIndice} />
-            <FlatList
-              contentContainerStyle={{
-                paddingBottom: 20,
-              }}
-              horizontal={false}
-              renderItem={renderEvidence}
-              keyExtractor={(_, index) => String(index)}
-              data={evidences}
-            />
+            <FontAwesome name='image' style={styles.icon} />
           </View>
-        </Modal>
-      </TouchableOpacity>
-    </View>
+          <Modal
+            transparent={true}
+            visible={visibleGalery}
+            animationType='slide'>
+            {renderHeaderGalery()}
+            <View style={styles.containerGalery}>
+              <FlatList
+                contentContainerStyle={{
+                  paddingBottom: 20,
+                }}
+                horizontal={false}
+                renderItem={renderEvidence}
+                keyExtractor={(_, index) => String(index)}
+                data={evidences}
+              />
+            </View>
+          </Modal>
+        </TouchableOpacity>
+      </View>
+    </>
   );
 };
 

@@ -1,19 +1,17 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { Modal, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   QUALITY_IMAGE_AND_VIDEO,
   UPLOAD_TYPE,
   UPLOAD_TYPES,
   USER_REGISTRATION,
 } from '../../../constants/keys';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  fetchAddEvidence,
-  // fetchIndicesIncendios,
-} from '../../../redux/indices-incendios/indices-incendios-action';
+import { fetchAddEvidence } from '../../../redux/indices-incendios/indices-incendios-action';
+import CustomModal from '../CustomModal';
 import styles from './styles';
 
 const PickerImage = ({ indice }) => {
@@ -24,12 +22,20 @@ const PickerImage = ({ indice }) => {
 
   const dispatch = useDispatch();
   const [registrationUser, setRegistrationUser] = useState('');
-
+  const loadingAddEvidence = useSelector(
+    (state) => state.indicesIncendios.loadingAddEvidence,
+  );
   useEffect(() => {
     AsyncStorage.getItem(USER_REGISTRATION).then((value) => {
       setRegistrationUser(value);
     });
   }, []);
+
+  useEffect(() => {
+    if (file) {
+      setConfirmUpload(true);
+    }
+  }, [file]);
 
   function openPickerCam() {
     setUploadType(UPLOAD_TYPES.CAM);
@@ -97,15 +103,25 @@ const PickerImage = ({ indice }) => {
     );
   }
 
-  useEffect(() => {
-    if (file) {
-      setConfirmUpload(true);
-    }
-  }, [file]);
+  function cancelButton() {
+    invalidateFile();
+    setConfirmUpload(false);
+  }
+
+  function confirmButton() {
+    uploadFile();
+  }
   return (
     <>
       <View style={styles.container}>
-        <Modal transparent={true} visible={confirmUpload}>
+        <CustomModal
+          message={' Deseja anexar a mídia a essa ocorrência ?'}
+          onClose={cancelButton}
+          visible={confirmUpload}
+          onConfirm={confirmButton}
+          loading={loadingAddEvidence}
+        />
+        {/* <Modal transparent={true} visible={confirmUpload}>
           <View style={styles.containerUpload}>
             <Text style={styles.labelQuestionUpload}>
               Deseja anexar a mídia a essa ocorrência ?
@@ -128,7 +144,7 @@ const PickerImage = ({ indice }) => {
               </TouchableOpacity>
             </View>
           </View>
-        </Modal>
+        </Modal> */}
 
         <Text style={styles.label}>Adicionar evidência</Text>
 
@@ -145,7 +161,6 @@ const PickerImage = ({ indice }) => {
             <FontAwesome name='image' style={styles.icon} />
           </TouchableOpacity>
         </View>
-       
       </View>
     </>
   );

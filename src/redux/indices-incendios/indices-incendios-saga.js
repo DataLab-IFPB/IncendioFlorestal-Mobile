@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import storage from '@react-native-firebase/storage';
 import { call, put } from '@redux-saga/core/effects';
 import axios from 'axios';
@@ -6,22 +7,21 @@ import moment from 'moment';
 import { takeLatest } from 'redux-saga/effects';
 import { DB_URI } from '../../config/keys';
 import { UPLOAD_TYPE, USER_REGISTRATION } from '../../constants/keys';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   fetchAddEvidenceFail,
   fetchAddEvidenceSuccess,
   fetchIndicesIncendiosFail,
   fetchIndicesIncendiosSuccess,
+  fetchRemoveEvidenceFail,
+  fetchRemoveEvidenceSuccess,
   fetchSaveIndiceFail,
   fetchSaveIndiceSuccess,
-  fetchRemoveEvidenceSuccess,
-  fetchRemoveEvidenceFail,
 } from './indices-incendios-action';
 import {
   FETCH_ADD_EVIDENCE,
   FETCH_INDICES_INCENDIOS,
-  FETCH_SAVE_INDICE,
   FETCH_REMOVE_EVIDENCE,
+  FETCH_SAVE_INDICE,
 } from './indices-incendios-types';
 
 const COLECTION_NAME = 'dados-firms';
@@ -192,6 +192,7 @@ const removeAndUpdateEvidences = (evidences, evidenceToRemove, indiceUid) => {
       .child('evidences')
       .set(evidencesFilters)
       .then((value) => {
+        console.log('evidence remover ', value);
         resolve(true);
       })
       .catch((err) => reject(err));

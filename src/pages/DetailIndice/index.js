@@ -5,14 +5,14 @@ import Feather from 'react-native-vector-icons/Feather';
 import IconAwesome from 'react-native-vector-icons/FontAwesome5';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import IOIcon from 'react-native-vector-icons/Ionicons';
-
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPrevisao } from '../../redux/previsao/previsao-action';
 import formatDate from '../../utils/format-data';
-import PickerImage from '../components/PickerImage';
 import Galery from '../components/Galery';
+import PickerImage from '../components/PickerImage';
 import styles from './styles';
+
 const DetailIndice = ({
   indiceCoords,
   closeIndiceDetail,
@@ -29,9 +29,22 @@ const DetailIndice = ({
 
   useEffect(() => {
     dispatch(fetchPrevisao(indiceCoords));
-  }, [indiceCoords]);
+  }, [dispatch, indiceCoords]);
 
   useEffect(() => {
+    function mountEvidencecData() {
+      const keys = Object.keys(indice.evidences);
+
+      const evidencesData = Object.values(indice.evidences);
+
+      return evidencesData.map((evidence, index) => {
+        return {
+          uid: keys[index],
+          ...evidence,
+        };
+      });
+    }
+
     if (indice && indice.hasOwnProperty('evidences')) {
       const evidencesData = mountEvidencecData();
       setContainsEvidenceces({
@@ -40,19 +53,6 @@ const DetailIndice = ({
       });
     }
   }, [indice]);
-
-  function mountEvidencecData() {
-    const keys = Object.keys(indice.evidences);
-
-    const evidencesData = Object.values(indice.evidences);
-
-    return evidencesData.map((evidence, index) => {
-      return {
-        uid: keys[index],
-        ...evidence,
-      };
-    });
-  }
 
   function _renderInfo(info) {
     return info === null ? ' - ' : info;

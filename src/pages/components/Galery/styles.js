@@ -7,13 +7,15 @@ export default StyleSheet.create({
     backgroundColor: 'tomato',
   },
   containerEvidence: {
-    width: '100%',
-    height: width * 0.5,
+    width: width * 0.95,
+    height: width * 0.65,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'column',
     marginTop: '4%',
     backgroundColor: '#c1c1c1',
     borderRadius: 15,
+    marginLeft: '2%',
   },
   containerCreatedAt: {
     justifyContent: 'space-between',
