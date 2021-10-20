@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import {
   FlatList,
@@ -11,11 +12,9 @@ import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Video from 'react-native-video';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  fetchIndicesIncendios,
-  fetchRemoveEvidence,
-} from '../../../redux/indices-incendios/indices-incendios-action';
+import { fetchRemoveEvidence } from '../../../redux/indices-incendios/indices-incendios-action';
 import CustomModal from '../CustomModal';
+import VisualizationEvidence from '../VisualizationEvidence';
 import styles from './styles';
 const Galery = ({ evidences, indiceUid }) => {
   const [visibleGalery, setVisibleGalery] = useState(false);
@@ -30,12 +29,35 @@ const Galery = ({ evidences, indiceUid }) => {
     (state) => state.indicesIncendios.evidenceRemoved,
   );
 
+  const errorOnRemoveEvidence = useSelector(
+    (state) => state.indicesIncendios.errorRemoveEvidence,
+  );
+  const isFocused = useIsFocused();
+  const [showMessageError, setShowMessageError] = useState(false);
   useEffect(() => {
     if (evidenceRemoved) {
       setVisibleGalery(false);
-      dispatch(fetchIndicesIncendios());
+      setShowModal(false);
     }
   }, [dispatch, evidenceRemoved]);
+
+  useEffect(() => {
+    if (errorOnRemoveEvidence !== null) {
+      setShowModal(false);
+    }
+  }, [errorOnRemoveEvidence]);
+
+  useEffect(() => {
+    if (
+      errorOnRemoveEvidence &&
+      !loadingRemoveEvidence &&
+      !showModal &&
+      isFocused
+    ) {
+      setShowMessageError(true);
+    }
+  }, [errorOnRemoveEvidence, isFocused, loadingRemoveEvidence, showModal]);
+
   function renderCreatedAt(date) {
     return date !== '' ? `Registrado em: ${date}` : '';
   }
@@ -44,42 +66,60 @@ const Galery = ({ evidences, indiceUid }) => {
     return registration !== '' ? `Por: ${registration}` : '';
   }
 
+  function closeVisualizationDetail() {
+    setShowEvidenceDetail(false);
+  }
+
+  function enableVisualizationDetail() {
+    setShowEvidenceDetail(true);
+  }
+  function renderVisualizationImageEvidence(evidence) {
+    return (
+      <TouchableOpacity
+        style={styles.containerEvidenceVideo}
+        onPress={enableVisualizationDetail}>
+        <Image
+          source={{ uri: evidence.item.uri }}
+          style={styles.imageEvidence}
+        />
+        <VisualizationEvidence
+          content={
+            <Image
+              source={{ uri: evidence.item.uri }}
+              style={styles.imageEvidence}
+            />
+          }
+          visible={showEvidenceDetail}
+          close={closeVisualizationDetail}
+        />
+      </TouchableOpacity>
+    );
+  }
   function renderVisualizationVideoEvidence(evidence) {
     return (
       <>
         <TouchableOpacity
           style={styles.containerEvidenceVideo}
-          onPress={() => {
-            setShowVideoEvidence(true);
-          }}
+          onPress={enableVisualizationDetail}
           activeOpacity={1}>
           <FontAwesome name='video-camera' style={styles.icon} />
-          <Text>{'Toque para visualizar o vídeo'}</Text>
+          <Text style={styles.labelVideoEvidence}>
+            {'Toque para\nvisualizar\no vídeo'}
+          </Text>
         </TouchableOpacity>
 
-        <Modal
-          visible={showVideoEvidence}
-          transparent={true}
-          animationType={'slide'}>
-          <View style={styles.containerVisualizationEvidenceVideo}>
-            <View style={styles.headerCOntainerVIsualizationEvidenceVideo}>
-              <TouchableOpacity>
-                <IconAntDesign
-                  onPress={() => setShowVideoEvidence(false)}
-                  name='closecircle'
-                  color={'#F00'}
-                  size={styles.iconClose}
-                />
-              </TouchableOpacity>
-            </View>
+        <VisualizationEvidence
+          visible={showEvidenceDetail}
+          close={closeVisualizationDetail}
+          content={
             <Video
               source={{ uri: evidence.item.uri }}
               paused={true}
               controls={true}
               style={styles.videoEvidence}
             />
-          </View>
-        </Modal>
+          }
+        />
       </>
     );
   }
@@ -87,13 +127,11 @@ const Galery = ({ evidences, indiceUid }) => {
   function renderEvidenceData(evidence) {
     const MEDIA_TYPE_PHOTO = 'base64';
 
-    return evidence.item.media_type === MEDIA_TYPE_PHOTO ? (
-      <Image source={{ uri: evidence.item.uri }} style={styles.imageEvidence} />
-    ) : (
-      renderVisualizationVideoEvidence(evidence)
-    );
+    return evidence.item.media_type === MEDIA_TYPE_PHOTO
+      ? renderVisualizationImageEvidence(evidence)
+      : renderVisualizationVideoEvidence(evidence);
   }
-  const [showVideoEvidence, setShowVideoEvidence] = useState(false);
+  const [showEvidenceDetail, setShowEvidenceDetail] = useState(false);
 
   function deleteEvidence(evidence) {
     if (evidenceToRemove) {
@@ -115,7 +153,7 @@ const Galery = ({ evidences, indiceUid }) => {
       <TouchableOpacity
         onLongPress={() => {
           if (evidence !== null) {
-            setEvidenceToRemove(evidence);
+            setEvidenceToRemove(evidence.item);
             setShowModal(true);
           }
         }}>
@@ -128,7 +166,6 @@ const Galery = ({ evidences, indiceUid }) => {
               {renderRegisterBy(evidence.item.registration_for)}
             </Text>
           </View>
-
           {renderEvidenceData(evidence)}
         </View>
       </TouchableOpacity>
@@ -157,6 +194,17 @@ const Galery = ({ evidences, indiceUid }) => {
         onConfirm={() => deleteEvidence(evidenceToRemove)}
         visible={showModal}
       />
+
+      <CustomModal
+        message={errorOnRemoveEvidence && errorOnRemoveEvidence.message}
+        loading={loadingRemoveEvidence}
+        onClose={cancelButton}
+        onConfirm={() => setShowMessageError(false)}
+        visible={showMessageError}
+        enableButtonCancel={false}
+        labelButtonConfirm={'Ok'}
+      />
+
       <View>
         <TouchableOpacity onPress={() => setVisibleGalery(true)}>
           <View style={styles.labelVisualizationGallery}>

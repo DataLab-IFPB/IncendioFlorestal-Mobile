@@ -70,7 +70,6 @@ const sendEvidence = (pathSaveIndice, data, mediaType, uploadType) => {
           resolve(true);
         })
         .catch((err) => {
-          console.log('reject ', err);
           reject(err);
         });
     });
@@ -182,7 +181,7 @@ function* addEvidence(action) {
 
 const removeAndUpdateEvidences = (evidences, evidenceToRemove, indiceUid) => {
   const evidencesFilters = evidences.filter(
-    (evidence) => evidence.uid !== evidenceToRemove.item.uid,
+    (evidence) => evidence.uid !== evidenceToRemove.uid,
   );
 
   return new Promise((resolve, reject) => {
@@ -208,7 +207,7 @@ function* removeEvidence(action) {
     const userRegistrationParser = parseInt(JSON.parse(userRegistration), 10);
 
     const evidenceRegistrationForParser = parseInt(
-      evidence.item.registration_for,
+      evidence.registration_for,
       10,
     );
 

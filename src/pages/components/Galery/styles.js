@@ -2,35 +2,29 @@ import { Dimensions, StyleSheet } from 'react-native';
 
 const { width } = Dimensions.get('window');
 export default StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'tomato',
-  },
   containerEvidence: {
-    width: width * 0.95,
-    height: width * 0.65,
     alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'column',
+    justifyContent: 'space-around',
+    flexDirection: 'row-reverse',
     marginTop: '4%',
     backgroundColor: '#c1c1c1',
-    borderRadius: 15,
-    marginLeft: '2%',
+    width: '90%',
+    alignSelf: 'center',
+    borderRadius: 10,
   },
   containerCreatedAt: {
     justifyContent: 'space-between',
-    width: '100%',
-    paddingHorizontal: '2%',
-    // flexDirection: 'row',
+    width: '40%',
+    flexDirection: 'column',
   },
   labelCreatedAt: {
     color: '#000',
     fontWeight: 'bold',
   },
   imageEvidence: {
-    width: width * 0.95,
-    height: width * 0.33,
-    resizeMode: 'contain',
+    width: width * 0.4,
+    height: width * 0.3,
+    resizeMode: 'center',
   },
   videoEvidence: {
     width: width * 0.95,
@@ -63,11 +57,10 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   containerEvidenceVideo: {
-    width: '100%',
     height: width * 0.3,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: '3%',
+    alignSelf: 'center',
   },
   containerVisualizationEvidenceVideo: {
     flex: 1,
@@ -86,15 +79,14 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     paddingBottom: '2%',
   },
-  containerIconTrash: {
-    width: '100%',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-    paddingRight: '2%',
-  },
+
   labelVisualizationGallery: {
     alignItems: 'center',
     flexDirection: 'column',
     bottom: '5%',
+  },
+  labelVideoEvidence: {
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
 });

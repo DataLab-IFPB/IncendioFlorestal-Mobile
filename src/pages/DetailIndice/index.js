@@ -157,14 +157,15 @@ const DetailIndice = ({
             </View>
           </View>
 
-          <PickerImage indice={indice} />
+          <PickerImage key={indice.uid} indice={indice} />
 
-          {containsEvidences.contain && (
-            <Galery
-              evidences={containsEvidences.evidences}
-              indiceUid={indice.uid}
-            />
-          )}
+          {containsEvidences.contain &&
+            containsEvidences.evidences.length > 0 && (
+              <Galery
+                evidences={containsEvidences.evidences}
+                indiceUid={indice.uid}
+              />
+            )}
         </>
       )}
     </View>

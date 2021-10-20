@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import MapboxGL from '@react-native-mapbox-gl/maps';
+import MapboxGL, { Logger } from '@react-native-mapbox-gl/maps';
 import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
 import { BackHandler, Modal, Text, TouchableOpacity, View } from 'react-native';
@@ -54,6 +54,19 @@ const Maps = () => {
   const [coordsClickInMap, setCoordsClickInMap] = useState();
   const isFocused = useIsFocused();
   const notifyEvidenceUploaded = useNotify();
+
+  Logger.setLogCallback((log) => {
+    const { message } = log;
+
+    // expected warnings - see https://github.com/mapbox/mapbox-gl-native/issues/15341#issuecomment-522889062
+    if (
+      message.match('Request failed due to a permanent error: Canceled') ||
+      message.match('Request failed due to a permanent error: Socket Closed')
+    ) {
+      return true;
+    }
+    return false;
+  });
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', () => {

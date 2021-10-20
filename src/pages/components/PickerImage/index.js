@@ -25,10 +25,14 @@ const PickerImage = ({ indice }) => {
   const loadingAddEvidence = useSelector(
     (state) => state.indicesIncendios.loadingAddEvidence,
   );
+
   useEffect(() => {
-    AsyncStorage.getItem(USER_REGISTRATION).then((value) => {
-      setRegistrationUser(value);
-    });
+    function restoreUserRegistration() {
+      AsyncStorage.getItem(USER_REGISTRATION).then((value) => {
+        setRegistrationUser(value);
+      });
+    }
+    restoreUserRegistration();
   }, []);
 
   useEffect(() => {
@@ -121,30 +125,6 @@ const PickerImage = ({ indice }) => {
           onConfirm={confirmButton}
           loading={loadingAddEvidence}
         />
-        {/* <Modal transparent={true} visible={confirmUpload}>
-          <View style={styles.containerUpload}>
-            <Text style={styles.labelQuestionUpload}>
-              Deseja anexar a mídia a essa ocorrência ?
-            </Text>
-
-            <View style={styles.containerButtonsUpload}>
-              <TouchableOpacity
-                style={styles.buttonUpload}
-                onPress={uploadFile}>
-                <Text style={styles.labelButtonUpload}>Sim</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => {
-                  invalidateFile();
-                  setConfirmUpload(false);
-                }}
-                style={[styles.buttonUpload, styles.buttonCancelUpload]}>
-                <Text style={styles.labelButtonUpload}>Não</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal> */}
 
         <Text style={styles.label}>Adicionar evidência</Text>
 
