@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import IconFeather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Video from 'react-native-video';
 import { useDispatch, useSelector } from 'react-redux';
@@ -56,6 +57,7 @@ const Galery = ({ evidences, indiceUid }) => {
     ) {
       setShowMessageError(true);
     }
+    return () => {};
   }, [errorOnRemoveEvidence, isFocused, loadingRemoveEvidence, showModal]);
 
   function renderCreatedAt(date) {
@@ -148,27 +150,29 @@ const Galery = ({ evidences, indiceUid }) => {
   function cancelButton() {
     setShowModal(false);
   }
+
+  function deleteEvidence(evidence) {
+    setEvidenceToRemove(evidence.item);
+    setShowModal(true);
+  }
   function renderEvidence(evidence) {
     return evidence.item.media_type ? (
-      <TouchableOpacity
-        onLongPress={() => {
-          if (evidence !== null) {
-            setEvidenceToRemove(evidence.item);
-            setShowModal(true);
-          }
-        }}>
-        <View style={styles.containerEvidence}>
-          <View style={styles.containerCreatedAt}>
-            <Text style={styles.labelCreatedAt}>
-              {renderCreatedAt(evidence.item.created_at)}
-            </Text>
-            <Text style={styles.labelCreatedAt}>
-              {renderRegisterBy(evidence.item.registration_for)}
-            </Text>
-          </View>
-          {renderEvidenceData(evidence)}
+      <View style={styles.containerEvidence}>
+        <IconFeather
+          onPress={() => deleteEvidence(evidence)}
+          name={'trash'}
+          style={styles.iconTrash}
+        />
+        <View style={styles.containerCreatedAt}>
+          <Text style={styles.labelCreatedAt}>
+            {renderCreatedAt(evidence.item.created_at)}
+          </Text>
+          <Text style={styles.labelCreatedAt}>
+            {renderRegisterBy(evidence.item.registration_for)}
+          </Text>
         </View>
-      </TouchableOpacity>
+        {renderEvidenceData(evidence)}
+      </View>
     ) : null;
   }
   function renderHeaderGalery() {

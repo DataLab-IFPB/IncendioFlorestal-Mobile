@@ -89,4 +89,9 @@ export default StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
   },
+  iconTrash: {
+    fontSize: width * 0.07,
+    color: '#000',
+    paddingHorizontal: '2%',
+  },
 });
