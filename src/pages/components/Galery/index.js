@@ -35,6 +35,9 @@ const Galery = ({ evidences, indiceUid }) => {
   );
   const isFocused = useIsFocused();
   const [showMessageError, setShowMessageError] = useState(false);
+
+  const ERROR_ON_DELETE_EVIDENCE = 'Erro ao remover evidência.';
+
   useEffect(() => {
     if (evidenceRemoved) {
       setVisibleGalery(false);
@@ -53,7 +56,8 @@ const Galery = ({ evidences, indiceUid }) => {
       errorOnRemoveEvidence &&
       !loadingRemoveEvidence &&
       !showModal &&
-      isFocused
+      isFocused &&
+      errorOnRemoveEvidence.message === ERROR_ON_DELETE_EVIDENCE
     ) {
       setShowMessageError(true);
     }
@@ -136,30 +140,30 @@ const Galery = ({ evidences, indiceUid }) => {
   const [showEvidenceDetail, setShowEvidenceDetail] = useState(false);
 
   function deleteEvidence(evidence) {
-    if (evidenceToRemove) {
+    if (evidenceToRemove !== null) {
       dispatch(
         fetchRemoveEvidence({
           allEvidences: evidences,
-          evidence,
+          evidence: evidence.item,
           indiceUid,
         }),
       );
     }
   }
 
+  function showModalRemoveEvidence(evidence) {
+    setShowModal(true);
+    setEvidenceToRemove(evidence);
+  }
   function cancelButton() {
     setShowModal(false);
   }
 
-  function deleteEvidence(evidence) {
-    setEvidenceToRemove(evidence.item);
-    setShowModal(true);
-  }
   function renderEvidence(evidence) {
     return evidence.item.media_type ? (
       <View style={styles.containerEvidence}>
         <IconFeather
-          onPress={() => deleteEvidence(evidence)}
+          onPress={() => showModalRemoveEvidence(evidence)}
           name={'trash'}
           style={styles.iconTrash}
         />

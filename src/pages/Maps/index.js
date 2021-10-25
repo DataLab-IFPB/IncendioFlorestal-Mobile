@@ -237,6 +237,7 @@ const Maps = () => {
         )}
       <View style={styles.containerMapsAndButtons}>
         <Previsao userCoordinates={userGeolocation} />
+
         <FloatingMenu setMapStyle={setMapStyle} />
         <View style={styles.containerIconLocation}>
           <IconMaterial

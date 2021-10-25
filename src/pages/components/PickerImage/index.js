@@ -33,6 +33,8 @@ const PickerImage = ({ indice }) => {
       });
     }
     restoreUserRegistration();
+
+    return () => {};
   }, []);
 
   useEffect(() => {
@@ -95,16 +97,19 @@ const PickerImage = ({ indice }) => {
     const MEDIA_TYPE = uploadType;
     setConfirmUpload(false);
     console.log(indice.uid);
-    dispatch(
-      fetchAddEvidence({
-        evidence: mediaTypeSend === UPLOAD_TYPE.VIDEO ? file.path : file.data,
-        evidenceFileName: file.path,
-        mediaType: MEDIA_TYPE,
-        indiceId: indice.uid,
-        uploadType: mediaTypeSend,
-        registrationUser,
-      }),
-    );
+
+    if (file !== null) {
+      dispatch(
+        fetchAddEvidence({
+          evidence: mediaTypeSend === UPLOAD_TYPE.VIDEO ? file.path : file.data,
+          evidenceFileName: file.path,
+          mediaType: MEDIA_TYPE,
+          indiceId: indice.uid,
+          uploadType: mediaTypeSend,
+          registrationUser,
+        }),
+      );
+    }
   }
 
   function cancelButton() {

@@ -191,7 +191,6 @@ const removeAndUpdateEvidences = (evidences, evidenceToRemove, indiceUid) => {
       .child('evidences')
       .set(evidencesFilters)
       .then((value) => {
-        console.log('evidence remover ', value);
         resolve(true);
       })
       .catch((err) => reject(err));
@@ -201,6 +200,13 @@ const removeAndUpdateEvidences = (evidences, evidenceToRemove, indiceUid) => {
 function* removeEvidence(action) {
   try {
     const { evidence, allEvidences, indiceUid } = action.payload;
+
+    if (evidence === null) {
+      console.log('evidence null');
+      yield put(
+        fetchRemoveEvidenceFail(new Error('Erro ao remover evidência.')),
+      );
+    }
 
     const userRegistration = yield AsyncStorage.getItem(USER_REGISTRATION);
 
@@ -213,9 +219,7 @@ function* removeEvidence(action) {
 
     if (userRegistrationParser !== evidenceRegistrationForParser) {
       yield put(
-        fetchRemoveEvidenceFail(
-          new Error('Erro ao remover evidência. Usuário sem permissão!'),
-        ),
+        fetchRemoveEvidenceFail(new Error('Erro ao remover evidência.')),
       );
     } else {
       const evidenceRemoved = yield removeAndUpdateEvidences(
@@ -223,8 +227,9 @@ function* removeEvidence(action) {
         evidence,
         indiceUid,
       );
-
-      yield put(fetchRemoveEvidenceSuccess(evidenceRemoved));
+      if (evidenceRemoved) {
+        yield put(fetchRemoveEvidenceSuccess(evidenceRemoved));
+      }
     }
   } catch (error) {
     yield put(fetchRemoveEvidenceFail(error));

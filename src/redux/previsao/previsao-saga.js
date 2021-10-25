@@ -15,7 +15,7 @@ import {
 function* previsao(action) {
   try {
     const { latitude, longitude } = action.payload;
-    const URL = `http://api.weatherapi.com/v1/current.json?key=${API_PREVISAO_KEY}&q=${latitude},${longitude}&aqi=no`;
+    const URL = `https://api.weatherapi.com/v1/current.json?key=${API_PREVISAO_KEY}&q=${latitude},${longitude}&aqi=no`;
 
     const { data } = yield call(axios.get, URL);
 
@@ -30,7 +30,7 @@ function* previsao(action) {
 function* previsaoUsuarioLogado(action) {
   try {
     const { latitude, longitude } = action.payload;
-    const URL = `http://api.weatherapi.com/v1/current.json?key=${API_PREVISAO_KEY}&q=${latitude},${longitude}&aqi=no`;
+    const URL = `https://api.weatherapi.com/v1/current.json?key=${API_PREVISAO_KEY}&q=${latitude},${longitude}&aqi=no`;
 
     const { data } = yield call(axios.get, URL);
 

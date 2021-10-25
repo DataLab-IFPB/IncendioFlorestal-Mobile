@@ -8,8 +8,9 @@ export default StyleSheet.create({
     backgroundColor: '#FFF',
     height: width * 1.2,
     marginHorizontal: '10%',
-    marginVertical: '20%',
+    marginVertical: '40%',
     borderRadius: 15,
+    elevation: 10,
   },
   header: {
     top: '0%',
