@@ -6,11 +6,13 @@ export default StyleSheet.create({
     flex: 1,
   },
   containerMapsAndButtons: {
-    width: '100%',
-    height: '100%',
-    zIndex: 2,
+    flex: 1,
   },
-
+  containerInteration: {
+    alignItems: 'center',
+    width: '100%',
+    height: '20%',
+  },
   containerIndexFire: {
     width: 100,
     height: 100,
@@ -45,5 +47,24 @@ export default StyleSheet.create({
     fontSize: width * 0.04,
     fontWeight: 'bold',
     color: '#000',
+  },
+  containerIconLocation: {
+    position: 'absolute',
+    zIndex: 2,
+    marginLeft: '3.8%',
+    top: '5%',
+    backgroundColor: '#000',
+    borderRadius: 30,
+    height: width * 0.1,
+    width: width * 0.07,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#000',
+  },
+
+  styleIcon: {
+    fontSize: width * 0.07,
+    color: '#FFF',
   },
 });

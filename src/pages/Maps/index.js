@@ -1,36 +1,35 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import MapboxGL from '@react-native-mapbox-gl/maps';
-import React, { useEffect, useState } from 'react';
+import MapboxGL, { Logger } from '@react-native-mapbox-gl/maps';
+import { useIsFocused } from '@react-navigation/native';
+import React, { useEffect, useRef, useState } from 'react';
 import { BackHandler, Modal, Text, TouchableOpacity, View } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
+import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import { useDispatch, useSelector } from 'react-redux';
+import { MAP_BOX_KEY } from '../../config/keys';
 import { PERMISSION_LOCATION_USE } from '../../constants/keys';
+import useNotify from '../../hooks/useNotify';
 import {
   fetchIndicesIncendios,
   fetchSaveIndice,
 } from '../../redux/indices-incendios/indices-incendios-action';
-import Previsao from '../Previsao';
 import { fetchPrevisao } from '../../redux/previsao/previsao-action';
 import getMoment from '../../utils/getMoment';
 import Loading from '../components/Loading';
 import DetailIndice from '../DetailIndice';
 import FloatingMenu from '../FloatingMenu';
 import ModalNovoIndice from '../ModalNovoIndice';
+import Previsao from '../Previsao';
 import styles from './styles';
-
 const Maps = () => {
   const dispatch = useDispatch();
-  MapboxGL.setAccessToken(
-    'pk.eyJ1IjoiaXRhbG9hN3giLCJhIjoiY2txYjVxcndqMHd5aTJ1dDV0ZXBlM2kxaCJ9.P1_QYLu4AQbAX9u-V37_1Q',
-  );
-  const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Outdoors);
+  MapboxGL.setAccessToken(MAP_BOX_KEY);
+  const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Street);
   const indices = useSelector((state) => state.indicesIncendios.data);
-  // const [indices, setIndices] = useState([]);
   const loadingIndices = useSelector((state) => state.indicesIncendios.loading);
-  // const [loadingIndices, setLoadingIndices] = useState(false);
   const errorsRequest = useSelector((state) => state.indicesIncendios.error);
-
+  const mapRef = useRef();
   const indiceSaved = useSelector(
     (state) => state.indicesIncendios.indiceSaved,
   );
@@ -53,17 +52,26 @@ const Maps = () => {
 
   const [showModalNovoIndice, setShowModalNovoIndice] = useState(false);
   const [coordsClickInMap, setCoordsClickInMap] = useState();
+  const isFocused = useIsFocused();
+  const notifyEvidenceUploaded = useNotify();
+
+  Logger.setLogCallback((log) => {
+    const { message } = log;
+
+    // expected warnings - see https://github.com/mapbox/mapbox-gl-native/issues/15341#issuecomment-522889062
+    if (
+      message.match('Request failed due to a permanent error: Canceled') ||
+      message.match('Request failed due to a permanent error: Socket Closed')
+    ) {
+      return true;
+    }
+    return false;
+  });
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', () => {
       return true;
     });
-  }, []);
-
-  useEffect(() => {
-    if (indices === null && !loadingIndices) {
-      dispatch(fetchIndicesIncendios());
-    }
   }, []);
 
   useEffect(() => {
@@ -128,13 +136,13 @@ const Maps = () => {
     ) {
       setShowMessageIndicesNotFound(true);
     }
-  }, [errorsRequest, indices]);
+  }, [errorsRequest, indices, loadingIndices, loadingValidateGeolocationUser]);
 
   useEffect(() => {
     if (indiceSaved) {
       dispatch(fetchIndicesIncendios());
     }
-  }, [indiceSaved]);
+  }, [dispatch, indiceSaved]);
 
   function _saveIndice(value) {
     const coordinates = value.geometry.coordinates;
@@ -178,12 +186,26 @@ const Maps = () => {
     );
     dispatch(fetchSaveIndice(indiceCreateToUser));
   }
+
+  function returnToLocale() {
+    mapRef.current.moveTo([
+      userGeolocation.longitude,
+      userGeolocation.latitude,
+    ]);
+  }
+  function showIndiceDetail(coordinate) {
+    setShowDetail(true);
+    setIndiceCoords({
+      latitude: coordinate.latitude,
+      longitude: coordinate.longitude,
+    });
+    setIndiceToShow(coordinate);
+  }
+
   return loadingValidateGeolocationUser ? (
     <Loading loading={loadingValidateGeolocationUser || loadingIndices} />
   ) : (
-    <View style={styles.containerMapsAndButtons}>
-      <FloatingMenu setMapStyle={setMapStyle} />
-      <Previsao userCoordinates={userGeolocation} />
+    <>
       <Modal transparent={true} visible={showDetail} animationType='slide'>
         <DetailIndice
           resetIndiceToShow={setIndiceToShow}
@@ -193,105 +215,124 @@ const Maps = () => {
         />
       </Modal>
 
-      <ModalNovoIndice
-        visible={showModalNovoIndice}
-        onConfirm={() => _saveIndice(coordsClickInMap)}
-        onCancel={() => setShowModalNovoIndice(false)}
-      />
-      <MapboxGL.MapView
-        onLongPress={(value) => {
-          if (indiceToShow === null) {
-            setCoordsClickInMap(value);
-            setShowModalNovoIndice(true);
-          }
-        }}
-        styleURL={mapStyle}
-        zoomLevel={20}
-        logoEnabled={false}
-        attributionEnabled={false}
-        centerCoordinate={[userGeolocation.longitude, userGeolocation.latitude]}
-        style={styles.containerMap}>
-        <MapboxGL.Camera
-          zoomLevel={10}
-          // zoom pra cima
-          minZoomLevel={7}
-          // zoom pra baixo
-          maxZoomLevel={20}
+      {!loadingIndices &&
+        !loadingValidateGeolocationUser &&
+        indices === null &&
+        isFocused && (
+          <Modal visible={showMessageIndicesNotFound} transparent={true}>
+            <View style={styles.containerIndicesNotFound}>
+              <Text style={styles.labelIndiceNotFound}>
+                {`${'!Ops.\nNão foi possível carregar os dados'}`}
+              </Text>
+              <TouchableOpacity
+                style={styles.btnOkIndiceNotFound}
+                onPress={() => setShowMessageIndicesNotFound(false)}>
+                <Text
+                  style={[styles.labelIndiceNotFound, styles.labelButtonOk]}>
+                  Ok
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+        )}
+      <View style={styles.containerMapsAndButtons}>
+        <Previsao userCoordinates={userGeolocation} />
+
+        <FloatingMenu setMapStyle={setMapStyle} />
+        <View style={styles.containerIconLocation}>
+          <IconMaterial
+            onPress={() => returnToLocale()}
+            name={'my-location'}
+            style={styles.styleIcon}
+          />
+        </View>
+
+        <ModalNovoIndice
+          visible={showModalNovoIndice}
+          onConfirm={() => _saveIndice(coordsClickInMap)}
+          onCancel={() => setShowModalNovoIndice(false)}
+        />
+        <MapboxGL.MapView
+          onLongPress={(value) => {
+            if (indiceToShow === null) {
+              setCoordsClickInMap(value);
+              setShowModalNovoIndice(true);
+            }
+          }}
+          styleURL={mapStyle}
+          zoomLevel={20}
+          logoEnabled={false}
+          attributionEnabled={false}
           centerCoordinate={[
             userGeolocation.longitude,
             userGeolocation.latitude,
           ]}
-          animationMode={'flyTo'}
-          animationDuration={1100}
-        />
+          style={styles.containerMap}>
+          <MapboxGL.Camera
+            ref={mapRef}
+            zoomLevel={10}
+            // zoom pra cima
+            minZoomLevel={7}
+            // zoom pra baixo
+            maxZoomLevel={20}
+            centerCoordinate={[
+              userGeolocation.longitude,
+              userGeolocation.latitude,
+            ]}
+            animationMode={'flyTo'}
+            animationDuration={1100}
+          />
 
-        {indices &&
-          indices.map((coordinate, index) => {
-            if (coordinate.ativo) {
-              return (
-                <MapboxGL.MarkerView
-                  key={index}
-                  coordinate={[
-                    Number(coordinate.longitude),
-                    Number(coordinate.latitude),
-                  ]}>
-                  {coordinate.userCreated ? (
-                    <View style={styles.containerIndexFire}>
-                      <IconSimple
-                        onLongPress={() => {
-                          setShowDetail(true);
-                          setIndiceCoords({
-                            latitude: coordinate.latitude,
-                            longitude: coordinate.longitude,
-                          });
-                          setIndiceToShow(coordinate);
-                        }}
-                        name='fire'
-                        size={30}
-                        color={'#FFF000'}
-                      />
-                    </View>
-                  ) : (
-                    <View style={styles.containerIndexFire}>
-                      <IconSimple
-                        onPress={() => {
-                          setShowDetail(true);
-                          setIndiceCoords({
-                            latitude: coordinate.latitude,
-                            longitude: coordinate.longitude,
-                          });
-                          setIndiceToShow(coordinate);
-                        }}
-                        name='fire'
-                        size={30}
-                        color={
-                          coordinate.brightness >= 500 ? '#F00' : '#ff4500'
-                        }
-                      />
-                    </View>
-                  )}
-                </MapboxGL.MarkerView>
-              );
-            }
-          })}
-      </MapboxGL.MapView>
-      {!loadingIndices && !loadingValidateGeolocationUser && indices === null && (
-        <Modal visible={showMessageIndicesNotFound} transparent={true}>
-          <View style={styles.containerIndicesNotFound}>
-            <Text style={styles.labelIndiceNotFound}>
-              {`${'!Ops.\nNão foi possível carregar os dados'}`}
-            </Text>
-            <TouchableOpacity
-              style={styles.btnOkIndiceNotFound}
-              onPress={() => setShowMessageIndicesNotFound(false)}>
-              <Text style={[styles.labelIndiceNotFound, styles.labelButtonOk]}>
-                Ok
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </Modal>
-      )}
-    </View>
+          <MapboxGL.UserLocation
+            showsUserHeadingIndicator={true}
+            visible={true}
+            renderMode='native'
+          />
+
+          {indices &&
+            indices.map((coordinate, index) => {
+              if (coordinate.ativo) {
+                return (
+                  <MapboxGL.MarkerView
+                    key={index}
+                    coordinate={[
+                      Number(coordinate.longitude),
+                      Number(coordinate.latitude),
+                    ]}>
+                    {coordinate &&
+                    coordinate.hasOwnProperty('userCreated') &&
+                    coordinate.userCreated ? (
+                      <View style={styles.containerIndexFire}>
+                        <IconSimple
+                          onPress={() => {
+                            showIndiceDetail(coordinate);
+                          }}
+                          name='fire'
+                          size={30}
+                          color={'#FFF000'}
+                        />
+                      </View>
+                    ) : (
+                      <View style={styles.containerIndexFire}>
+                        <IconSimple
+                          onPress={() => showIndiceDetail(coordinate)}
+                          name='fire'
+                          size={30}
+                          color={
+                            coordinate.brightness >= 500 ? '#F00' : '#ff4500'
+                          }
+                        />
+                      </View>
+                    )}
+                  </MapboxGL.MarkerView>
+                );
+              }
+            })}
+        </MapboxGL.MapView>
+
+        {notifyEvidenceUploaded}
+      </View>
+    </>
   );
 };
 

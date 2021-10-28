@@ -6,11 +6,11 @@ export default StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFF',
-    height: width * 0.9,
+    height: width * 1.2,
     marginHorizontal: '10%',
-    marginVertical: '20%',
+    marginVertical: '30%',
     borderRadius: 15,
-    top: '10%',
+    elevation: 10,
   },
   header: {
     top: '0%',
@@ -48,5 +48,12 @@ export default StyleSheet.create({
   },
   iconCloseSize: width * 0.07,
   iconIndiceSize: width * 0.15,
-  iconOcorreuEmSize: width * 0.08,
+
+  iconColorBlack: {
+    color: '#000',
+    fontSize: width * 0.08,
+  },
+  containerRenderComponents: {
+    alignItems: 'center',
+  },
 });

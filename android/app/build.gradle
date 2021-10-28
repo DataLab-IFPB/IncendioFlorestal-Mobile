@@ -137,6 +137,8 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        vectorDrawables.useSupportLibrary = true
+
     }
     splits {
         abi {
@@ -204,6 +206,11 @@ dependencies {
 
     // VECTOR ICONS
     implementation project(':react-native-vector-icons')
+
+
+    // REACT NATIVE VIDEO
+    compile project(':react-native-video')
+    implementation "androidx.appcompat:appcompat:1.0.0"
 
 
 

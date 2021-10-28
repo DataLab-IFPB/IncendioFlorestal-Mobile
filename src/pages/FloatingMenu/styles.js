@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -6,15 +6,18 @@ export const styles = (theme) => {
   return StyleSheet.create({
     actionButtonIcon: {
       fontSize: width * 0.04,
-      color: theme === 'dark' ? '#fff' : '#000',
+      color: '#FFFF',
     },
-    container: {
-      position: 'absolute',
-      elevation: 10,
-      zIndex: 2,
-    },
+
     menuColor: {
-      color: theme === 'dark' ? '#000' : '#FFF',
+      color: '#000',
     },
+    containerFloatingMenu: {
+      position: 'absolute',
+      zIndex: 2,
+      top: '8%',
+      marginLeft: '-3.4%',
+    },
+    menuSize: width * 0.1,
   });
 };

@@ -20,7 +20,7 @@ const ModalNovoIndice = ({ visible, onCancel, onConfirm }) => {
     if (indiceSaved) {
       onCancel();
     }
-  }, [indiceSaved]);
+  }, [indiceSaved, onCancel]);
 
   return (
     <Modal visible={visible} transparent={true} animationType='slide'>

@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import MapboxGL from '@react-native-mapbox-gl/maps';
 import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
+  Image,
+  Keyboard,
   Text,
   TextInput,
-  Image,
-  TouchableWithoutFeedback,
   TouchableOpacity,
-  Keyboard,
+  TouchableWithoutFeedback,
+  View,
 } from 'react-native';
-import packageJson from '../../../package.json';
-
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import Logo from '../../assets/logo.png';
-import Loading from '../components/Loading';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchLogin } from '../../redux/login/login-action';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import packageJson from '../../../package.json';
+import Logo from '../../assets/logo.png';
 import { PERMISSION_LOCATION_USE } from '../../constants/keys';
+import { fetchLogin } from '../../redux/login/login-action';
+import Loading from '../components/Loading';
 import styles from './styles';
-import MapboxGL from '@react-native-mapbox-gl/maps';
+
 const Login = () => {
   const navigation = useNavigation();
   const [matricula, setMatricula] = useState(null);
@@ -27,6 +27,7 @@ const Login = () => {
   const [autenticacaoInvalida, setAutenticacaoInvalida] = useState(false);
   const loading = useSelector((state) => state.login.loading);
   const user = useSelector((state) => state.login.data);
+  const newUser = useSelector((state) => state.login.newUser);
   const error = useSelector((state) => state.login.error);
   const dispatch = useDispatch();
 
@@ -45,16 +46,16 @@ const Login = () => {
   }, []);
 
   useEffect(() => {
-    if (user) {
-      if (user.firstLogin) {
-        navigation.navigate('FirstLogin', {
-          usuario: user,
-        });
-      } else {
-        navigation.navigate('Home');
-      }
+    if (user && user.firstLogin && newUser === null) {
+      redirectToConfigurePassword();
+    } else if (user && user.birthDate === '') {
+      navigation.navigate('Home');
     }
-  }, [navigation, user]);
+
+    if (newUser) {
+      navigation.navigate('Home');
+    }
+  }, [user, newUser]);
 
   useEffect(() => {
     if (error && !loading) {
@@ -68,6 +69,12 @@ const Login = () => {
     return await MapboxGL.requestAndroidLocationPermissions();
   };
 
+  const redirectToConfigurePassword = () => {
+    navigation.navigate('FirstLogin', {
+      usuario: user.userData,
+    });
+  };
+
   const logar = () => {
     if (
       (!matricula && !senha) ||
@@ -77,8 +84,7 @@ const Login = () => {
       setAutenticacaoInvalida(true);
     } else {
       setAutenticacaoInvalida(false);
-      setMatricula(matricula);
-      dispatch(fetchLogin({ matricula, senha: parseInt(senha, 10) }));
+      dispatch(fetchLogin({ matricula, senha }));
     }
   };
   const [iconName, setIconName] = useState('eye-slash');

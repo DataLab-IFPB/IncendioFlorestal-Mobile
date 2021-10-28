@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -9,6 +9,8 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPrevisao } from '../../redux/previsao/previsao-action';
 import formatDate from '../../utils/format-data';
+import Galery from '../components/Galery';
+import PickerImage from '../components/PickerImage';
 import styles from './styles';
 
 const DetailIndice = ({
@@ -20,9 +22,37 @@ const DetailIndice = ({
   const dispatch = useDispatch();
   const previsao = useSelector((state) => state.previsao.data);
   const loading = useSelector((state) => state.previsao.loading);
+  const [containsEvidences, setContainsEvidenceces] = useState({
+    contain: false,
+    evidences: null,
+  });
+
   useEffect(() => {
     dispatch(fetchPrevisao(indiceCoords));
-  }, [indiceCoords]);
+  }, [dispatch, indiceCoords]);
+
+  useEffect(() => {
+    function mountEvidencecData() {
+      const keys = Object.keys(indice.evidences);
+
+      const evidencesData = Object.values(indice.evidences);
+
+      return evidencesData.map((evidence, index) => {
+        return {
+          uid: keys[index],
+          ...evidence,
+        };
+      });
+    }
+
+    if (indice && indice.hasOwnProperty('evidences')) {
+      const evidencesData = mountEvidencecData();
+      setContainsEvidenceces({
+        contain: true,
+        evidences: evidencesData,
+      });
+    }
+  }, [indice]);
 
   function _renderInfo(info) {
     return info === null ? ' - ' : info;
@@ -30,7 +60,7 @@ const DetailIndice = ({
 
   function _renderComponent(icon, data) {
     return (
-      <View style={{ alignItems: 'center' }}>
+      <View style={styles.containerRenderComponents}>
         {icon}
         {data}
       </View>
@@ -71,18 +101,16 @@ const DetailIndice = ({
           </View>
           <Text style={styles.labelNoBold}>Ocorreu de:</Text>
           {indice && indice.daynight === 'D' ? (
-            <Fontisto
-              name='day-sunny'
-              size={styles.iconOcorreuEmSize}
-              color='#000'
-            />
+            <Fontisto name='day-sunny' style={styles.iconColorBlack} />
           ) : (
-            <Feather name='moon' color='#000' size={styles.iconOcorreuEmSize} />
+            <Feather name='moon' style={styles.iconColorBlack} />
           )}
 
           <View style={styles.containerPrevisao}>
             <Text style={styles.labelNoBold}>
-              {`Local: ${previsao && _renderInfo(previsao.location.name)}`}
+              {`Local: ${
+                previsao && _renderInfo(previsao.location.name || '')
+              }`}
             </Text>
             <View style={styles.containerOrientation}>
               {_renderComponent(
@@ -128,6 +156,16 @@ const DetailIndice = ({
               )}
             </View>
           </View>
+
+          <PickerImage indice={indice} />
+
+          {containsEvidences.contain &&
+            containsEvidences.evidences.length > 0 && (
+              <Galery
+                evidences={containsEvidences.evidences}
+                indiceUid={indice.uid}
+              />
+            )}
         </>
       )}
     </View>

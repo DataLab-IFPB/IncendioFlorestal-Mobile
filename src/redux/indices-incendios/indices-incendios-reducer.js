@@ -5,6 +5,12 @@ const initialState = {
   error: null,
   loading: false,
   indiceSaved: false,
+  loadingAddEvidence: false,
+  evidenceSaved: null,
+  errorSaveEvidence: null,
+  loadingRemoveEvidence: false,
+  evidenceRemoved: null,
+  errorRemoveEvidence: null,
 };
 
 export default function (state = initialState, action) {
@@ -44,6 +50,46 @@ export default function (state = initialState, action) {
         loading: false,
         error: action.payload,
       };
+
+    case types.FETCH_ADD_EVIDENCE:
+      return {
+        ...state,
+        loadingAddEvidence: true,
+      };
+    case types.FETCH_ADD_EVIDENCE_SUCCESS:
+      return {
+        ...state,
+        evidenceSaved: action.payload,
+        loadingAddEvidence: false,
+      };
+    case types.FETCH_ADD_EVIDENCE_FAIL:
+      return {
+        ...state,
+        loadingAddEvidence: false,
+        errorSaveEvidence: action.payload,
+      };
+
+    case types.FETCH_REMOVE_EVIDENCE: {
+      return {
+        ...state,
+        loadingRemoveEvidence: true,
+      };
+    }
+
+    case types.FETCH_REMOVE_EVIDENCE_SUCCESS: {
+      return {
+        ...state,
+        loadingRemoveEvidence: false,
+        evidenceRemoved: action.payload,
+      };
+    }
+    case types.FETCH_REMOVE_EVIDENCE_FAIL: {
+      return {
+        ...state,
+        loadingRemoveEvidence: false,
+        errorRemoveEvidence: action.payload,
+      };
+    }
     default:
       return state;
   }

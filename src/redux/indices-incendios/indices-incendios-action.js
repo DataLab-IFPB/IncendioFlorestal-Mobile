@@ -40,3 +40,45 @@ export const fetchSaveIndiceFail = (error) => {
     payload: error,
   };
 };
+
+export const fetchAddEvidence = (evidence) => {
+  return {
+    type: types.FETCH_ADD_EVIDENCE,
+    payload: evidence,
+  };
+};
+
+export const fetchAddEvidenceSuccess = (data) => {
+  return {
+    type: types.FETCH_ADD_EVIDENCE_SUCCESS,
+    payload: data,
+  };
+};
+
+export const fetchAddEvidenceFail = (error) => {
+  return {
+    type: types.FETCH_ADD_EVIDENCE_FAIL,
+    payload: error,
+  };
+};
+
+export const fetchRemoveEvidence = (evidence) => {
+  return {
+    type: types.FETCH_REMOVE_EVIDENCE,
+    payload: evidence,
+  };
+};
+
+export const fetchRemoveEvidenceSuccess = (data) => {
+  return {
+    type: types.FETCH_REMOVE_EVIDENCE_SUCCESS,
+    payload: data,
+  };
+};
+
+export const fetchRemoveEvidenceFail = (error) => {
+  return {
+    type: types.FETCH_REMOVE_EVIDENCE_FAIL,
+    payload: error,
+  };
+};

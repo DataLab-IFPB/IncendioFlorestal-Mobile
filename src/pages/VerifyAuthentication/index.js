@@ -13,26 +13,30 @@ const VerifyAuthentication = () => {
   const [loading, setLoading] = useState(true);
   const loadingIndices = useSelector((state) => state.indicesIncendios.loading);
   const dispatch = useDispatch();
+
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         setValidateToken(true);
         setLoading(false);
-      } else {
+      } else if (user === null) {
         setValidateToken(false);
         setLoading(false);
       }
     });
+    return () => {};
   }, []);
 
   useEffect(() => {
     if (validateToken) {
       dispatch(fetchIndicesIncendios());
     }
-  }, [validateToken]);
+  }, [dispatch, validateToken]);
 
-  if (validateToken === null && loadingIndices) {
-    return <Loading loading={loading || loadingIndices} />;
+  if (validateToken === null) {
+    return (
+      <Loading loading={loading || loadingIndices || validateToken === null} />
+    );
   }
   return validateToken ? (
     <Stack.Navigator>

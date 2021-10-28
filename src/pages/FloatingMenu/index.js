@@ -1,8 +1,8 @@
-import React from 'react';
-import IconAwesome from 'react-native-vector-icons/FontAwesome5';
 import MapboxGL from '@react-native-mapbox-gl/maps';
-import ActionButton from 'react-native-action-button';
+import React from 'react';
 import { useColorScheme } from 'react-native';
+import ActionButton from 'react-native-action-button';
+import IconAwesome from 'react-native-vector-icons/FontAwesome5';
 import { styles } from './styles';
 const FloatingMenu = ({ setMapStyle }) => {
   const theme = useColorScheme();
@@ -13,9 +13,10 @@ const FloatingMenu = ({ setMapStyle }) => {
 
   return (
     <ActionButton
-      style={style.container}
+      style={style.containerFloatingMenu}
       renderIcon={() => handleIcon('layer-group')}
       verticalOrientation='down'
+      size={style.menuSize}
       position='left'
       buttonColor={style.menuColor.color}>
       <ActionButton.Item
