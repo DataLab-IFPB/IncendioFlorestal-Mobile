@@ -157,7 +157,7 @@ const DetailIndice = ({
             </View>
           </View>
 
-          <PickerImage key={indice.uid} indice={indice} />
+          <PickerImage indice={indice} />
 
           {containsEvidences.contain &&
             containsEvidences.evidences.length > 0 && (

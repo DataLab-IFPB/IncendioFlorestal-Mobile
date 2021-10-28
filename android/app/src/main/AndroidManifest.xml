@@ -9,6 +9,11 @@
   <uses-feature android:name="android.hardware.camera" android:required="false" />
   <uses-feature android:name="android.hardware.camera.front" android:required="false" />
 
+  <!-- Para usar camera frontal -->
+  <uses-feature android:name="android.hardware.camera" android:required="false" />
+  <uses-feature android:name="android.hardware.camera.front" android:required="false" />
+
+
 
 
 

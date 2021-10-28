@@ -22,9 +22,9 @@ export default StyleSheet.create({
     fontWeight: 'bold',
   },
   imageEvidence: {
-    width: width * 0.4,
-    height: width * 0.3,
-    resizeMode: 'center',
+    resizeMode: 'contain',
+    width: '100%',
+    height: '100%',
   },
   videoEvidence: {
     width: width * 0.95,

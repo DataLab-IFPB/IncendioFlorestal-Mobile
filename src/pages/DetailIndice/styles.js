@@ -8,7 +8,7 @@ export default StyleSheet.create({
     backgroundColor: '#FFF',
     height: width * 1.2,
     marginHorizontal: '10%',
-    marginVertical: '40%',
+    marginVertical: '30%',
     borderRadius: 15,
     elevation: 10,
   },

@@ -27,14 +27,14 @@ const PickerImage = ({ indice }) => {
   );
 
   useEffect(() => {
-    function restoreUserRegistration() {
-      AsyncStorage.getItem(USER_REGISTRATION).then((value) => {
-        setRegistrationUser(value);
-      });
+    async function restoreUserRegistration() {
+      const registration = await AsyncStorage.getItem(USER_REGISTRATION);
+      if (registration) {
+        setRegistrationUser(registration);
+      }
     }
-    restoreUserRegistration();
 
-    return () => {};
+    restoreUserRegistration();
   }, []);
 
   useEffect(() => {
@@ -47,13 +47,16 @@ const PickerImage = ({ indice }) => {
     setUploadType(UPLOAD_TYPES.CAM);
     setMediaTypeSend(UPLOAD_TYPE.IMAGE);
     ImagePicker.openCamera({
+      forceJpg: true,
       width: QUALITY_IMAGE_AND_VIDEO.width,
       height: QUALITY_IMAGE_AND_VIDEO.height,
-      cropping: false,
+      cropping: true,
       includeBase64: true,
       mediaType: 'photo',
       compressImageQuality: 1,
-    }).then((image) => setFile(image));
+    })
+      .then((image) => setFile(image))
+      .catch((err) => console.warn(err));
   }
 
   function openPickerCamRecord() {
@@ -64,12 +67,14 @@ const PickerImage = ({ indice }) => {
       width: QUALITY_IMAGE_AND_VIDEO.width,
       height: QUALITY_IMAGE_AND_VIDEO.height,
       mediaType: 'video',
-    }).then((image) => {
-      const validateLenghtRecord = validateLenghtFile(image.duration);
-      if (validateLenghtRecord) {
-        setFile(image);
-      }
-    });
+    })
+      .then((image) => {
+        const validateLenghtRecord = validateLenghtFile(image.duration);
+        if (validateLenghtRecord) {
+          setFile(image);
+        }
+      })
+      .catch((err) => console.warn(err));
   }
 
   function validateLenghtFile(duration) {
@@ -86,7 +91,9 @@ const PickerImage = ({ indice }) => {
       includeBase64: true,
       mediaType: 'any',
       compressImageQuality: 1,
-    }).then((image) => setFile(image));
+    })
+      .then((image) => setFile(image))
+      .catch((err) => console.warn(err));
   }
 
   function invalidateFile() {
