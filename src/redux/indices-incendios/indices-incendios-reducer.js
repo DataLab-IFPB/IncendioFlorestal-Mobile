@@ -1,5 +1,6 @@
 import * as types from './indices-incendios-types';
-
+import { createActions, createReducer } from 'reduxsauce';
+import { markActionsOffline } from 'redux-offline-queue';
 const initialState = {
   data: null,
   error: null,
@@ -12,6 +13,18 @@ const initialState = {
   evidenceRemoved: null,
   errorRemoveEvidence: null,
 };
+
+const { Creators } = createActions({
+  saveIndiceIncendio: ['data'],
+  saveIndiceSuccess: ['data'],
+  saveIndiceFail: ['error'],
+});
+
+markActionsOffline(Creators, [
+  'saveIndiceIncendio',
+  'saveIndiceSuccess',
+  'saveIndiceFail',
+]);
 
 export default function (state = initialState, action) {
   switch (action.type) {
