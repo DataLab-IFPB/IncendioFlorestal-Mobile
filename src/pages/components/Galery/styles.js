@@ -26,6 +26,11 @@ export default StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  imagePreview: {
+    resizeMode: 'contain',
+    width: width * 0.35,
+    height: width * 0.35,
+  },
   videoEvidence: {
     width: width * 0.95,
     height: width * 0.35,

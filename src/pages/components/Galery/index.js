@@ -86,7 +86,7 @@ const Galery = ({ evidences, indiceUid }) => {
         onPress={enableVisualizationDetail}>
         <Image
           source={{ uri: evidence.item.uri }}
-          style={styles.imageEvidence}
+          style={styles.imagePreview}
         />
         <VisualizationEvidence
           content={
