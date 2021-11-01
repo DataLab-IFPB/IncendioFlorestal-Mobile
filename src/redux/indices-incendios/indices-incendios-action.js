@@ -82,3 +82,10 @@ export const fetchRemoveEvidenceFail = (error) => {
     payload: error,
   };
 };
+
+export const resetEvidenceSaved = () => {
+  return {
+    type: types.RESET_EVIDENCE_SAVED,
+    payload: false,
+  };
+};

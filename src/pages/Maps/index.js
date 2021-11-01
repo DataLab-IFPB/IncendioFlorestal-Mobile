@@ -15,6 +15,10 @@ import {
   fetchSaveIndice,
 } from '../../redux/indices-incendios/indices-incendios-action';
 import { fetchPrevisao } from '../../redux/previsao/previsao-action';
+import {
+  saveIndiceLocal,
+  saveTemperatureLocal,
+} from '../../service/saveDataOffine';
 import getMoment from '../../utils/getMoment';
 import Loading from '../components/Loading';
 import DetailIndice from '../DetailIndice';
@@ -26,14 +30,14 @@ const Maps = () => {
   const dispatch = useDispatch();
   MapboxGL.setAccessToken(MAP_BOX_KEY);
   const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Street);
-  const indices = useSelector((state) => state.indicesIncendios.data);
+  const indicesData = useSelector((state) => state.indicesIncendios.data);
   const loadingIndices = useSelector((state) => state.indicesIncendios.loading);
   const errorsRequest = useSelector((state) => state.indicesIncendios.error);
   const mapRef = useRef();
   const indiceSaved = useSelector(
     (state) => state.indicesIncendios.indiceSaved,
   );
-
+  const [indices, setIndices] = useState([]);
   const [showDetail, setShowDetail] = useState(false);
   const [indiceCoords, setIndiceCoords] = useState();
   const [indiceToShow, setIndiceToShow] = useState(null);
@@ -67,6 +71,12 @@ const Maps = () => {
     }
     return false;
   });
+
+  useEffect(() => {
+    if (indicesData) {
+      setIndices(indicesData);
+    }
+  }, [indicesData]);
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', () => {
@@ -144,36 +154,37 @@ const Maps = () => {
     }
   }, [dispatch, indiceSaved]);
 
-  function _saveIndice(value) {
+  async function _saveIndice(value) {
     const coordinates = value.geometry.coordinates;
     const longitude = coordinates[0];
     const latitude = coordinates[1];
+
+    const temperature = {
+      temp_c: previsaoNewIndice && previsaoNewIndice.current.temp_c,
+      wind_kph: previsaoNewIndice && previsaoNewIndice.current.wind_kph,
+      humidity: previsaoNewIndice && previsaoNewIndice.current.humidity,
+      locale: previsaoNewIndice && previsaoNewIndice.location.name,
+      precip_in: previsaoNewIndice && previsaoNewIndice.current.precip_in,
+    };
 
     const indiceCreateToUser = {
       latitude: latitude,
       longitude: longitude,
       userCreated: true,
       acq_date: new Date().toISOString(),
-      acq_datetime: null,
-      acq_time: null,
+      acq_datetime: '',
+      acq_time: '',
       ativo: true,
-      brightness: null,
-      brightness_2: null,
-      confidence: null,
+      brightness: 0,
+      brightness_2: 0,
+      confidence: true,
       daynight: getMoment(),
       frp: null,
       point: [longitude, latitude],
       satellite: '',
       scan: '',
       track: '',
-      version: '1',
-      temperature: {
-        temp_c: previsaoNewIndice && previsaoNewIndice.current.temp_c,
-        wind_kph: previsaoNewIndice && previsaoNewIndice.current.wind_kph,
-        humidity: previsaoNewIndice && previsaoNewIndice.current.humidity,
-        locale: previsaoNewIndice && previsaoNewIndice.location.name,
-        precip_in: previsaoNewIndice && previsaoNewIndice.current.precip_in,
-      },
+      version: 1,
     };
 
     const latitudeCoordisClickMap = value.geometry.coordinates[1];
@@ -184,7 +195,16 @@ const Maps = () => {
         longitude: longitudeCoordisClickMap,
       }),
     );
-    dispatch(fetchSaveIndice(indiceCreateToUser));
+    dispatch(fetchSaveIndice({ ...indiceCreateToUser, temperature }));
+
+    const temperatureSaved = await saveTemperatureLocal(temperature);
+
+    if (temperatureSaved) {
+      await saveIndiceLocal({
+        ...indiceCreateToUser,
+        temperature: temperatureSaved,
+      });
+    }
   }
 
   function returnToLocale() {
@@ -203,7 +223,11 @@ const Maps = () => {
   }
 
   return loadingValidateGeolocationUser ? (
-    <Loading loading={loadingValidateGeolocationUser || loadingIndices} />
+    <Loading
+      loading={
+        loadingValidateGeolocationUser || loadingIndices || indices.length === 0
+      }
+    />
   ) : (
     <>
       <Modal transparent={true} visible={showDetail} animationType='slide'>

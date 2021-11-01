@@ -51,7 +51,7 @@ export default StyleSheet.create({
   containerIconLocation: {
     position: 'absolute',
     zIndex: 2,
-    marginLeft: '3.8%',
+    marginLeft: width <= 400 ? '4.5%' : '3.8%',
     top: '5%',
     backgroundColor: '#000',
     borderRadius: 30,

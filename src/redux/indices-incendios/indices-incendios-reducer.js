@@ -1,6 +1,6 @@
-import * as types from './indices-incendios-types';
-import { createActions, createReducer } from 'reduxsauce';
 import { markActionsOffline } from 'redux-offline-queue';
+import { createActions } from 'reduxsauce';
+import * as types from './indices-incendios-types';
 const initialState = {
   data: null,
   error: null,
@@ -103,6 +103,12 @@ export default function (state = initialState, action) {
         errorRemoveEvidence: action.payload,
       };
     }
+
+    case types.RESET_EVIDENCE_SAVED:
+      return {
+        ...state,
+        indiceSaved: action.payload,
+      };
     default:
       return state;
   }

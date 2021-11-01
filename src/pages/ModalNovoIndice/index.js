@@ -7,20 +7,22 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import LogoApp from '../../assets/logo.png';
+import { resetEvidenceSaved } from '../../redux/indices-incendios/indices-incendios-action';
 import styles from './styles';
-
 const ModalNovoIndice = ({ visible, onCancel, onConfirm }) => {
+  const dispatch = useDispatch();
   const indiceSaved = useSelector(
     (state) => state.indicesIncendios.indiceSaved,
   );
 
   useEffect(() => {
     if (indiceSaved) {
+      dispatch(resetEvidenceSaved(false));
       onCancel();
     }
-  }, [indiceSaved, onCancel]);
+  }, [dispatch, indiceSaved, onCancel]);
 
   return (
     <Modal visible={visible} transparent={true} animationType='slide'>
