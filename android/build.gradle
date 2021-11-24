@@ -8,6 +8,7 @@ buildscript {
         targetSdkVersion = 29
         ndkVersion = "20.1.5948944"
         playServicesVersion = "17.0.0" // or find latest version
+        androidXCore = "1.7.0"
 
     }
     repositories {

@@ -6,6 +6,7 @@ import { BackHandler, Modal, Text, TouchableOpacity, View } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
+import { useNetInfo } from '@react-native-community/netinfo';
 import { useDispatch, useSelector } from 'react-redux';
 import { MAP_BOX_KEY } from '../../config/keys';
 import { PERMISSION_LOCATION_USE } from '../../constants/keys';
@@ -22,6 +23,7 @@ import FloatingMenu from '../FloatingMenu';
 import ModalNovoIndice from '../ModalNovoIndice';
 import Previsao from '../Previsao';
 import styles from './styles';
+import CustomModal from '../components/CustomModal';
 const Maps = () => {
   const dispatch = useDispatch();
   MapboxGL.setAccessToken(MAP_BOX_KEY);
@@ -33,12 +35,16 @@ const Maps = () => {
   const indiceSaved = useSelector(
     (state) => state.indicesIncendios.indiceSaved,
   );
+  const [isConnect, setIsConnect] = useState(true);
+  const connect = useNetInfo();
 
   const [showDetail, setShowDetail] = useState(false);
   const [indiceCoords, setIndiceCoords] = useState();
   const [indiceToShow, setIndiceToShow] = useState(null);
   const [showMessageIndicesNotFound, setShowMessageIndicesNotFound] =
     useState(false);
+
+  const [showModalNotConnect, setShowModalNotConnect] = useState(false);
   const [userGeolocation, setUserGeolocation] = useState({
     latitude: 0,
     longitude: 0,
@@ -52,6 +58,7 @@ const Maps = () => {
 
   const [showModalNovoIndice, setShowModalNovoIndice] = useState(false);
   const [coordsClickInMap, setCoordsClickInMap] = useState();
+
   const isFocused = useIsFocused();
   const notifyEvidenceUploaded = useNotify();
 
@@ -67,6 +74,10 @@ const Maps = () => {
     }
     return false;
   });
+
+  useEffect(() => {
+    setIsConnect(connect.isConnected);
+  }, [connect.isConnected]);
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', () => {
@@ -206,6 +217,15 @@ const Maps = () => {
     <Loading loading={loadingValidateGeolocationUser || loadingIndices} />
   ) : (
     <>
+      <CustomModal
+        visible={showModalNotConnect}
+        message={
+          'Você não possui acesso a rede.\nPortanto, não poderá fazer um registro de incêndio'
+        }
+        onConfirm={() => setShowModalNotConnect(false)}
+        enableButtonCancel={false}
+        labelButtonConfirm={'Fechar!'}
+      />
       <Modal transparent={true} visible={showDetail} animationType='slide'>
         <DetailIndice
           resetIndiceToShow={setIndiceToShow}
@@ -256,7 +276,12 @@ const Maps = () => {
           onLongPress={(value) => {
             if (indiceToShow === null) {
               setCoordsClickInMap(value);
-              setShowModalNovoIndice(true);
+
+              if (!isConnect) {
+                setShowModalNotConnect(true);
+              } else {
+                setShowModalNovoIndice(true);
+              }
             }
           }}
           styleURL={mapStyle}
