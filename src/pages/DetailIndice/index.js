@@ -40,13 +40,11 @@ const DetailIndice = ({
 
   useEffect(() => {
     setLoadingLocal(true);
-    console.log('evidenceSaved ', evidenceSaved);
     try {
       firebase
         .database()
         .ref(`dados-firms/${indiceFromMap.uid}`)
         .on('value', (value) => {
-          console.log('indice ', value.val());
           const indiceData = value.val();
           setIndice({
             uid: indiceFromMap.uid,
@@ -82,17 +80,14 @@ const DetailIndice = ({
         contain: true,
         evidences: evidencesData,
       });
+    } else if (indice && !indice.hasOwnProperty('evidences')) {
+      setContainsEvidenceces({
+        contain: false,
+        evidences: null,
+      });
     }
-  }, [indice, evidenceRemoved]);
+  }, [indice, evidenceRemoved, indiceFromMap]);
 
-  // function searchIndice(coordinate) {
-  //   return new Promise((resolve) => {
-  //     firebase
-  //       .database()
-  //       .ref(`dados-firms/${coordinate.uid}`)
-  //       .on('value', (value) => resolve(value.val()));
-  //   }).finally(() => setLoadingSearchIndice(false));
-  // }
   function _renderInfo(info) {
     return info === null ? ' - ' : info;
   }

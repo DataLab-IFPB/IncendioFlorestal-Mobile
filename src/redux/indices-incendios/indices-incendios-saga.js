@@ -151,7 +151,6 @@ function* addEvidence(action) {
     const pathToSaveEvidence = `evidences/${fileName}`;
 
     if (indiceId) {
-      console.log('saga ', indiceId);
       const evidenceSaved = yield sendEvidence(
         pathToSaveEvidence,
         evidence,
@@ -161,7 +160,6 @@ function* addEvidence(action) {
 
       if (evidenceSaved) {
         const evidenceUrl = yield urlEvidenceUploaded(pathToSaveEvidence);
-        console.log(evidenceUrl);
         if (evidenceUrl) {
           yield updateListEvidences(
             indiceId,
@@ -204,7 +202,6 @@ function* removeEvidence(action) {
     const { evidence, allEvidences, indiceUid } = action.payload;
 
     if (evidence === null) {
-      console.log('evidence null');
       yield put(
         fetchRemoveEvidenceFail(new Error('Erro ao remover evidência.')),
       );
