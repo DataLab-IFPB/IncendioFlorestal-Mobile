@@ -48,8 +48,9 @@ const PickerImage = ({ indice }) => {
     setMediaTypeSend(UPLOAD_TYPE.IMAGE);
     ImagePicker.openCamera({
       forceJpg: true,
-      width: QUALITY_IMAGE_AND_VIDEO.width,
       height: QUALITY_IMAGE_AND_VIDEO.height,
+      compressImageMaxWidth: QUALITY_IMAGE_AND_VIDEO.width,
+      compressImageMaxHeight: QUALITY_IMAGE_AND_VIDEO.height,
       cropping: true,
       includeBase64: true,
       mediaType: 'photo',
@@ -103,7 +104,6 @@ const PickerImage = ({ indice }) => {
   async function uploadFile() {
     const MEDIA_TYPE = uploadType;
     setConfirmUpload(false);
-    console.log(indice.uid);
 
     if (file !== null) {
       dispatch(

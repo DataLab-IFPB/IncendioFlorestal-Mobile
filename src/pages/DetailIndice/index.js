@@ -1,3 +1,4 @@
+import firebase from 'firebase';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
@@ -16,16 +17,46 @@ import styles from './styles';
 const DetailIndice = ({
   indiceCoords,
   closeIndiceDetail,
-  indice,
+  indiceFromMap,
   resetIndiceToShow,
 }) => {
   const dispatch = useDispatch();
   const previsao = useSelector((state) => state.previsao.data);
   const loading = useSelector((state) => state.previsao.loading);
+  const [loadingLocal, setLoadingLocal] = useState(false);
   const [containsEvidences, setContainsEvidenceces] = useState({
     contain: false,
     evidences: null,
   });
+
+  const [indice, setIndice] = useState();
+  const evidenceSaved = useSelector(
+    (state) => state.indicesIncendios.evidenceSaved,
+  );
+
+  const evidenceRemoved = useSelector(
+    (state) => state.indicesIncendios.evidenceRemoved,
+  );
+
+  useEffect(() => {
+    setLoadingLocal(true);
+    console.log('evidenceSaved ', evidenceSaved);
+    try {
+      firebase
+        .database()
+        .ref(`dados-firms/${indiceFromMap.uid}`)
+        .on('value', (value) => {
+          console.log('indice ', value.val());
+          const indiceData = value.val();
+          setIndice({
+            uid: indiceFromMap.uid,
+            ...indiceData,
+          });
+        });
+    } finally {
+      setLoadingLocal(false);
+    }
+  }, [indiceFromMap, evidenceSaved, evidenceRemoved]);
 
   useEffect(() => {
     dispatch(fetchPrevisao(indiceCoords));
@@ -52,8 +83,16 @@ const DetailIndice = ({
         evidences: evidencesData,
       });
     }
-  }, [indice]);
+  }, [indice, evidenceRemoved]);
 
+  // function searchIndice(coordinate) {
+  //   return new Promise((resolve) => {
+  //     firebase
+  //       .database()
+  //       .ref(`dados-firms/${coordinate.uid}`)
+  //       .on('value', (value) => resolve(value.val()));
+  //   }).finally(() => setLoadingSearchIndice(false));
+  // }
   function _renderInfo(info) {
     return info === null ? ' - ' : info;
   }
@@ -81,7 +120,7 @@ const DetailIndice = ({
         />
       </View>
 
-      {loading ? (
+      {loading || loadingLocal ? (
         <View>
           <ActivityIndicator size='large' color='#F00' />
         </View>
@@ -91,7 +130,7 @@ const DetailIndice = ({
             <SimpleLineIcons
               name='fire'
               size={styles.iconIndiceSize}
-              color={indice.userCreated ? '#FFF000' : '#F00'}
+              color={indice && indice.userCreated ? '#FFF000' : '#F00'}
             />
             <Text style={styles.labelNoBold}>Registrado em:</Text>
             <Text style={styles.label}>
@@ -157,7 +196,7 @@ const DetailIndice = ({
             </View>
           </View>
 
-          <PickerImage indice={indice} />
+          {indice && <PickerImage indice={indice} />}
 
           {containsEvidences.contain &&
             containsEvidences.evidences.length > 0 && (

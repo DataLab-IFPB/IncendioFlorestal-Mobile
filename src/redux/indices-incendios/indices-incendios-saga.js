@@ -150,29 +150,31 @@ function* addEvidence(action) {
     const fileName = mounteEvidenceName(evidenceFileName);
     const pathToSaveEvidence = `evidences/${fileName}`;
 
-    console.log(indiceId);
-    const evidenceSaved = yield sendEvidence(
-      pathToSaveEvidence,
-      evidence,
-      mediaType,
-      uploadType,
-    );
+    if (indiceId) {
+      console.log('saga ', indiceId);
+      const evidenceSaved = yield sendEvidence(
+        pathToSaveEvidence,
+        evidence,
+        mediaType,
+        uploadType,
+      );
 
-    if (evidenceSaved) {
-      const evidenceUrl = yield urlEvidenceUploaded(pathToSaveEvidence);
-      console.log(evidenceUrl);
-      if (evidenceUrl) {
-        yield updateListEvidences(
-          indiceId,
-          evidenceUrl,
-          mediaType,
-          registrationUser,
-        );
+      if (evidenceSaved) {
+        const evidenceUrl = yield urlEvidenceUploaded(pathToSaveEvidence);
+        console.log(evidenceUrl);
+        if (evidenceUrl) {
+          yield updateListEvidences(
+            indiceId,
+            evidenceUrl,
+            mediaType,
+            registrationUser,
+          );
 
-        yield put(fetchAddEvidenceSuccess(evidenceUrl));
+          yield put(fetchAddEvidenceSuccess(evidenceUrl));
+        }
+      } else {
+        yield put(fetchAddEvidenceFail(new Error('Erro ao enviar evidência')));
       }
-    } else {
-      yield put(fetchAddEvidenceFail(new Error('Erro ao enviar evidência')));
     }
   } catch (error) {
     yield put(fetchAddEvidenceFail(error));

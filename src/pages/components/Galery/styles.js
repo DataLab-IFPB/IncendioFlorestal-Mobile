@@ -27,7 +27,7 @@ export default StyleSheet.create({
     height: '100%',
   },
   imagePreview: {
-    resizeMode: 'contain',
+    resizeMode: 'center',
     width: width * 0.35,
     height: width * 0.35,
   },

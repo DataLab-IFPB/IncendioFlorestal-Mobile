@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import firebase from 'firebase';
 import MapboxGL, { Logger } from '@react-native-mapbox-gl/maps';
 import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
@@ -204,13 +205,14 @@ const Maps = () => {
       userGeolocation.latitude,
     ]);
   }
+
   function showIndiceDetail(coordinate) {
     setShowDetail(true);
+    setIndiceToShow(coordinate);
     setIndiceCoords({
       latitude: coordinate.latitude,
       longitude: coordinate.longitude,
     });
-    setIndiceToShow(coordinate);
   }
 
   return loadingValidateGeolocationUser ? (
@@ -229,7 +231,7 @@ const Maps = () => {
       <Modal transparent={true} visible={showDetail} animationType='slide'>
         <DetailIndice
           resetIndiceToShow={setIndiceToShow}
-          indice={indiceToShow}
+          indiceFromMap={indiceToShow}
           indiceCoords={indiceCoords}
           closeIndiceDetail={setShowDetail}
         />
