@@ -5,7 +5,7 @@ import axios from 'axios';
 import firebase from 'firebase';
 import moment from 'moment';
 import { takeLatest } from 'redux-saga/effects';
-import { DB_URI } from '../../config/keys';
+import { DB_URI_PROD } from '../../config/keys';
 import { UPLOAD_TYPE, USER_REGISTRATION } from '../../constants/keys';
 import {
   fetchAddEvidenceFail,
@@ -80,7 +80,7 @@ function* indicesIncendios() {
   try {
     const { data } = yield call(
       axios.get,
-      `${DB_URI}/${COLECTION_NAME}.${MEDIA_TYPE}`,
+      `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}`,
     );
 
     const valuesMounted = yield mountData(data);

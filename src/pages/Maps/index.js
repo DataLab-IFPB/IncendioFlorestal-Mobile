@@ -1,13 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import firebase from 'firebase';
+import { useNetInfo } from '@react-native-community/netinfo';
 import MapboxGL, { Logger } from '@react-native-mapbox-gl/maps';
 import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
 import { BackHandler, Modal, Text, TouchableOpacity, View } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
+import IconAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
-import { useNetInfo } from '@react-native-community/netinfo';
 import { useDispatch, useSelector } from 'react-redux';
 import { MAP_BOX_KEY } from '../../config/keys';
 import { PERMISSION_LOCATION_USE } from '../../constants/keys';
@@ -18,18 +18,19 @@ import {
 } from '../../redux/indices-incendios/indices-incendios-action';
 import { fetchPrevisao } from '../../redux/previsao/previsao-action';
 import getMoment from '../../utils/getMoment';
+import CustomModal from '../components/CustomModal';
+import Filter from '../components/Filter';
 import Loading from '../components/Loading';
 import DetailIndice from '../DetailIndice';
 import FloatingMenu from '../FloatingMenu';
 import ModalNovoIndice from '../ModalNovoIndice';
 import Previsao from '../Previsao';
 import styles from './styles';
-import CustomModal from '../components/CustomModal';
 const Maps = () => {
   const dispatch = useDispatch();
   MapboxGL.setAccessToken(MAP_BOX_KEY);
   const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Street);
-  const indices = useSelector((state) => state.indicesIncendios.data);
+  const indicesValues = useSelector((state) => state.indicesIncendios.data);
   const loadingIndices = useSelector((state) => state.indicesIncendios.loading);
   const errorsRequest = useSelector((state) => state.indicesIncendios.error);
   const mapRef = useRef();
@@ -39,6 +40,7 @@ const Maps = () => {
   const [isConnect, setIsConnect] = useState(true);
   const connect = useNetInfo();
 
+  const [indices, setIndices] = useState([]);
   const [showDetail, setShowDetail] = useState(false);
   const [indiceCoords, setIndiceCoords] = useState();
   const [indiceToShow, setIndiceToShow] = useState(null);
@@ -59,7 +61,7 @@ const Maps = () => {
 
   const [showModalNovoIndice, setShowModalNovoIndice] = useState(false);
   const [coordsClickInMap, setCoordsClickInMap] = useState();
-
+  const [showModalFilter, setShowModalFilter] = useState(false);
   const isFocused = useIsFocused();
   const notifyEvidenceUploaded = useNotify();
 
@@ -75,6 +77,12 @@ const Maps = () => {
     }
     return false;
   });
+
+  useEffect(() => {
+    if (indicesValues) {
+      setIndices(indicesValues);
+    }
+  }, [indicesValues]);
 
   useEffect(() => {
     setIsConnect(connect.isConnected);
@@ -156,6 +164,10 @@ const Maps = () => {
     }
   }, [dispatch, indiceSaved]);
 
+  useEffect(() => {
+    console.log('indices maps ', indices.length);
+  }, [indices]);
+
   function _saveIndice(value) {
     const coordinates = value.geometry.coordinates;
     const longitude = coordinates[0];
@@ -215,10 +227,20 @@ const Maps = () => {
     });
   }
 
+  function closeModalFilter() {
+    setShowModalFilter(false);
+  }
+
   return loadingValidateGeolocationUser ? (
     <Loading loading={loadingValidateGeolocationUser || loadingIndices} />
   ) : (
     <>
+      <Filter
+        visible={showModalFilter}
+        closeModal={closeModalFilter}
+        indices={indicesValues}
+        refreshIndices={setIndices}
+      />
       <CustomModal
         visible={showModalNotConnect}
         message={
@@ -269,12 +291,20 @@ const Maps = () => {
           />
         </View>
 
+        <TouchableOpacity
+          onPress={() => setShowModalFilter(true)}
+          style={[styles.containerIconLocation, styles.containerFilter]}>
+          <IconAwesome5 name={'filter'} style={styles.iconFilter} />
+        </TouchableOpacity>
+
         <ModalNovoIndice
           visible={showModalNovoIndice}
           onConfirm={() => _saveIndice(coordsClickInMap)}
           onCancel={() => setShowModalNovoIndice(false)}
         />
         <MapboxGL.MapView
+          animated={true}
+          renderToHardwareTextureAndroid={true}
           onLongPress={(value) => {
             if (indiceToShow === null) {
               setCoordsClickInMap(value);
@@ -318,7 +348,7 @@ const Maps = () => {
 
           {indices &&
             indices.map((coordinate, index) => {
-              if (coordinate.ativo) {
+              if (coordinate.active) {
                 return (
                   <MapboxGL.MarkerView
                     key={index}

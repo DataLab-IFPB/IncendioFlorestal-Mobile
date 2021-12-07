@@ -67,4 +67,11 @@ export default StyleSheet.create({
     fontSize: width * 0.07,
     color: '#FFF',
   },
+  iconFilter: {
+    fontSize: width * 0.05,
+    color: '#FFF',
+  },
+  containerFilter: {
+    top: '14%',
+  },
 });

@@ -15,7 +15,7 @@ export const styles = (theme) => {
     containerFloatingMenu: {
       position: 'absolute',
       zIndex: 2,
-      top: '8%',
+      top: '18%',
       marginLeft: '-3.4%',
     },
     menuSize: width * 0.1,

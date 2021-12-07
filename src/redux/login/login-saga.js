@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import firebase from 'firebase';
 import { put, takeLatest } from 'redux-saga/effects';
 import { DOMAIN_EMAIL, USER_REGISTRATION } from '../../constants/keys';
@@ -8,7 +9,6 @@ import {
   fetchNewUserSuccess,
 } from './login-action';
 import { FETCH_LOGIN, FETCH_NEW_USER } from './login-types';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 const getUserInRealTime = (matricula) => {
   return new Promise((resolve) => {
     firebase
