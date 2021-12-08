@@ -12,6 +12,7 @@ const Filter = ({ visible, closeModal, indices, refreshIndices }) => {
   useEffect(() => {
     verifyMounth();
   }, []);
+  // verifica se o mês atual é fevereiro, se sim, altera o limite dos dias para 29.
   function verifyMounth() {
     if (mounthAtual === 2) {
       setMaxValueSlide(29);
@@ -20,6 +21,7 @@ const Filter = ({ visible, closeModal, indices, refreshIndices }) => {
     }
   }
 
+  // compara as datas dado uma data inicial e a data anterior
   function getRange(startDate, endDate, type) {
     let fromDate = moment(startDate);
     let toDate = moment(endDate);
@@ -31,6 +33,8 @@ const Filter = ({ visible, closeModal, indices, refreshIndices }) => {
     return range;
   }
 
+  // realiza a filtragem dos indices de acordo com o resultado do metodo getRange
+  // caso se encaixe na filtragem, o indice sera retornado na nova listagem
   function filtrarIndices() {
     const indicesFiltrados = indices.filter((indice) => {
       let diference =

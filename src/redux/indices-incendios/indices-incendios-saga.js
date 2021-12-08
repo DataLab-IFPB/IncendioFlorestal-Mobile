@@ -26,6 +26,8 @@ import {
 
 const COLECTION_NAME = 'dados-firms';
 const MEDIA_TYPE = 'json';
+
+// salva o indice de incendio no firebase
 const _save = (indiceDindiceDate) => {
   return new Promise((resolve) => {
     firebase
@@ -39,6 +41,8 @@ const _save = (indiceDindiceDate) => {
   });
 };
 
+// monta os objetos que representam um indice de incendio para ficar mais pratico para
+// consultar as propriedades de cada dado
 const mountData = (data) => {
   const indices = Object.values(data);
   const keys = Object.keys(data);
@@ -51,6 +55,7 @@ const mountData = (data) => {
   });
 };
 
+// envia a evidencia para o firebase
 const sendEvidence = (pathSaveIndice, data, mediaType, uploadType) => {
   if (uploadType === UPLOAD_TYPE.IMAGE) {
     return new Promise((resolve) => {
@@ -113,6 +118,7 @@ const urlEvidenceUploaded = async (evidenceName) => {
   return await storage().ref(evidenceName).getDownloadURL();
 };
 
+// atualiza a lista de evidencias de um indice
 const updateListEvidences = (
   indiceUID,
   evidenceUrl,

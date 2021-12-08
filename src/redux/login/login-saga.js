@@ -69,6 +69,8 @@ function* login(action) {
     const formatUserData = Object.values(userRefInDb)[0];
     const senhaParse = senha.toString();
     yield AsyncStorage.setItem(USER_REGISTRATION, matricula);
+
+    // verifica se a senha informada no login é a data de nascimento do usuarios
     if (
       formatUserData.birthDate !== senhaParse &&
       formatUserData.birthDate !== ''
@@ -77,6 +79,9 @@ function* login(action) {
     } else {
       const userRef = Object.keys(userRefInDb)[0];
       const userData = mountUser(formatUserData, userRef);
+      // se tiver data de nascimento, então é o primeiro login do usuario
+      // entao sera retornado um objeto que representa que é seu primeiro login
+      // com isso ele sera redirecionado para a tela de redefinir senha
       if (formatUserData.birthDate !== '') {
         yield put(
           fetchLoginSuccess({
@@ -85,6 +90,8 @@ function* login(action) {
           }),
         );
       }
+      // verifica se a data de nascimento esta vazia, se sim, significa que o usuario já fez login
+      // então ele não precisa fazer o login novamente e não fazer login e redefinir a senha
       if (formatUserData.birthDate === '') {
         const { user } = yield firebase
           .auth()
