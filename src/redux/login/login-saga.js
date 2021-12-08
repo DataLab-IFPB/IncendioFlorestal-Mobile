@@ -15,24 +15,25 @@ const getUserInRealTime = (matricula) => {
       .database()
       .ref()
       .child('users')
-      .orderByChild('email')
-      .startAt(matricula)
-      .limitToFirst(1)
+      .orderByChild('registration')
+      .equalTo(matricula)
       .on('value', (value) => {
         resolve(value.val());
       });
   });
 };
 
-const updateUserInRealTime = (user) => {
+const getUserInRealTimeFilter = (matricula) => {
   return new Promise((resolve) => {
-    const userRef = firebase
+    firebase
       .database()
-      .ref('users/' + user.ref)
-      .update({
-        birthDate: '',
+      .ref()
+      .child('users')
+      .orderByChild('email')
+      .equalTo(`${matricula}${DOMAIN_EMAIL}`)
+      .on('value', (value) => {
+        resolve(value.val());
       });
-    resolve(userRef);
   });
 };
 
@@ -68,12 +69,21 @@ function updateUserUidAndEmail(user, ref) {
 function* login(action) {
   try {
     const { matricula, senha } = action.payload;
-
-    const userRefInDb = yield getUserInRealTime(matricula);
+    // busca o usuario pela matricula
+    const userRef = yield getUserInRealTime(matricula);
+    let userRefInDb = null;
+    // verifica se a referencia para o usuario no banco existe
+    // se nao exsitir, é feitou uma consulta no firebase buscando pelo email que ja existe
+    if (userRef === null) {
+      console.log('segundo login');
+      userRefInDb = yield getUserInRealTimeFilter(matricula);
+    } else {
+      console.log('primeiro login ');
+      userRefInDb = userRef;
+    }
     const formatUserData = Object.values(userRefInDb)[0];
     const senhaParse = senha.toString();
     yield AsyncStorage.setItem(USER_REGISTRATION, matricula);
-
     // verifica se a senha informada no login é a data de nascimento do usuarios
     if (
       formatUserData.birthDate !== senhaParse &&
@@ -109,6 +119,7 @@ function* login(action) {
       }
     }
   } catch (error) {
+    console.log('catch ', error);
     yield put(fetchLoginFail(error));
   }
 }
@@ -127,9 +138,6 @@ function* createNewUser(action) {
     const userUpdated = updateUserUidAndEmail(user, userData.ref);
 
     if (user && userUpdated) {
-      yield updateUserInRealTime(user);
-
-      yield login({ matricula: userData.registration, senha });
       yield put(fetchNewUserSuccess(user));
     }
   } catch (error) {
