@@ -10,14 +10,17 @@ import {
 } from './login-action';
 import { FETCH_LOGIN, FETCH_NEW_USER } from './login-types';
 const getUserInRealTime = (matricula) => {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     firebase
       .database()
       .ref()
       .child('users')
-      .orderByChild('registration')
-      .equalTo(matricula)
-      .on('value', (value) => resolve(value.val()));
+      .orderByChild('email')
+      .startAt(matricula)
+      .limitToFirst(1)
+      .on('value', (value) => {
+        resolve(value.val());
+      });
   });
 };
 
@@ -56,6 +59,7 @@ function updateUserUidAndEmail(user, ref) {
         email: user.email,
         birthDate: '',
         registration: '',
+        firstLogin: false,
       });
     resolve(userRef);
   });
