@@ -15,19 +15,31 @@ import {
   fetchRemoveEvidenceFail,
   fetchRemoveEvidenceSuccess,
   fetchSaveIndiceFail,
-  fetchSaveIndiceSuccess,
+  fetchSaveIndiceSuccess
 } from './indices-incendios-action';
 import {
   FETCH_ADD_EVIDENCE,
   FETCH_INDICES_INCENDIOS,
   FETCH_REMOVE_EVIDENCE,
-  FETCH_SAVE_INDICE,
+  FETCH_SAVE_INDICE
 } from './indices-incendios-types';
 
 const COLECTION_NAME = 'dados-firms';
 const MEDIA_TYPE = 'json';
 const LIMIT_TO_FIRST = 50;
 
+const generateDate = () => {
+  const date = new Date();
+
+  return 
+  {
+    startAt: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate() - 5}`,
+    endAt: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
+  }
+};
+const URI_TEST =
+  
+`https://combate-incendios-dev-default-rtdb.firebaseio.com/dados-firms.json?orderBy="acq_date"&startAt="&endAt="2021-11-31"&limitToFirst=${LIMIT_TO_FIRST}`;
 // salva o indice de incendio no firebase
 const _save = (indiceDindiceDate) => {
   return new Promise((resolve) => {
