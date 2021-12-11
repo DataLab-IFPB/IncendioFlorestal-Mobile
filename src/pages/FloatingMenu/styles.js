@@ -16,8 +16,9 @@ export const styles = (theme) => {
       position: 'absolute',
       zIndex: 2,
       top: '18%',
-      marginLeft: '-3.4%',
+      marginLeft: '-3.2%',
     },
+
     menuSize: width * 0.1,
   });
 };

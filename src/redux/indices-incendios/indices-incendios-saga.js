@@ -26,6 +26,7 @@ import {
 
 const COLECTION_NAME = 'dados-firms';
 const MEDIA_TYPE = 'json';
+const LIMIT_TO_FIRST = 50;
 
 // salva o indice de incendio no firebase
 const _save = (indiceDindiceDate) => {
@@ -85,7 +86,7 @@ function* indicesIncendios() {
   try {
     const { data } = yield call(
       axios.get,
-      `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}`,
+      `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}?orderBy="active"&equalTo=true&limitToFirst=${LIMIT_TO_FIRST}`,
     );
 
     const valuesMounted = yield mountData(data);

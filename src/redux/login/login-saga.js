@@ -75,10 +75,8 @@ function* login(action) {
     // verifica se a referencia para o usuario no banco existe
     // se nao exsitir, é feitou uma consulta no firebase buscando pelo email que ja existe
     if (userRef === null) {
-      console.log('segundo login');
       userRefInDb = yield getUserInRealTimeFilter(matricula);
     } else {
-      console.log('primeiro login ');
       userRefInDb = userRef;
     }
     const formatUserData = Object.values(userRefInDb)[0];
@@ -119,7 +117,6 @@ function* login(action) {
       }
     }
   } catch (error) {
-    console.log('catch ', error);
     yield put(fetchLoginFail(error));
   }
 }
