@@ -15,31 +15,34 @@ import {
   fetchRemoveEvidenceFail,
   fetchRemoveEvidenceSuccess,
   fetchSaveIndiceFail,
-  fetchSaveIndiceSuccess
+  fetchSaveIndiceSuccess,
 } from './indices-incendios-action';
 import {
   FETCH_ADD_EVIDENCE,
   FETCH_INDICES_INCENDIOS,
   FETCH_REMOVE_EVIDENCE,
-  FETCH_SAVE_INDICE
+  FETCH_SAVE_INDICE,
 } from './indices-incendios-types';
 
 const COLECTION_NAME = 'dados-firms';
 const MEDIA_TYPE = 'json';
 const LIMIT_TO_FIRST = 50;
-
+const DAYS_TO_CALCULATE_INDICES = 5;
+// pega a data atual e faz o calculo para criar duas datas, a inicial e a final
+// a data inicial é a data atual - 5 dias
 const generateDate = () => {
   const date = new Date();
 
-  return 
-  {
-    startAt: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate() - 5}`,
+  return {
+    startAt: `${date.getFullYear()}-${date.getMonth() + 1}-${
+      date.getDate() - date.getDate() >= 10
+        ? `${date.getDate()}`
+        : `0${new Date().getDate() - DAYS_TO_CALCULATE_INDICES}` // calcula a data inicial verificando se o dia é menor que 10
+    }`,
     endAt: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
-  }
+  };
 };
-const URI_TEST =
-  
-`https://combate-incendios-dev-default-rtdb.firebaseio.com/dados-firms.json?orderBy="acq_date"&startAt="&endAt="2021-11-31"&limitToFirst=${LIMIT_TO_FIRST}`;
+
 // salva o indice de incendio no firebase
 const _save = (indiceDindiceDate) => {
   return new Promise((resolve) => {
@@ -96,9 +99,11 @@ const sendEvidence = (pathSaveIndice, data, mediaType, uploadType) => {
 
 function* indicesIncendios() {
   try {
+    const dates = generateDate();
+
     const { data } = yield call(
       axios.get,
-      `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}?orderBy="active"&equalTo=true&limitToFirst=${LIMIT_TO_FIRST}`,
+      `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}?orderBy="acq_date"&startAt="${dates.startAt}"&endAt="${dates.endAt}"&limitToLast=${LIMIT_TO_FIRST}&orderBy="active"&startAt=true&endAt=true`,
     );
 
     const valuesMounted = yield mountData(data);

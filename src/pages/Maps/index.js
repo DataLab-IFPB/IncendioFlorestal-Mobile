@@ -14,7 +14,7 @@ import { PERMISSION_LOCATION_USE } from '../../constants/keys';
 import useNotify from '../../hooks/useNotify';
 import {
   fetchIndicesIncendios,
-  fetchSaveIndice
+  fetchSaveIndice,
 } from '../../redux/indices-incendios/indices-incendios-action';
 import { fetchPrevisao } from '../../redux/previsao/previsao-action';
 import getMoment from '../../utils/getMoment';
@@ -207,6 +207,9 @@ const Maps = () => {
     dispatch(fetchSaveIndice(indiceCreateToUser));
   }
 
+  useEffect(() => {
+    console.log(indices.length);
+  }, [indices]);
   function returnToLocale() {
     mapRef.current.moveTo([
       userGeolocation.longitude,
