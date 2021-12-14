@@ -207,9 +207,6 @@ const Maps = () => {
     dispatch(fetchSaveIndice(indiceCreateToUser));
   }
 
-  useEffect(() => {
-    console.log(indices.length);
-  }, [indices]);
   function returnToLocale() {
     mapRef.current.moveTo([
       userGeolocation.longitude,

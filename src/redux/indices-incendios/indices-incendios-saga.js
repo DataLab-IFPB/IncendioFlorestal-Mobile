@@ -10,6 +10,8 @@ import { UPLOAD_TYPE, USER_REGISTRATION } from '../../constants/keys';
 import {
   fetchAddEvidenceFail,
   fetchAddEvidenceSuccess,
+  fetchFilterIndicesFail,
+  fetchFilterIndicesSuccess,
   fetchIndicesIncendiosFail,
   fetchIndicesIncendiosSuccess,
   fetchRemoveEvidenceFail,
@@ -19,6 +21,7 @@ import {
 } from './indices-incendios-action';
 import {
   FETCH_ADD_EVIDENCE,
+  FETCH_FILTER_INDICES_INCENDIOS,
   FETCH_INDICES_INCENDIOS,
   FETCH_REMOVE_EVIDENCE,
   FETCH_SAVE_INDICE,
@@ -26,8 +29,8 @@ import {
 
 const COLECTION_NAME = 'dados-firms';
 const MEDIA_TYPE = 'json';
-const LIMIT_TO_FIRST = 50;
-const DAYS_TO_CALCULATE_INDICES = 5;
+const LIMIT_TO_FIRST = 10;
+const DAYS_TO_CALCULATE_INDICES = 3;
 // pega a data atual e faz o calculo para criar duas datas, a inicial e a final
 // a data inicial é a data atual - 5 dias
 const generateDate = () => {
@@ -38,6 +41,18 @@ const generateDate = () => {
       date.getDate() - date.getDate() >= 10
         ? `${date.getDate()}`
         : `0${new Date().getDate() - DAYS_TO_CALCULATE_INDICES}` // calcula a data inicial verificando se o dia é menor que 10
+    }`,
+    endAt: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
+  };
+};
+
+// filtra os indices de acordo com a data passada por parametro
+const generateDateFilter = (lengthDays) => {
+  const date = new Date();
+
+  return {
+    startAt: `${date.getFullYear()}-${date.getMonth() + 1}-${
+      date.getDate() - lengthDays
     }`,
     endAt: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
   };
@@ -259,9 +274,29 @@ function* removeEvidence(action) {
   }
 }
 
+function* filterIndices(action) {
+  try {
+    // passa a data informada no filtro do mapa para que possa ser gerado a data inicial e final
+    const dates = generateDateFilter(action.payload);
+
+    const { data } = yield call(
+      axios.get,
+      `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}?orderBy="acq_date"&startAt="${dates.startAt}"&endAt="${dates.endAt}"&limitToLast=${LIMIT_TO_FIRST}&orderBy="active"&startAt=true&endAt=true`,
+    );
+
+    const valuesMounted = yield mountData(data);
+
+    if (valuesMounted) {
+      yield put(fetchFilterIndicesSuccess(valuesMounted));
+    }
+  } catch (error) {
+    yield put(fetchFilterIndicesFail(error));
+  }
+}
 export const indicesSagas = [
   takeLatest(FETCH_INDICES_INCENDIOS, indicesIncendios),
   takeLatest(FETCH_SAVE_INDICE, saveIndice),
   takeLatest(FETCH_ADD_EVIDENCE, addEvidence),
   takeLatest(FETCH_REMOVE_EVIDENCE, removeEvidence),
+  takeLatest(FETCH_FILTER_INDICES_INCENDIOS, filterIndices),
 ];

@@ -11,6 +11,7 @@ const initialState = {
   loadingRemoveEvidence: false,
   evidenceRemoved: null,
   errorRemoveEvidence: null,
+  loadingFilter: false,
 };
 
 export default function (state = initialState, action) {
@@ -88,6 +89,28 @@ export default function (state = initialState, action) {
         ...state,
         loadingRemoveEvidence: false,
         errorRemoveEvidence: action.payload,
+      };
+    }
+
+    case types.FETCH_FILTER_INDICES_INCENDIOS: {
+      return {
+        ...state,
+        loadingFilter: true,
+      };
+    }
+
+    case types.FETCH_FILTER_INDICES_INCENDIOS_SUCCESS: {
+      return {
+        ...state,
+        loadingFilter: false,
+        data: action.payload,
+      };
+    }
+    case types.FETCH_FILTER_INDICES_INCENDIOS_FAIL: {
+      return {
+        ...state,
+        loadingFilter: false,
+        error: action.payload,
       };
     }
     default:

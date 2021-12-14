@@ -1,50 +1,21 @@
 import Slider from '@react-native-community/slider';
-import moment from 'moment';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Image, Modal, Text, TouchableOpacity, View } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { fetchFilterIndices } from '../../../redux/indices-incendios/indices-incendios-action';
 import styles from './styles';
 
 const Filter = ({ visible, closeModal, indices, refreshIndices }) => {
   const [valueSlide, setValueSlide] = useState(1);
-  const [maxValueSlide, setMaxValueSlide] = useState(31);
-  const mounthAtual = new Date().getMonth();
+  const MAX_VALUE_RANGE_DAYS = 3;
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    verifyMounth();
-  }, []);
-  // verifica se o mês atual é fevereiro, se sim, altera o limite dos dias para 29.
-  function verifyMounth() {
-    if (mounthAtual === 2) {
-      setMaxValueSlide(29);
-    } else {
-      setMaxValueSlide(30);
-    }
-  }
-
-  // compara as datas dado uma data inicial e a data anterior
-  function getRange(startDate, endDate, type) {
-    let fromDate = moment(startDate);
-    let toDate = moment(endDate);
-    let diff = toDate.diff(fromDate, type);
-    let range = [];
-    for (let i = 0; i < diff; i++) {
-      range.push(moment(startDate).add(i, type));
-    }
-    return range;
-  }
-
-  // realiza a filtragem dos indices de acordo com o resultado do metodo getRange
-  // caso se encaixe na filtragem, o indice sera retornado na nova listagem
+  // realiza uma nova requisição ao banco de dados para buscar os indices de acordo com a data
   function filtrarIndices() {
-    const indicesFiltrados = indices.filter((indice) => {
-      let diference =
-        getRange(indice.acq_date, new Date(), 'days').length === valueSlide;
-
-      return diference;
-    });
-    refreshIndices(indicesFiltrados);
+    dispatch(fetchFilterIndices(valueSlide));
     closeModal();
   }
+
   return (
     <Modal transparent={true} visible={visible} animationType={'slide'}>
       <View style={styles.container}>
@@ -54,9 +25,7 @@ const Filter = ({ visible, closeModal, indices, refreshIndices }) => {
         />
         <View style={styles.containerHeader}>
           <Text style={[styles.labelTextButton, styles.labelHeader]}>
-            {
-              'Filtrar os registros de incêndios pela quantidade de dias anterior ao dia atual'
-            }
+            {'Filtrar os registros de incêndios'}
           </Text>
         </View>
 
@@ -64,7 +33,7 @@ const Filter = ({ visible, closeModal, indices, refreshIndices }) => {
           <Text>{`${valueSlide} ${valueSlide === 1 ? 'dia:' : 'dias:'}`}</Text>
           <Slider
             minimumValue={1}
-            maximumValue={maxValueSlide}
+            maximumValue={MAX_VALUE_RANGE_DAYS}
             minimumTrackTintColor='#000'
             maximumTrackTintColor='#000'
             thumbTintColor={'#000'}

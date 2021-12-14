@@ -82,3 +82,24 @@ export const fetchRemoveEvidenceFail = (error) => {
     payload: error,
   };
 };
+
+export const fetchFilterIndices = (filter) => {
+  return {
+    type: types.FETCH_FILTER_INDICES_INCENDIOS,
+    payload: filter,
+  };
+};
+
+export const fetchFilterIndicesSuccess = (data) => {
+  return {
+    type: types.FETCH_FILTER_INDICES_INCENDIOS_SUCCESS,
+    payload: data,
+  };
+};
+
+export const fetchFilterIndicesFail = (error) => {
+  return {
+    type: types.FETCH_FILTER_INDICES_INCENDIOS_FAIL,
+    payload: error,
+  };
+};
