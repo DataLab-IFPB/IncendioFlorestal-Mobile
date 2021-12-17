@@ -138,11 +138,20 @@ const DetailIndice = ({
         ) : (
           <>
             <View style={styles.containerDetail}>
-              <SimpleLineIcons
-                name='fire'
-                size={styles.iconIndiceSize}
-                color={indice && indice.userCreated ? '#FFF000' : '#F00'}
-              />
+              {!indiceFromMap.active ? (
+                <SimpleLineIcons
+                  name='fire'
+                  size={styles.iconIndiceSize}
+                  color={'#c1c1c1'}
+                />
+              ) : (
+                <SimpleLineIcons
+                  name='fire'
+                  size={styles.iconIndiceSize}
+                  color={indice && indice.userCreated ? '#FFF000' : '#F00'}
+                />
+              )}
+
               <Text style={styles.labelNoBold}>Registrado em:</Text>
               <Text style={styles.label}>
                 {indice && formatDate(indice.acq_date)}
