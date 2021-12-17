@@ -20,6 +20,7 @@ export default StyleSheet.create({
     width: '100%',
     paddingHorizontal: '4%',
     marginTop: '4%',
+    justifyContent: 'space-between',
   },
   containerDetail: {
     alignItems: 'center',

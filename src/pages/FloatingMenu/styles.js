@@ -16,7 +16,7 @@ export const styles = (theme) => {
       position: 'absolute',
       zIndex: 2,
       top: '18%',
-      marginLeft: -width * 0.045,
+      marginLeft: -width * 0.04,
     },
 
     menuSize: width * 0.1,

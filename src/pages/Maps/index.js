@@ -227,6 +227,67 @@ const Maps = () => {
     setShowModalFilter(false);
   }
 
+  function renderColorIcon(coordinate) {
+    console.log('render icon color ', coordinate.active);
+    let color = '#F00';
+
+    if (coordinate?.brightness >= 500) {
+      color = '#ff4500';
+    } else if (!coordinate.active) {
+      color = '#c1c1c1';
+    }
+    return color;
+  }
+
+  function renderIconFire(coordinate) {
+    if (coordinate.userCreated && coordinate.active) {
+      return (
+        <View style={styles.containerIndexFire}>
+          <IconSimple
+            onPress={() => {
+              showIndiceDetail(coordinate);
+            }}
+            name='fire'
+            size={30}
+            color={'#FFF000'}
+          />
+        </View>
+      );
+    } else if (coordinate?.brightness >= 500 && coordinate.active) {
+      return (
+        <View style={styles.containerIndexFire}>
+          <IconSimple
+            onPress={() => showIndiceDetail(coordinate)}
+            name='fire'
+            size={30}
+            color={'#F00'}
+          />
+        </View>
+      );
+    } else if (coordinate?.brightness <= 500 && coordinate.active) {
+      return (
+        <View style={styles.containerIndexFire}>
+          <IconSimple
+            onPress={() => showIndiceDetail(coordinate)}
+            name='fire'
+            size={30}
+            color={'#ff4500'}
+          />
+        </View>
+      );
+    } else if (!coordinate.active) {
+      return (
+        <View style={styles.containerIndexFire}>
+          <IconSimple
+            onPress={() => showIndiceDetail(coordinate)}
+            name='fire'
+            size={30}
+            color={'#c1c1c1'}
+          />
+        </View>
+      );
+    }
+  }
   return loadingValidateGeolocationUser ? (
     <Loading loading={loadingValidateGeolocationUser || loadingIndices} />
   ) : (
@@ -344,42 +405,16 @@ const Maps = () => {
 
           {indices &&
             indices.map((coordinate, index) => {
-              if (coordinate.active) {
-                return (
-                  <MapboxGL.MarkerView
-                    key={index}
-                    coordinate={[
-                      Number(coordinate.longitude),
-                      Number(coordinate.latitude),
-                    ]}>
-                    {coordinate &&
-                    coordinate.hasOwnProperty('userCreated') &&
-                    coordinate.userCreated ? (
-                      <View style={styles.containerIndexFire}>
-                        <IconSimple
-                          onPress={() => {
-                            showIndiceDetail(coordinate);
-                          }}
-                          name='fire'
-                          size={30}
-                          color={'#FFF000'}
-                        />
-                      </View>
-                    ) : (
-                      <View style={styles.containerIndexFire}>
-                        <IconSimple
-                          onPress={() => showIndiceDetail(coordinate)}
-                          name='fire'
-                          size={30}
-                          color={
-                            coordinate.brightness >= 500 ? '#F00' : '#ff4500'
-                          }
-                        />
-                      </View>
-                    )}
-                  </MapboxGL.MarkerView>
-                );
-              }
+              return (
+                <MapboxGL.MarkerView
+                  key={index}
+                  coordinate={[
+                    Number(coordinate.longitude),
+                    Number(coordinate.latitude),
+                  ]}>
+                  {renderIconFire(coordinate)}
+                </MapboxGL.MarkerView>
+              );
             })}
         </MapboxGL.MapView>
 

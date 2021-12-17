@@ -281,9 +281,8 @@ function* filterIndices(action) {
 
     const { data } = yield call(
       axios.get,
-      `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}?orderBy="acq_date"&startAt="${dates.startAt}"&endAt="${dates.endAt}"&limitToLast=${LIMIT_TO_FIRST}&orderBy="active"&startAt=true&endAt=true`,
+      `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}?orderBy="acq_date"&startAt="${dates.startAt}"&endAt="${dates.endAt}"&limitToFirst=${LIMIT_TO_FIRST}`,
     );
-
     const valuesMounted = yield mountData(data);
 
     if (valuesMounted) {
