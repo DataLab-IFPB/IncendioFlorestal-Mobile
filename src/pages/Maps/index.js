@@ -30,7 +30,7 @@ const Maps = () => {
   const dispatch = useDispatch();
   MapboxGL.setAccessToken(MAP_BOX_KEY);
   const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Street);
-  const indicesValues = useSelector((state) => state.indicesIncendios.data);
+  const indices = useSelector((state) => state.indicesIncendios.data);
   const loadingIndices = useSelector((state) => state.indicesIncendios.loading);
   const errorsRequest = useSelector((state) => state.indicesIncendios.error);
   const mapRef = useRef();
@@ -40,7 +40,6 @@ const Maps = () => {
   const [isConnect, setIsConnect] = useState(true);
   const connect = useNetInfo();
 
-  const [indices, setIndices] = useState([]);
   const [showDetail, setShowDetail] = useState(false);
   const [indiceCoords, setIndiceCoords] = useState();
   const [indiceToShow, setIndiceToShow] = useState(null);
@@ -77,12 +76,6 @@ const Maps = () => {
     }
     return false;
   });
-
-  useEffect(() => {
-    if (indicesValues) {
-      setIndices(indicesValues);
-    }
-  }, [indicesValues]);
 
   useEffect(() => {
     setIsConnect(connect.isConnected);
@@ -227,67 +220,48 @@ const Maps = () => {
     setShowModalFilter(false);
   }
 
-  function renderColorIcon(coordinate) {
-    console.log('render icon color ', coordinate.active);
-    let color = '#F00';
-
-    if (coordinate?.brightness >= 500) {
-      color = '#ff4500';
-    } else if (!coordinate.active) {
-      color = '#c1c1c1';
-    }
-    return color;
+  function renderIndices() {
+    return (
+      indices &&
+      indices.map((coordinate, index) => {
+        if (coordinate.active) {
+          return (
+            <MapboxGL.MarkerView
+              key={index}
+              coordinate={[
+                Number(coordinate.longitude),
+                Number(coordinate.latitude),
+              ]}>
+              {coordinate.userCreated ? (
+                <View style={styles.containerIndexFire}>
+                  <IconSimple
+                    onPress={() => {
+                      showIndiceDetail(coordinate);
+                    }}
+                    name='fire'
+                    size={30}
+                    color={'#FFF000'}
+                  />
+                </View>
+              ) : (
+                <View style={styles.containerIndexFire}>
+                  <IconSimple
+                    onPress={() => {
+                      showIndiceDetail(coordinate);
+                    }}
+                    name='fire'
+                    size={30}
+                    color={coordinate?.brightness >= 500 ? '#F00' : '#ff4500'}
+                  />
+                </View>
+              )}
+            </MapboxGL.MarkerView>
+          );
+        }
+      })
+    );
   }
 
-  function renderIconFire(coordinate) {
-    if (coordinate.userCreated && coordinate.active) {
-      return (
-        <View style={styles.containerIndexFire}>
-          <IconSimple
-            onPress={() => {
-              showIndiceDetail(coordinate);
-            }}
-            name='fire'
-            size={30}
-            color={'#FFF000'}
-          />
-        </View>
-      );
-    } else if (coordinate?.brightness >= 500 && coordinate.active) {
-      return (
-        <View style={styles.containerIndexFire}>
-          <IconSimple
-            onPress={() => showIndiceDetail(coordinate)}
-            name='fire'
-            size={30}
-            color={'#F00'}
-          />
-        </View>
-      );
-    } else if (coordinate?.brightness <= 500 && coordinate.active) {
-      return (
-        <View style={styles.containerIndexFire}>
-          <IconSimple
-            onPress={() => showIndiceDetail(coordinate)}
-            name='fire'
-            size={30}
-            color={'#ff4500'}
-          />
-        </View>
-      );
-    } else if (!coordinate.active) {
-      return (
-        <View style={styles.containerIndexFire}>
-          <IconSimple
-            onPress={() => showIndiceDetail(coordinate)}
-            name='fire'
-            size={30}
-            color={'#c1c1c1'}
-          />
-        </View>
-      );
-    }
-  }
   return loadingValidateGeolocationUser ? (
     <Loading loading={loadingValidateGeolocationUser || loadingIndices} />
   ) : (
@@ -295,8 +269,7 @@ const Maps = () => {
       <Filter
         visible={showModalFilter}
         closeModal={closeModalFilter}
-        indices={indicesValues}
-        refreshIndices={setIndices}
+        indices={indices}
       />
       <CustomModal
         visible={showModalNotConnect}
@@ -384,8 +357,8 @@ const Maps = () => {
           style={styles.containerMap}>
           <MapboxGL.Camera
             ref={mapRef}
-            zoomLevel={10}
             // zoom pra cima
+            zoomLevel={13}
             minZoomLevel={7}
             // zoom pra baixo
             maxZoomLevel={20}
@@ -403,19 +376,9 @@ const Maps = () => {
             renderMode='native'
           />
 
-          {indices &&
-            indices.map((coordinate, index) => {
-              return (
-                <MapboxGL.MarkerView
-                  key={index}
-                  coordinate={[
-                    Number(coordinate.longitude),
-                    Number(coordinate.latitude),
-                  ]}>
-                  {renderIconFire(coordinate)}
-                </MapboxGL.MarkerView>
-              );
-            })}
+          {/* {indices &&
+           } */}
+          {renderIndices()}
         </MapboxGL.MapView>
 
         {notifyEvidenceUploaded}

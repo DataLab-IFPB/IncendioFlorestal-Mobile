@@ -29,8 +29,7 @@ import {
 
 const COLECTION_NAME = 'dados-firms';
 const MEDIA_TYPE = 'json';
-const LIMIT_TO_FIRST = 10;
-const DAYS_TO_CALCULATE_INDICES = 3;
+const DAYS_TO_CALCULATE_INDICES = 1;
 // pega a data atual e faz o calculo para criar duas datas, a inicial e a final
 // a data inicial é a data atual - 5 dias
 const generateDate = () => {
@@ -118,7 +117,7 @@ function* indicesIncendios() {
 
     const { data } = yield call(
       axios.get,
-      `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}?orderBy="acq_date"&startAt="${dates.startAt}"&endAt="${dates.endAt}"&limitToLast=${LIMIT_TO_FIRST}&orderBy="active"&startAt=true&endAt=true`,
+      `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}?orderBy="acq_date"&startAt="${dates.startAt}"&endAt="${dates.endAt}"`,
     );
 
     const valuesMounted = yield mountData(data);
@@ -281,12 +280,28 @@ function* filterIndices(action) {
 
     const { data } = yield call(
       axios.get,
-      `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}?orderBy="acq_date"&startAt="${dates.startAt}"&endAt="${dates.endAt}"&limitToFirst=${LIMIT_TO_FIRST}`,
+      `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}?orderBy="acq_date"&startAt="${dates.startAt}"`,
     );
+
+    console.log(
+      `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}?orderBy="acq_date"&startAt="${dates.startAt}"`,
+    );
+    // monta os dados do filtro
     const valuesMounted = yield mountData(data);
 
-    if (valuesMounted) {
-      yield put(fetchFilterIndicesSuccess(valuesMounted));
+    // faz uma iteração sobre todos os indices e verifica se o indice está dentro do filtro e se esta com status de ATIVO
+    let valuesIndices = [];
+    for (let i = 0; i < 10; i++) {
+      if (
+        moment(valuesMounted[i].acq_date).isBetween(dates.startAt) &&
+        valuesMounted[i]?.active
+      ) {
+        valuesIndices.push(valuesMounted[i]);
+      }
+    }
+
+    if (valuesIndices) {
+      yield put(fetchFilterIndicesSuccess(valuesIndices));
     }
   } catch (error) {
     yield put(fetchFilterIndicesFail(error));

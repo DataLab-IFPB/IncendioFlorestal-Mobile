@@ -1,6 +1,6 @@
 import firebase from 'firebase';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Text, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import IconAwesome from 'react-native-vector-icons/FontAwesome5';
@@ -115,20 +115,6 @@ const DetailIndice = ({
             color={'#F00'}
             size={styles.iconCloseSize}
           />
-
-          {!indiceFromMap?.active && (
-            <IOIcon
-              onPress={() =>
-                Alert.alert(
-                  'Atenção!',
-                  'O indice em questão não consta mais como ativo!',
-                )
-              }
-              name='warning'
-              color={'#f11'}
-              size={40}
-            />
-          )}
         </View>
 
         {loading || loadingLocal ? (
@@ -138,19 +124,11 @@ const DetailIndice = ({
         ) : (
           <>
             <View style={styles.containerDetail}>
-              {!indiceFromMap.active ? (
-                <SimpleLineIcons
-                  name='fire'
-                  size={styles.iconIndiceSize}
-                  color={'#c1c1c1'}
-                />
-              ) : (
-                <SimpleLineIcons
-                  name='fire'
-                  size={styles.iconIndiceSize}
-                  color={indice && indice.userCreated ? '#FFF000' : '#F00'}
-                />
-              )}
+              <SimpleLineIcons
+                name='fire'
+                size={styles.iconIndiceSize}
+                color={indice && indice.userCreated ? '#FFF000' : '#F00'}
+              />
 
               <Text style={styles.labelNoBold}>Registrado em:</Text>
               <Text style={styles.label}>

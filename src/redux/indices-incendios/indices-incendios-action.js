@@ -98,6 +98,7 @@ export const fetchFilterIndicesSuccess = (data) => {
 };
 
 export const fetchFilterIndicesFail = (error) => {
+  console.log('filter fail ', error);
   return {
     type: types.FETCH_FILTER_INDICES_INCENDIOS_FAIL,
     payload: error,

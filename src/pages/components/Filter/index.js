@@ -5,12 +5,11 @@ import { useDispatch } from 'react-redux';
 import { fetchFilterIndices } from '../../../redux/indices-incendios/indices-incendios-action';
 import styles from './styles';
 
-const Filter = ({ visible, closeModal, indices, refreshIndices }) => {
+const Filter = ({ visible, closeModal, indices }) => {
   const [valueSlide, setValueSlide] = useState(1);
-  const MAX_VALUE_RANGE_DAYS = 3;
+  const MAX_VALUE_RANGE_DAYS = 2;
   const dispatch = useDispatch();
 
-  // realiza uma nova requisição ao banco de dados para buscar os indices de acordo com a data
   function filtrarIndices() {
     dispatch(fetchFilterIndices(valueSlide));
     closeModal();
