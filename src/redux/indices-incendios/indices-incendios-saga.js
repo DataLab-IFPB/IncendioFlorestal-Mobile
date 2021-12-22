@@ -34,12 +34,9 @@ const DAYS_TO_CALCULATE_INDICES = 1;
 // a data inicial é a data atual - 5 dias
 const generateDate = () => {
   const date = new Date();
-
   return {
     startAt: `${date.getFullYear()}-${date.getMonth() + 1}-${
-      date.getDate() - date.getDate() >= 10
-        ? `${date.getDate()}`
-        : `0${new Date().getDate() - DAYS_TO_CALCULATE_INDICES}` // calcula a data inicial verificando se o dia é menor que 10
+      date.getDate() - DAYS_TO_CALCULATE_INDICES
     }`,
     endAt: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
   };
@@ -117,13 +114,23 @@ function* indicesIncendios() {
 
     const { data } = yield call(
       axios.get,
-      `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}?orderBy="acq_date"&startAt="${dates.startAt}"&endAt="${dates.endAt}"`,
+      `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}?orderBy="acq_date"&startAt="${dates.startAt}"`,
     );
 
     const valuesMounted = yield mountData(data);
 
-    if (valuesMounted) {
-      yield put(fetchIndicesIncendiosSuccess(valuesMounted));
+    let valuesIndices = [];
+    for (let i = 0; i < 10; i++) {
+      if (
+        moment(valuesMounted[i].acq_date).isBetween(dates.startAt) &&
+        valuesMounted[i]?.active
+      ) {
+        valuesIndices.push(valuesMounted[i]);
+      }
+    }
+
+    if (valuesIndices) {
+      yield put(fetchIndicesIncendiosSuccess(valuesIndices));
     }
   } catch (error) {
     yield put(fetchIndicesIncendiosFail(error));
@@ -275,17 +282,17 @@ function* removeEvidence(action) {
 
 function* filterIndices(action) {
   try {
-    // passa a data informada no filtro do mapa para que possa ser gerado a data inicial e final
+    const dateNow = new Date();
     const dates = generateDateFilter(action.payload);
+    const dateFormated = `${dateNow.getFullYear()}-${dateNow.getMonth() + 1}-${
+      action.payload === 2 ? dateNow.getDate() - 1 : dateNow.getDate()
+    }`;
 
     const { data } = yield call(
       axios.get,
-      `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}?orderBy="acq_date"&startAt="${dates.startAt}"`,
+      `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}?orderBy="acq_date"&startAt="${dateFormated}"`,
     );
 
-    console.log(
-      `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}?orderBy="acq_date"&startAt="${dates.startAt}"`,
-    );
     // monta os dados do filtro
     const valuesMounted = yield mountData(data);
 
