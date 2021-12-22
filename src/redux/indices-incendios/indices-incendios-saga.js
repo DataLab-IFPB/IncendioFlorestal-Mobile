@@ -48,7 +48,9 @@ const generateDateFilter = (lengthDays) => {
 
   return {
     startAt: `${date.getFullYear()}-${date.getMonth() + 1}-${
-      date.getDate() - lengthDays
+      lengthDays === 2
+        ? date.getDate() - DAYS_TO_CALCULATE_INDICES
+        : date.getDate()
     }`,
     endAt: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
   };
@@ -111,16 +113,20 @@ const sendEvidence = (pathSaveIndice, data, mediaType, uploadType) => {
 function* indicesIncendios() {
   try {
     const dates = generateDate();
+    const dateNow = new Date();
+    const dateFormated = `${dateNow.getFullYear()}-${dateNow.getMonth() + 1}-${
+      dateNow.getDate() - DAYS_TO_CALCULATE_INDICES
+    }`;
 
     const { data } = yield call(
       axios.get,
-      `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}?orderBy="acq_date"&startAt="${dates.startAt}"`,
+      `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}?orderBy="acq_date"&startAt="${dateFormated}"`,
     );
 
     const valuesMounted = yield mountData(data);
 
     let valuesIndices = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < valuesMounted.length; i++) {
       if (
         moment(valuesMounted[i].acq_date).isBetween(dates.startAt) &&
         valuesMounted[i]?.active
@@ -128,7 +134,6 @@ function* indicesIncendios() {
         valuesIndices.push(valuesMounted[i]);
       }
     }
-
     if (valuesIndices) {
       yield put(fetchIndicesIncendiosSuccess(valuesIndices));
     }
@@ -285,9 +290,10 @@ function* filterIndices(action) {
     const dateNow = new Date();
     const dates = generateDateFilter(action.payload);
     const dateFormated = `${dateNow.getFullYear()}-${dateNow.getMonth() + 1}-${
-      action.payload === 2 ? dateNow.getDate() - 1 : dateNow.getDate()
+      action.payload === 2
+        ? dateNow.getDate() - DAYS_TO_CALCULATE_INDICES
+        : dateNow.getDate()
     }`;
-
     const { data } = yield call(
       axios.get,
       `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}?orderBy="acq_date"&startAt="${dateFormated}"`,
@@ -295,18 +301,17 @@ function* filterIndices(action) {
 
     // monta os dados do filtro
     const valuesMounted = yield mountData(data);
-
     // faz uma iteração sobre todos os indices e verifica se o indice está dentro do filtro e se esta com status de ATIVO
     let valuesIndices = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < valuesMounted.length; i++) {
       if (
-        moment(valuesMounted[i].acq_date).isBetween(dates.startAt) &&
-        valuesMounted[i]?.active
+        (moment(valuesMounted[i].acq_date).isBetween(dates.startAt) &&
+          valuesMounted[i]?.active) ||
+        valuesMounted[i].active
       ) {
         valuesIndices.push(valuesMounted[i]);
       }
     }
-
     if (valuesIndices) {
       yield put(fetchFilterIndicesSuccess(valuesIndices));
     }
