@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { Notify } from '../components/Layout';
 import { useSelector } from 'react-redux';
-import Notify from '../pages/components/Notify';
+
 const useNotify = () => {
   const [showNotify, setShowNotify] = useState(false);
   const evidenceSaved = useSelector(
@@ -13,6 +14,12 @@ const useNotify = () => {
     }
   }, [evidenceSaved]);
 
+  useEffect(() => {
+    if (showNotify) {
+      sleep(5000);
+    }
+  }, [showNotify]);
+
   const sleep = (time) => {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -22,11 +29,6 @@ const useNotify = () => {
     });
   };
 
-  useEffect(() => {
-    if (showNotify) {
-      sleep(5000);
-    }
-  }, [showNotify]);
   return showNotify ? <Notify /> : null;
 };
 

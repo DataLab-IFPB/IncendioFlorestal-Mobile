@@ -4,6 +4,7 @@ export const DB_URI_DESV =
   'https://combate-incendios-dev-default-rtdb.firebaseio.com';
 
 export const DB_URI_PROD =
-  'https://combate-incendios-prod-default-rtdb.firebaseio.com';
+  'https://combate-incendios-prod2-default-rtdb.firebaseio.com';
+
 export const MAP_BOX_KEY =
   'pk.eyJ1IjoiaXRhbG9hN3giLCJhIjoiY2txYjVxcndqMHd5aTJ1dDV0ZXBlM2kxaCJ9.P1_QYLu4AQbAX9u-V37_1Q';

@@ -1,42 +1,70 @@
 import * as types from './login-types';
 
-export const fetchLogin = (userData) => {
+export const requestLogin = (userData) => {
   return {
-    type: types.FETCH_LOGIN,
+    type: types.REQUEST_LOGIN,
     payload: userData,
   };
 };
 
-export const fetchLoginSuccess = (userData) => {
+export const firstLogin = (userData) => {
   return {
-    type: types.FETCH_LOGIN_SUCCESS,
+    type: types.FISRT_LOGIN,
+    payload: userData
+  }
+}
+
+export const autoLoginVerify = () => {
+  return {
+    type: types.AUTO_LOGIN_VERIFY
+  }
+}
+
+export const autoLoginSuccess = (userData) => {
+  return {
+    type: types.AUTO_LOGIN_SUCCESS,
+    payload: userData
+  };
+}
+
+export const autoLoginFail = () => {
+  return {
+    type: types.AUTO_LOGIN_FAIL
+  }
+}
+
+export const requestLoginSuccess = (userData) => {
+  return {
+    type: types.REQUEST_LOGIN_SUCCESS,
     payload: userData,
   };
-};
+}
 
-export const fetchLoginFail = (error) => {
+export const requestLoginFail = (error) => {
   return {
-    type: types.FETCH_LOGIN_FAIL,
+    type: types.REQUEST_LOGIN_FAIL,
     payload: error,
   };
-};
+}
 
-export const fetchNewUser = (data) => {
+export const requestNewUser = (data) => {
   return {
-    type: types.FETCH_NEW_USER,
+    type: types.REQUEST_NEW_USER,
     payload: data,
   };
-};
-export const fetchNewUserSuccess = (newUser) => {
+}
+
+export const createNewUserSuccess = (newUser) => {
   return {
-    type: types.FETCH_NEW_USER_SUCCESS,
+    type: types.CREATE_NEW_USER_SUCCESS,
     payload: newUser,
   };
-};
+}
 
-export const fetchNewUserFail = (error) => {
+export const createNewUserFail = (error) => {
   return {
-    type: types.FETCH_NEW_USER_FAIL,
+    type: types.CREATE_NEW_USER_FAIL,
     payload: error,
   };
-};
+}
+

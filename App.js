@@ -1,18 +1,20 @@
 import React, { useEffect } from 'react';
-import Navigation from './src/pages/Navigation';
-import { Provider } from 'react-redux';
-import initFirebase from './src/core/firebase/firebase.config';
-import SplashScreen from 'react-native-splash-screen';
 import store from './src/redux';
+import Theme from './src/providers/theme';
+import Routes from './src/routes/routes';
+import SplashScreen from 'react-native-splash-screen';
+import { Provider } from 'react-redux';
 
 export default function App() {
-  initFirebase();
   useEffect(() => {
     SplashScreen.hide();
   });
+
   return (
     <Provider store={store}>
-      <Navigation />
+      <Theme>
+       <Routes/>
+      </Theme>
     </Provider>
   );
 }
