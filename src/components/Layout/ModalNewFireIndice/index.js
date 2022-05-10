@@ -10,16 +10,6 @@ const ModalNewFireIndice = ({ visible, onCancel, onConfirm }) => {
   const netInfo = useNetInfo();
   const { width } = useWindowDimensions();
 
-  const indiceSaved = useSelector(
-    (state) => state.indicesIncendios.indiceSaved,
-  );
-
-  useEffect(() => {
-    if (indiceSaved) {
-      onCancel();
-    }
-  }, [indiceSaved, onCancel]);
-
   return (
     <Modal visible={visible} transparent={true} animationType='fade'>
       <RootContainer>

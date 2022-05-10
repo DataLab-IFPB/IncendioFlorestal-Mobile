@@ -1,7 +1,7 @@
 import * as types from './fire-indices-types';
 
 const initialState = {
-  data: null,
+  data: [],
   error: null,
   loading: false,
   indiceSaved: false,
@@ -19,7 +19,7 @@ export default function (state = initialState, action) {
     case types.SAVE_FIRE_INDICE_OFFLINE:
       return {
         ...state,
-        data: action.payload
+        data: [...state.data, action.payload]
       }
     case types.FETCH_INDICES_INCENDIOS:
       return {

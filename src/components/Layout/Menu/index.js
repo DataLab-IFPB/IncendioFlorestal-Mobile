@@ -20,6 +20,16 @@ const Menu = ({ onLocation, onFilter, setMapStyle }) => {
 
     return(
         <React.Fragment>
+                
+            <Container>
+                <ButtonMenu onPress={onLocation}>
+                    {iconMaterial('my-location')}
+                </ButtonMenu>
+
+                <ButtonMenu onPress={onFilter}>
+                    {iconMaterial('filter-alt')}
+                </ButtonMenu>
+            </Container>
             <ActionButtonMenu  
                 size={40}
                 position='left'
@@ -49,16 +59,6 @@ const Menu = ({ onLocation, onFilter, setMapStyle }) => {
                     {iconFontAwesome('tree')}
                 </ActionButtonMenu.Item>
             </ActionButtonMenu>
-                
-            <Container>
-                <ButtonMenu onPress={onLocation}>
-                    {iconMaterial('my-location')}
-                </ButtonMenu>
-
-                <ButtonMenu onPress={onFilter}>
-                    {iconMaterial('filter-alt')}
-                </ButtonMenu>
-            </Container>
         </React.Fragment>
     );
 }

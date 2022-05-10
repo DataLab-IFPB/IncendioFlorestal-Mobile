@@ -23,7 +23,7 @@ const Filter = ({ visible, closeModal, filterDays, onUpdateDaysSlider }) => {
 
   function filterIndices() {
     onUpdateDaysSlider(days);
-    dispatch(fetchFilterIndices(filterDays));
+    dispatch(fetchFilterIndices(days));
     closeModal();
   }
 

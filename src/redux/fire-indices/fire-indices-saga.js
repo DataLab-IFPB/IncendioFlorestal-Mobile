@@ -26,6 +26,7 @@ import {
   FETCH_REMOVE_EVIDENCE,
   FETCH_SAVE_INDICE,
 } from './fire-indices-types';
+import { formatISO } from '../../shared/utils/formatDate';
 
 const COLECTION_NAME = 'fires';
 const MEDIA_TYPE = 'json';
@@ -286,19 +287,20 @@ function* filterIndices(action) {
   try {
     const dateNow = new Date();
     const dates = generateDateFilter(action.payload);
-    const dateFormated = `${dateNow.getFullYear()}-${dateNow.getMonth() < 10 ? '0' : ''}${dateNow.getMonth() + 1}-${
-      action.payload === 2
-        ? dateNow.getDate() - DAYS_TO_CALCULATE_INDICES
-        : dateNow.getDate()
-    }`;
 
+    if( action.payload === 2 ) {
+      dateNow.setDate(dateNow.getDate() - DAYS_TO_CALCULATE_INDICES);
+    }
+
+    const dateFormated = formatISO(dateNow);
+  
     const { data } = yield call(
       axios.get,
       `${DB_URI_PROD}/${COLECTION_NAME}.${MEDIA_TYPE}?orderBy="acq_date"&startAt="${dateFormated}"`,
     );
 
-    // monta os dados do filtro
     const valuesMounted = yield mountData(data);
+
     // faz uma iteração sobre todos os indices e verifica se o indice está dentro do filtro e se esta com status de ATIVO
     let valuesIndices = [];
     for (let i = 0; i < valuesMounted.length; i++) {

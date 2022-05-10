@@ -1,7 +1,11 @@
+import { useDispatch } from 'react-redux';
 import Realm from 'realm';
 import FireIndiceSchema from '../../schemas/database/FireIndiceSchema';
+import { saveFireIndiceOffline as saveFireIndiceStore } from '../../../redux/fire-indices/fire-indices-action';
 
 const realmDB = () => {
+
+    const dispatch = useDispatch();
 
     function getRealm() {
         
@@ -16,14 +20,20 @@ const realmDB = () => {
         realm.write(() => {
             realm.create('FireIndice', data);
         });
+        dispatch(saveFireIndiceStore(data));
     }
 
     async function getFireIndicesOffline() {
         const realm = await getRealm();
-        return new Promise((resolve) => {
-            const data = realm.objects('FireIndice');
-            resolve(data);
-        });
+        return realm.objects('FireIndice').map((item) => ({
+            latitude: item.latitude,
+            longitude: item.longitude,
+            acq_date: item.acq_date,
+            acq_datetime: item.acq_datetime,
+            active: item.active,
+            daynight: item.daynight,
+            WKT: item.WKT
+        }))
     }
 
     async function clearFireIndicesOffline() {

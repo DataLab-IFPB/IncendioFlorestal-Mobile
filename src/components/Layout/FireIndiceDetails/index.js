@@ -9,10 +9,11 @@ import IOIcon from 'react-native-vector-icons/Ionicons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPrevisao } from '../../../redux/previsao/previsao-action';
-import formatDate from '../../../shared/utils/format-data';
 import Galery from '../Galery'
 import PickerImage from '../PickerImage';
 import styles from './styles';
+import { formatUTC } from '../../../shared/utils/formatDate';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 const FireIndiceDetails = ({
   indiceCoords,
@@ -20,7 +21,11 @@ const FireIndiceDetails = ({
   indiceFromMap,
   resetIndiceToShow,
 }) => {
+
   const dispatch = useDispatch();
+  const netInfo = useNetInfo();
+
+  const indices = useSelector((state) => state.indicesIncendios.data);
   const previsao = useSelector((state) => state.previsao.data);
   const loading = useSelector((state) => state.previsao.loading);
   const [loadingLocal, setLoadingLocal] = useState(false);
@@ -39,18 +44,29 @@ const FireIndiceDetails = ({
   );
 
   useEffect(() => {
-    setLoadingLocal(true);
+    // setLoadingLocal(true);
     
-    try {
-      database()
-      .ref(`fires/${indiceFromMap.uid}`)
-      .on('value', (value) => {
-        const indiceData = value.val();
-        setIndice({ uid: indiceFromMap.uid, ...indiceData });
-      });
-    } finally {
-      setLoadingLocal(false);
-    }
+    // try {
+    //   database()
+    //   .ref(`fires/${indiceFromMap.uid}`)
+    //   .on('value', (value) => {
+    //     const indiceData = value.val();
+    //     setIndice({ uid: indiceFromMap.uid, ...indiceData });
+    //   });
+    // } finally {
+    //   setLoadingLocal(false);
+    // }
+
+    setIndice(() => {
+      return indices.filter((register) =>{
+        if( register.latitude === indiceCoords.latitude && register.longitude === indiceCoords.longitude ) {
+          return register;
+        }
+      })[0];
+    });
+   
+
+    
   }, [indiceFromMap, evidenceSaved, evidenceRemoved]);
 
   useEffect(() => {
@@ -129,7 +145,7 @@ const FireIndiceDetails = ({
 
               <Text style={styles.labelNoBold}>Registrado em:</Text>
               <Text style={styles.label}>
-                {indice && formatDate(indice.acq_date)}
+                {indice && formatUTC(indice.acq_date)}
               </Text>
               <Text />
             </View>
@@ -143,7 +159,7 @@ const FireIndiceDetails = ({
             <View style={styles.containerPrevisao}>
               <Text style={styles.labelNoBold}>
                 {`Local: ${
-                  previsao && _renderInfo(previsao.location.name || '')
+                  previsao ? _renderInfo(previsao.location.name) : 'Não identificado'
                 }`}
               </Text>
               <View style={styles.containerOrientation}>
@@ -151,9 +167,8 @@ const FireIndiceDetails = ({
                   <IconAwesome name='wind' color='#010101' size={25} />,
                   <Text style={styles.labelNoBold}>
                     {`${
-                      previsao &&
-                      _renderInfo(Math.floor(previsao.current.wind_kph))
-                    }KM/H`}
+                      previsao ? _renderInfo(Math.floor(previsao.current.wind_kph)) + 'KM/H' : '-'
+                    }`}
                   </Text>,
                 )}
 
@@ -164,8 +179,8 @@ const FireIndiceDetails = ({
                     color='blue'
                   />,
                   <Text style={styles.labelNoBold}>{`${
-                    previsao && _renderInfo(previsao.current.humidity)
-                  }%`}</Text>,
+                    previsao ? _renderInfo(previsao.current.humidity) + '%' : '-'
+                  }`}</Text>,
                 )}
 
                 {_renderComponent(
@@ -175,7 +190,7 @@ const FireIndiceDetails = ({
                     color='red'
                   />,
                   <Text style={styles.labelNoBold}>
-                    {previsao && _renderInfo(previsao.current.temp_c)}
+                    {previsao ? _renderInfo(previsao.current.temp_c) : '-'}
                   </Text>,
                 )}
 
@@ -185,8 +200,8 @@ const FireIndiceDetails = ({
                     size={styles.iconCloseSize}
                   />,
                   <Text style={styles.labelNoBold}>{`${
-                    previsao && previsao.current.precip_in
-                  }%`}</Text>,
+                    previsao ? previsao.current.precip_in + '%' : '-'
+                  }`}</Text>,
                 )}
               </View>
             </View>

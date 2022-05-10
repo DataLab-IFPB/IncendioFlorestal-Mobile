@@ -2,7 +2,7 @@ import ActionButton from 'react-native-action-button-fix';
 import styled from 'styled-components';
 import { Dimensions } from 'react-native';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export const Container = styled.View`
     position: absolute;
@@ -11,8 +11,9 @@ export const Container = styled.View`
 `;
 
 export const ActionButtonMenu = styled(ActionButton)`
-     position: absolute;
-      z-index: 2;
-      top: 15%;
-      margin-left: ${Math.floor(-width * 0.04) + 'px'};
+    position: absolute;
+    z-index: 5;
+    left: -4%;
+    margin-top: 28%;
 `;
+

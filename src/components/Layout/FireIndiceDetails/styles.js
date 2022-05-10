@@ -32,6 +32,7 @@ export default StyleSheet.create({
   },
   labelNoBold: {
     fontSize: width * 0.04,
+    margin: 5
   },
   containerOrientation: {
     alignItems: 'center',

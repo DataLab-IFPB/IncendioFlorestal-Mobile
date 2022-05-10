@@ -7,11 +7,13 @@ class FireIndiceSchema {
             latitude: 'float',
             longitude: 'float',
             acq_date: 'string',
-            acq_time: 'string',
+            acq_datetime: 'string',
             active: 'bool',
-            daynight: 'string'
+            userCreated: 'bool',
+            daynight: 'string',
+            WKT: 'string'
         }
-    }
+    };
 }
 
 export default FireIndiceSchema;

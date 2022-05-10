@@ -89,24 +89,23 @@ const Map = () => {
     }
   }, [netInfo]);
 
-  // useEffect(() => {
+  useEffect(() => {
 
-  //   async function loadDataOffline() {
-  //     const data = await getFireIndicesOffline();
+    async function loadDataOffline() {
 
-  //     data.map(async (fireIndice) => {
-  //       const fireIndiceWeather = await getForecast(fireIndice.latitude, fireIndice.longitude);
-  //       console.debug(fireIndiceWeather);
-  //      });
+      const data = await getFireIndicesOffline();
 
-  //     clearFireIndicesOffline();
-  //     //console.debug(formatedData[0]);
-  //   }
+      data.map(async (fireIndice) => {
+        saveFireIndice(fireIndice);  
+      });
 
-  //   if( netInfo.isConnected ) {
-  //     loadDataOffline();
-  //   }
-  // }, [netInfo.isConnected]);
+      clearFireIndicesOffline();
+    }
+
+    if( netInfo.isConnected ) {
+      loadDataOffline();
+    }
+  }, []);
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', () => {
@@ -180,7 +179,6 @@ const Map = () => {
     }
   }, [dispatch, indiceSaved]);
 
-
   function createNewFireIndice(event) {
     const [latitude, longitude] = event.geometry.coordinates;
     const date = new Date();
@@ -190,76 +188,48 @@ const Map = () => {
       latitude,
       longitude,
       acq_date: dateFormated,
-      acq_time: `${dateFormated} ${date.getHours()}:${date.getMinutes()}:00`,
+      acq_datetime: `${dateFormated} ${date.getHours()}:${date.getMinutes()}:00`,
+      userCreated: true,
       active: true,
+      WKT: `POINT (${longitude} ${latitude})`,
       daynight: getMoment()
     }
   }
 
-  function saveNewFireIndiceOffline(data) {
-    const newFireIndice = createNewFireIndice(data);
-    saveFireIndiceOffline(newFireIndice);
-  }
-
-  function saveFireIndiceOnline(data) {
-    const newFireIndice = createNewFireIndice(data);
-  }
-
-  function saveFireIndice() {
+  function generateFireIndice() {
 
     const data = showModalNewFireIndice.data;
+    const indiceCreated = createNewFireIndice(data);
     
-    // if( netInfo.isConnected ) {
+    if( netInfo.isConnected ) {
+      saveFireIndice(indiceCreated);
+    } else {
+      saveFireIndiceOffline(indiceCreated);
+    }
     
-    // } else {
-    //   saveNewFireIndiceOffline(data);
-    // }
-    _saveIndice(data);
     setShowModalNewFireIndice({ show: false, data: null });
-    dispatch(fetchIndicesIncendios());
   }
 
-  function _saveIndice(value) {
-    const coordinates = value.geometry.coordinates;
-    const longitude = coordinates[0];
-    const latitude = coordinates[1];
+  async function saveFireIndice(fireIndice) {
 
-    const indiceCreateToUser = {
-      latitude: latitude,
-      longitude: longitude,
-      userCreated: true,
-      acq_date: new Date().toISOString(),
+    const weather = await getForecast(fireIndice.latitude, fireIndice.longitude);
+
+    const newIndice = {
       acq_datetime: null,
-      acq_time: null,
-      active: true,
       brightness: null,
       brightness_2: null,
-      confidence: null,
-      daynight: getMoment(),
+      confidence: '100',
       frp: null,
-      point: [longitude, latitude],
       satellite: '',
       scan: '',
       track: '',
-      version: '1',
-      weather: {
-        temp_c: previsaoNewIndice && previsaoNewIndice.current.temp_c,
-        wind_kph: previsaoNewIndice && previsaoNewIndice.current.wind_kph,
-        humidity: previsaoNewIndice && previsaoNewIndice.current.humidity,
-        locale: previsaoNewIndice && previsaoNewIndice.location.name,
-        precip_in: previsaoNewIndice && previsaoNewIndice.current.precip_in,
-      },
+      version: '',
+      weather,
+      ...fireIndice
     };
 
-    const latitudeCoordisClickMap = value.geometry.coordinates[1];
-    const longitudeCoordisClickMap = value.geometry.coordinates[0];
-    dispatch(
-      fetchPrevisao({
-        latitude: latitudeCoordisClickMap,
-        longitude: longitudeCoordisClickMap,
-      }),
-    );
-    dispatch(fetchSaveIndice(indiceCreateToUser));
+    dispatch(fetchSaveIndice(newIndice));
+    dispatch(fetchIndicesIncendios());
   }
 
   function returnToLocaleHandler() {
@@ -293,20 +263,20 @@ const Map = () => {
   function renderIndices() {
     return (
       indices &&
-      indices.map((coordinate, index) => {
-        if (coordinate.active) {
+      indices.map((register, index) => {
+        if (register.active) {
           return (
             <MapboxGL.MarkerView
               key={index}
               coordinate={[
-                Number(coordinate.longitude),
-                Number(coordinate.latitude),
+                register.latitude,
+                register.longitude
               ]}>
-              {coordinate.userCreated ? (
+              {register.userCreated ? (
                 <View style={styles.containerIndexFire}>
                   <IconSimple
                     onPress={() => {
-                      showIndiceDetail(coordinate);
+                      showIndiceDetail(register);
                     }}
                     name='fire'
                     size={30}
@@ -317,11 +287,11 @@ const Map = () => {
                 <View style={styles.containerIndexFire}>
                   <IconSimple
                     onPress={() => {
-                      showIndiceDetail(coordinate);
+                      showIndiceDetail(register);
                     }}
                     name='fire'
                     size={30}
-                    color={coordinate?.brightness >= 500 ? '#F00' : '#ff4500'}
+                    color={register?.brightness >= 500 ? '#F00' : '#ff4500'}
                   />
                 </View>
               )}
@@ -363,7 +333,7 @@ const Map = () => {
 
       <ModalNewFireIndice
         visible={showModalNewFireIndice.show}
-        onConfirm={saveFireIndice}
+        onConfirm={generateFireIndice}
         onCancel={() => setShowModalNewFireIndice({ show: false, data: null })}
       />
         
@@ -383,6 +353,7 @@ const Map = () => {
           onLongPress={(event) => setShowModalNewFireIndice({ show: true, data: event })}
           styleURL={mapStyle}
           zoomLevel={20}
+          compassEnabled={false}
           logoEnabled={false}
           attributionEnabled={false}
           centerCoordinate={[

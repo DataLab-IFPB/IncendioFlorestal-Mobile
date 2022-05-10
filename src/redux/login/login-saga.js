@@ -61,13 +61,10 @@ function* login(action) {
     // Verificar se é o primeiro acesso
     if( userData.birthDate === password && userData.firstLogin ) {    
        yield put(firstLogin(userRef));
-    } else {                                                          // Usuário já cadastrado
-
+    } else { // Usuário já cadastrado
       const { user } = yield auth().signInWithEmailAndPassword(userData.email, password);
 
       if( user ) {
-        // Persistir a sessão
-        yield auth().setPersistence(auth().Auth.Persistence.LOCAL);
         yield put(requestLoginSuccess(user));
       }
    }
