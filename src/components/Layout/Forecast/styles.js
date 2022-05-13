@@ -27,3 +27,7 @@ export const Label = styled.Text`
   font-size: 13px;
   color: ${({theme}) => theme.text.primary};
 `;
+
+export const WindIcon = styled.View`
+  flex-direction: row;
+`;

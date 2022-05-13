@@ -2,11 +2,12 @@ export const mountForecast = (data) => {
     
     const { current } = data;
     const { location } = data;
-    const { temp_c, wind_kph, humidity, locale, precip_in } = current;
+    const { temp_c, wind_kph, wind_degree, humidity, locale, precip_in } = current;
 
     return {
         temp_c,
         wind_kph,
+        wind_degree,
         humidity,
         precip_in,
         locale: location.name

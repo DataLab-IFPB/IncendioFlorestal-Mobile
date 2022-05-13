@@ -1,84 +1,82 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import LoadingForecast from './LoadingForecast';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import { useTheme } from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
-import { Container, ContainerInfo, Label } from './styles';
-import { fetchPrevisaoUsuarioLogado } from '../../../redux/previsao/previsao-action';
+import { Container, ContainerInfo, Label, WindIcon } from './styles';
+import { useNetInfo } from '@react-native-community/netinfo';
+import { weather } from '../../../shared/services/weather';
 
 const Forecast = ({ userCoordinates }) => {
 
-  const dispatch = useDispatch();
+  const netInfo = useNetInfo();
   const theme = useTheme();
 
-  const previsao = useSelector((state) => state.previsao.previsaoUsuario);
-  const loading = useSelector((state) => state.previsao.loadingPrevisaoUsuario);
+  const { getForecast } = weather();
+  const [currentWeather, setCurrentWeather] = useState(null);
 
   useEffect(() => {
-    if( userCoordinates.latitude && userCoordinates.longitude ) {
-      dispatch(
-        fetchPrevisaoUsuarioLogado({
-          latitude: userCoordinates.latitude,
-          longitude: userCoordinates.longitude,
-        }),
-      );
+    if(userCoordinates.latitude && userCoordinates.longitude) {
+      refreshWeather();
     }
   }, [userCoordinates]);
+
+  async function refreshWeather() {
+    setCurrentWeather(await getForecast(userCoordinates.longitude, userCoordinates.latitude));
+  }
 
   function renderInfo(info) {
     return info === null ? ' - ' : info;
   }
 
+  function windArrowIcon() {
+    return currentWeather === null ? null : <FontAwesome name='arrow-up' color='red' size={14} style={{transform: [{rotate: currentWeather.wind_degree + 'deg'}]}}/>;;
+  }
+
   function iconFontAwesome(name, color) {
     return <Ionicons name={name} size={15} color={color}/>;
   }
-
-  return (
-    <Container>
-      {/* Velocidade do vento */}
-      { loading && (<LoadingForecast/>) }
-      { !loading && (
-        <ContainerInfo>
-          <FontAwesome name='wind' color={theme.text.primary} size={15}/>
-          <Label>{renderInfo(previsao && previsao.current.wind_kph +  ' KM/H')}</Label>
-        </ContainerInfo>
-      )}
-
-      {/* Temperatura */}
-      { loading && (<LoadingForecast/>) }
-      { !loading && (
-        <ContainerInfo>
-          {iconFontAwesome('thermometer-outline', 'red')}
-          <Label>
-            {renderInfo(previsao && previsao?.current.temp_c + 'º')}
-          </Label>
-        </ContainerInfo>
-      )}
+  
+  if(netInfo.isConnected) {
+    return (
+      <Container>
+        {/* Velocidade do vento */}
+          <ContainerInfo>
+            <WindIcon>
+              <FontAwesome name='wind' color={theme.text.primary} size={15}/>
+              {windArrowIcon()}
+            </WindIcon>
+            <Label>{renderInfo(currentWeather && currentWeather.wind_kph +  ' KM/H')}</Label>
+          </ContainerInfo>
+  
+        {/* Temperatura */}
+          <ContainerInfo>
+            {iconFontAwesome('thermometer-outline', 'red')}
+            <Label>
+              {renderInfo(currentWeather && currentWeather.temp_c + 'º')}
+            </Label>
+          </ContainerInfo>
+         
+        {/* Humidade */}
+          <ContainerInfo>
+            {iconFontAwesome('water', 'skyblue')}
+            <Label>
+                {renderInfo(currentWeather && Math.floor(currentWeather.humidity) + '%')}
+            </Label>
+          </ContainerInfo>
        
-      {/* Humidade */}
-      { loading && (<LoadingForecast/>) }
-      { !loading && (
-        <ContainerInfo>
-          {iconFontAwesome('water', 'skyblue')}
-          <Label>
-              {renderInfo(previsao && Math.floor(previsao?.current.humidity) + '%')}
-          </Label>
-        </ContainerInfo>
-      )}
-     
-      {/* Precipitacao */}
-      { loading && (<LoadingForecast/>) }
-      { !loading && (
-        <ContainerInfo>
-          {iconFontAwesome('thunderstorm-outline', 'skyblue')}
-          <Label>
-            {renderInfo(previsao && previsao?.current.precip_in + '%')}
-          </Label>
-        </ContainerInfo>
-      )}
-    </Container>
-  );
+        {/* Precipitacao */}
+          <ContainerInfo>
+            {iconFontAwesome('thunderstorm-outline', 'skyblue')}
+            <Label>
+              {renderInfo(currentWeather && currentWeather.precip_in + '%')}
+            </Label>
+          </ContainerInfo>
+      </Container>
+    );
+  }
+
+  return null;
+
 };
 
 export default Forecast;
