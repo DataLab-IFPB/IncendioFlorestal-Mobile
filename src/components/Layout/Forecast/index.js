@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import { useTheme } from 'styled-components';
-import { Container, ContainerInfo, Label, WindIcon } from './styles';
+import { Container, ContainerInfo, Label, WindInfoLabel, WindIcons, WindInfoContainer, NorthLabel } from './styles';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { weather } from '../../../shared/services/weather';
 
@@ -18,7 +18,7 @@ const Forecast = ({ userCoordinates }) => {
     if(userCoordinates.latitude && userCoordinates.longitude) {
       refreshWeather();
     }
-  }, [userCoordinates]);
+  }, [userCoordinates, netInfo.isConnected]);
 
   async function refreshWeather() {
     setCurrentWeather(await getForecast(userCoordinates.longitude, userCoordinates.latitude));
@@ -28,8 +28,16 @@ const Forecast = ({ userCoordinates }) => {
     return info === null ? ' - ' : info;
   }
 
-  function windArrowIcon() {
-    return currentWeather === null ? null : <FontAwesome name='arrow-up' color='red' size={14} style={{transform: [{rotate: currentWeather.wind_degree + 'deg'}]}}/>;;
+  function windInfoContainer() {
+    return currentWeather === null ? <Label> - </Label> : (
+      <WindInfoContainer>
+        <WindInfoLabel>{renderInfo(currentWeather && currentWeather.wind_kph +  '\nKM/H')}</WindInfoLabel>
+        <WindIcons>
+          <NorthLabel>N</NorthLabel>
+          <Ionicons name={'arrow-up-outline'} size={17} color={'red'} style={{transform: [{rotate: 0 + 'deg'}]}}/>
+        </WindIcons>
+      </WindInfoContainer>
+    );
   }
 
   function iconFontAwesome(name, color) {
@@ -39,13 +47,10 @@ const Forecast = ({ userCoordinates }) => {
   if(netInfo.isConnected) {
     return (
       <Container>
-        {/* Velocidade do vento */}
+        {/* Velocidade e direcao do vento */}
           <ContainerInfo>
-            <WindIcon>
-              <FontAwesome name='wind' color={theme.text.primary} size={15}/>
-              {windArrowIcon()}
-            </WindIcon>
-            <Label>{renderInfo(currentWeather && currentWeather.wind_kph +  ' KM/H')}</Label>
+            <FontAwesome name='wind' color={theme.text.primary} size={15}/>
+            {windInfoContainer()}
           </ContainerInfo>
   
         {/* Temperatura */}
@@ -75,7 +80,7 @@ const Forecast = ({ userCoordinates }) => {
     );
   }
 
-  return null;
+  return <></>;
 
 };
 

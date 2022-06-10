@@ -28,6 +28,35 @@ export const Label = styled.Text`
   color: ${({theme}) => theme.text.primary};
 `;
 
-export const WindIcon = styled.View`
+export const WindInfoLabel = styled.Text`
+  text-align: center;
+  font-size: 10px;
+  margin-right: 6px;
+  margin-bottom: -3px;
+  color: ${({theme}) => theme.text.primary};
+`;
+
+export const NorthLabel = styled.Text`
+  text-align: center;
+  font-size: 10px;
+  margin-right: 1px;
+  margin-bottom: -3px;
+  font-weight: bold;
+  color: ${({theme}) => theme.text.primary};
+`;
+
+export const WindIcons = styled.View`
+  align-items: center;
+  flex-direction: column;
+  margin-right: -2px;
+`;
+
+export const WindInfoContainer = styled.View`
+  justify-content: center;
   flex-direction: row;
+  width: 60px;
+  height: 30px;
+  border-width: 1.2px;
+  border-radius: 10px;
+  border-color: ${({theme}) => theme.text.primary};
 `;
