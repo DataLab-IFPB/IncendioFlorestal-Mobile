@@ -1,7 +1,7 @@
 export const mountForecast = (data) => {
 
-	const { current } = data;
-	const { location } = data;
+	const { current } = data.forecast;
+	const { address } = data.locale;
 	const { temp_c, wind_kph, wind_degree, humidity, precip_in } = current;
 
 	return {
@@ -10,6 +10,6 @@ export const mountForecast = (data) => {
 		wind_degree,
 		humidity,
 		precip_in,
-		locale: location.name
+		locale: address.city ? address.city : address.village
 	};
 };
