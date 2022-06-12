@@ -13,6 +13,8 @@ target 'projeto_combate_incendios' do
   )
 
 
+  pod 'RealmJS', :path => '../node_modules/realm'
+
   target 'projeto_combate_incendiosTests' do
     inherit! :complete
     # Pods for testing

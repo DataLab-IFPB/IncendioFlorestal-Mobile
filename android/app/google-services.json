@@ -1,33 +1,34 @@
 {
   "project_info": {
-    "project_number": "883770424001",
-    "project_id": "combate-incendios-dev",
-    "storage_bucket": "combate-incendios-dev.appspot.com"
+    "project_number": "655422313080",
+    "firebase_url": "https://combate-incendios-prod2-default-rtdb.firebaseio.com",
+    "project_id": "combate-incendios-prod2",
+    "storage_bucket": "combate-incendios-prod2.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:883770424001:android:8775d2d19a43741dc63240",
+        "mobilesdk_app_id": "1:655422313080:android:dd6268b662bb5064d7d38d",
         "android_client_info": {
-          "package_name": "com.projeto_combate_incendios"
+          "package_name": "com.ifpb.datalab.fogonomato"
         }
       },
       "oauth_client": [
         {
-          "client_id": "883770424001-n8e83c5p8kv9ttbq76of8lrkathfjbdt.apps.googleusercontent.com",
+          "client_id": "655422313080-r9icsu3nb5n3t6q96rhhfpobhg5lfshp.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBXr1NsbV0mXr1CoCSXDq2CfOsv8TojA2I"
+          "current_key": "AIzaSyAYko6tL9QDuEXZtPnkTjjzTCbnWVWqlGw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "883770424001-n8e83c5p8kv9ttbq76of8lrkathfjbdt.apps.googleusercontent.com",
+              "client_id": "655422313080-r9icsu3nb5n3t6q96rhhfpobhg5lfshp.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

@@ -110,7 +110,8 @@ def enableProguardInReleaseBuilds = false
  * give correct results when using with locales other than en-US.  Note that
  * this variant is about 6MiB larger per architecture than default.
  */
-def jscFlavor = 'org.webkit:android-jsc:+'
+//def jscFlavor = 'org.webkit:android-jsc:+'
+def jscFlavor = 'org.webkit:android-jsc-intl:+'
 
 /**
  * Whether to enable the Hermes VM.
@@ -132,7 +133,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.projeto_combate_incendios"
+        applicationId "com.ifpb.datalab.fogonomato"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -193,15 +194,10 @@ dependencies {
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
-    // google maps
-    implementation(project(':react-native-maps')){
-       exclude group: 'com.google.android.gms', module: 'play-services-base'
-       exclude group: 'com.google.android.gms', module: 'play-services-maps'
-   }
    implementation 'com.google.android.gms:play-services-base:17.2.1'
    implementation 'com.google.android.gms:play-services-maps:17.0.0'
 
-    implementation platform('com.google.firebase:firebase-bom:28.1.0')
+    implementation platform('com.google.firebase:firebase-bom:29.3.1')
 
 
     // VECTOR ICONS
