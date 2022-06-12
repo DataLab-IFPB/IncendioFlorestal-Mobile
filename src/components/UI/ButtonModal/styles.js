@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "styled-components/native";
 
 export const Touchable = styled.TouchableOpacity`
     margin: 5px 0;

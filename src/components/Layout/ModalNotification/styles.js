@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components/native";
 
 export const RootContainer = styled.View`
     flex: 1;
@@ -23,7 +23,7 @@ export const Label = styled.Text`
     color: ${({theme}) => theme.text.primary};
 `;
 
-export const Touachble = styled.TouchableOpacity`   
+export const Touachble = styled.TouchableOpacity`
     margin: 20px 10px 10px 10px;
     padding: 5px 50px;
     border-radius: 15px;

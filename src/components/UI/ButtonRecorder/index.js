@@ -1,12 +1,12 @@
 import React, { Fragment, useState } from "react";
-import { Container, Label, TouchableCancel, TouchableEnd, TouchableStart } from "./styles";
-import FontAwesome from "react-native-vector-icons/FontAwesome5";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import firebase from "../../../shared/services/firebase";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import FontAwesome from "react-native-vector-icons/FontAwesome5";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch } from "react-redux";
 import { loadingActions } from "../../../store/actions";
 import { RECORDER_ROUTER_INITIAL_COORDINATES } from "../../../constants";
-import { useDispatch } from "react-redux";
+import { Container, Label, TouchableCancel, TouchableEnd, TouchableStart } from "./styles";
 
 const ButtonRecorder = ({ currentCoordinates, userRegistration, uidFireIndice, onCancel }) => {
 

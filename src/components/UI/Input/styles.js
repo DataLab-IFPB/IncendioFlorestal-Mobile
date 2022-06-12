@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components/native";
 
 export const Container = styled.View`
     width: 100%;
@@ -9,7 +9,7 @@ export const ContainerInput = styled.View`
     flex-direction: row;
     border-radius: 10px;
     background-color: ${({theme}) => theme.colors.secondary};
-    border: ${({theme, isValid}) => isValid ? `2px solid ${theme.colors.invalid}` : 'none'};
+    border: ${({theme, isValid}) => isValid ? `2px solid ${theme.colors.invalid}` : "none"};
 `;
 
 export const ContainerIcon = styled.View`
@@ -23,7 +23,7 @@ export const ButtonShowPassword = styled.TouchableOpacity`
     justify-content: center;
     align-items: center;
     padding: 5px 10px;
-`
+`;
 
 export const Label = styled.Text`
     margin-bottom: 3px;
