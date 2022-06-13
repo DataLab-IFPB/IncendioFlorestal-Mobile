@@ -48,7 +48,7 @@ const Forecast = ({ userCoordinates }) => {
 						name={"arrow-up-outline"}
 						size={17}
 						color={"red"}
-						style={{transform: [{rotate: 0 + "deg"}]}}
+						style={{transform: [{rotate: currentWeather.wind_degree + "deg"}]}}
 					/>
 				</WindIcons>
 			</WindInfoContainer>
