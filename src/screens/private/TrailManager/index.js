@@ -105,7 +105,7 @@ const TrailManager = ({ navigation, route }) => {
 				data: uid
 			});
 		} else {
-			setError("Você não possui permissão para deletar essa trilha!");
+			setError("Você não tem permissão para excluir essa trilha");
 		}
 	}
 

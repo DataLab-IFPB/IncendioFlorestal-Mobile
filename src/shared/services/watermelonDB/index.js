@@ -1,5 +1,7 @@
+import { where } from "@nozbe/watermelondb/QueryDescription";
 import { useDispatch } from "react-redux";
 import { firesIndicesActions } from "../../../store/actions";
+import { formatDatetime } from "../../utils/formatDate";
 import { database } from "./connection";
 
 const watermelonDB = () => {
@@ -12,6 +14,11 @@ const watermelonDB = () => {
 	const { addFireIndice } = firesIndicesActions;
 
 	async function saveFireIndiceOffline(data) {
+
+		const aux = data.latitude;
+		data.latitude = data.longitude;
+		data.longitude = aux;
+
 		await database.write(async () => {
 			const response = await database.get(TABLE_FIRES_INDICES).create((fireIndice) => {
 				fireIndice.latitude = data.latitude;
@@ -32,8 +39,9 @@ const watermelonDB = () => {
 		await database.write(async () => {
 			await database.get(TABLE_EVIDENCES).create((evidence) => {
 				evidence.path = data.path;
-				evidence.media = data.media;
-				evidence.fireIndice_id = data.fireIndice_id;
+				evidence.fileType = data.media;
+				evidence.fireIndice = data.fireIndice_id;
+				evidence.createdAt = formatDatetime(new Date());
 			});
 		});
 	}
@@ -49,9 +57,20 @@ const watermelonDB = () => {
 		const evidences = await evidencesCollection.query().fetch();
 
 		return evidences.filter((item) => {
-			if( item.fireIndice_id === fireIndiceId ) {
+			if( item.fireIndice === fireIndiceId ) {
 				return item;
 			}
+		});
+	}
+
+	async function removeEvidenceOffline(id) {
+		return new Promise((resolve) => {
+			database.write(async () => {
+				const evidencesCollection = database.get(TABLE_EVIDENCES);
+				await evidencesCollection.query(where("id", id)).markAllAsDeleted();
+			}).finally(() => {
+				resolve();
+			});
 		});
 	}
 
@@ -69,7 +88,8 @@ const watermelonDB = () => {
 		saveEvicendeOffline,
 		fetchFiresIndicesOffline,
 		fetchEvidencesOffline,
-		clearFireIndicesOffline
+		clearFireIndicesOffline,
+		removeEvidenceOffline
 	};
 };
 

@@ -15,6 +15,12 @@ function formatISO(date) {
 	return formatter.format("YYYY-MM-DD");
 }
 
+function formatDateString(datetime) {
+	const [date, time] = datetime.split(" ");
+	const [year, month, day] = date.split("-");
+	return `${day}/${month}/${year} ${time}`;
+}
+
 function formatDatetime(date) {
 	const dateFormated = formatISO(date);
 	const time = `${date.getHours()}:${date.getMinutes() < 10 ? "0" : ""}${date.getMinutes()}:00`;
@@ -27,9 +33,9 @@ function getMoment() {
 	const currentHour = momentInstance.format("HH");
 	let momentType = "";
 
-	if (currentHour >= 3 && currentHour < 12) {
+	if (currentHour >= 3 && currentHour <= 12) {
 		momentType = "D";
-	} else if (currentHour >= 20) {
+	} else {
 		momentType = "N";
 	}
 
@@ -40,5 +46,6 @@ export {
 	getMoment,
 	formatISO,
 	formatUTC,
-	formatDatetime
+	formatDatetime,
+	formatDateString
 };

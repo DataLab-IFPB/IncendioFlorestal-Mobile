@@ -1,7 +1,7 @@
 import storage from "@react-native-firebase/storage";
 import auth from "@react-native-firebase/auth";
 import database from "@react-native-firebase/database";
-import { formatISO } from "../../utils/formatDate";
+import { formatDatetime, formatISO } from "../../utils/formatDate";
 
 const firebase = () => {
 
@@ -129,18 +129,25 @@ const firebase = () => {
     * e cada índice, conterá um ou vários diretórios referenciando o usuário que
     * registrou a evidência, e a evidẽncia será salva de acordo com o tipo da midia.
     */
-	function registerNewEvidence(file, userRegistration, uidFireIndice) {
+	function registerNewEvidence(file, type, userRegistration, uidFireIndice) {
 
 		const fileSplit = file.split("/");
 		const nameFile = fileSplit[fileSplit.length - 1];
+		const newReference = database().ref("/evidences").push();
 
 		return new Promise((resolve, reject) => {
 			const task = storage()
 				.ref("evidences")
-				.child(uidFireIndice)
-				.child(userRegistration)
 				.child(`${nameFile}`)
 				.putFile(file);
+
+			newReference.set({
+				fireIndice: uidFireIndice,
+				user: userRegistration,
+				fileType: type,
+				file: nameFile,
+				createdAt: formatDatetime(new Date())
+			});
 
 			task.then(() => {
 				resolve("Evidências salvas com sucesso");
@@ -182,13 +189,22 @@ const firebase = () => {
 		});
 	}
 
+	async function getMedia(name) {
+		return new Promise((resolve) => {
+			storage().ref(`/evidences/${name}`)
+				.getDownloadURL().then((media) => {
+					resolve(media);
+				});
+		});
+	}
+
 	async function getTrails(fireIndice) {
 		return new Promise((resolve) => {
 			database().ref("/trails")
 				.orderByChild("fire_indice")
 				.equalTo(fireIndice)
 				.once("value")
-				.then((value) =>{
+				.then((value) => {
 					resolve(value.val());
 				});
 		});
@@ -199,12 +215,25 @@ const firebase = () => {
 	}
 
 	async function getEvidences(fireIndice) {
-		// return new Promise((resolve) => {
-		// 	const ref = storage().ref("/evidences").child(fireIndice);
-		// 	ref.listAll().then((res) => {
-		// 		console.log("data", res);
-		// 	});
-		// });
+		return new Promise((resolve) => {
+			database().ref("/evidences")
+				.orderByChild("fireIndice")
+				.equalTo(fireIndice)
+				.once("value")
+				.then((value) => {
+					resolve(value.val());
+				});
+		});
+	}
+
+	async function removeEvidence(uid) {
+		const ref = database().ref(`/evidences/${uid}`);
+		ref.once("value")
+			.then(async (value) => {
+				const file = value.val().file;
+				await storage().ref(`/evidences/${file}`).delete();
+				ref.remove();
+			});
 	}
 
 	return {
@@ -219,7 +248,9 @@ const firebase = () => {
 		updateStatusFireIndice,
 		registerNewTrail,
 		getTrails,
-		removeTrail
+		getMedia,
+		removeTrail,
+		removeEvidence
 	};
 };
 

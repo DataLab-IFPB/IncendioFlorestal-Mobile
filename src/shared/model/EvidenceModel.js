@@ -5,9 +5,10 @@ class EvidenceModel extends Model {
 
 	static table = "TB_EVIDENCES";
 
-	@field("fireIndice_id") fireIndice_id;
+	@field("fireIndice") fireIndice;
 	@field("path") path;
-	@field("media") media;
+	@field("fileType") fileType;
+	@field("createdAt") createdAt;
 }
 
 export default EvidenceModel;

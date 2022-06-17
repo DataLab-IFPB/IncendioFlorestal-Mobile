@@ -33,6 +33,17 @@ const firesIndicesSlice = createSlice({
 			return [];
 		},
 
+		loadFireIndicesOffline(_, action) {
+
+			const { payload } = action;
+
+			if( payload ) {
+				return [...action.payload];
+			}
+
+			return[];
+		},
+
 		addFireIndice(state, action) {
 			return [
 				...state,

@@ -9,6 +9,11 @@ export const Header = styled.View`
 	padding: 20px;
 	flex-direction: row;
 	justify-content: space-between;
+	align-items: center;
+
+	${({isEmptyMedias}) => !isEmptyMedias && `
+		justify-content: flex-start;
+	`}
 `;
 
 export const ContainerMedia = styled.View`
@@ -26,7 +31,26 @@ export const ContainerIconPlayer = styled.View`
 	justify-content: center;
 `;
 
-export const Label = styled.Text``;
+export const Title = styled.Text`
+	font-weight: bold;
+	font-size: 18px;
+	letter-spacing: 3px;
+	text-align: center;
+
+	${({isEmptyMedias}) => !isEmptyMedias && `
+		width: 90%;
+	`}
+`;
+
+export const Label = styled.Text`
+	font-size: 16px;
+	height: 10%;
+	text-align: center;
+`;
+
+export const TitleLabel = styled(Label)`
+	font-weight: bold;
+`;
 
 export const Image = styled.Image`
 	width: 320px;

@@ -36,7 +36,7 @@ const Map = ({ route }) => {
 	const mapRef = useRef();
 
 	const { enableLoading, disableLoading } = loadingActions;
-	const { loadFireIndices, addFireIndice } = firesIndicesActions;
+	const { loadFireIndices, loadFireIndicesOffline, addFireIndice } = firesIndicesActions;
 	const { getForecast } = weather();
 
 	const {
@@ -94,7 +94,7 @@ const Map = ({ route }) => {
 		}
 	}, [netInfo]);
 
-	// Params
+	// Exibir trilhas
 	useEffect(() => {
 		const params = route.params;
 
@@ -160,15 +160,20 @@ const Map = ({ route }) => {
 		});
 	}, []);
 
-	// Carregar índices de incêndios
 	useEffect(() => {
 		const fetchData = async () => {
-			const response = await getFiresIndices();
-			dispatch(loadFireIndices(response));
+			if( netInfo.isConnected ) {
+				await fetchFireIndices();
+			} else {
+				const data = await fetchFiresIndicesOffline();
+				dispatch(loadFireIndicesOffline(data));
+			}
 		};
 
-		fetchData();
-	}, []);
+		if( netInfo.isConnected !== null ) {
+			fetchData();
+		}
+	}, [netInfo]);
 
 	useEffect(() => {
 		async function verifyPermission() {
@@ -219,6 +224,11 @@ const Map = ({ route }) => {
 
 		return () => Geolocation.clearWatch(watchPosition);
 	}, []);
+
+	async function fetchFireIndices() {
+		const data = await getFiresIndices();
+		dispatch(loadFireIndices(data));
+	}
 
 	function createNewFireIndice(event) {
 
@@ -271,7 +281,7 @@ const Map = ({ route }) => {
 		const uid = await registerNewFireIndice(newIndice);
 
 		dispatch(addFireIndice({...newIndice, uid}));
-		dispatch(loadFireIndices());
+		fetchFireIndices();
 		dispatch(disableLoading());
 
 		return uid;
@@ -285,9 +295,16 @@ const Map = ({ route }) => {
 	}
 
 	function showFireIndiceDetails(fireIndice) {
+
+		const copyFireIndice = {...fireIndice};
+
+		if( typeof copyFireIndice.status === "string" ) {
+			copyFireIndice.status = JSON.parse(copyFireIndice.status);
+		}
+
 		setFireIndiceDetails({
 			isVisible: true,
-			fireIndice
+			fireIndice: copyFireIndice
 		});
 	}
 

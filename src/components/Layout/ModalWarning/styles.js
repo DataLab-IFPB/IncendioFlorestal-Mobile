@@ -14,6 +14,7 @@ export const ContainerRoot = styled.View`
 export const Container = styled.View`
     background-color: #FFF;
     border-radius: 10px;
+	width: 80%;
     justify-content: center;
     align-items: center;
     elevation: 5;
@@ -32,7 +33,7 @@ export const ContainerContent = styled.View`
     justify-content: center;
     align-items: center;
     margin-top: 20px;
-    padding: 20px 40px;
+    padding: 20px 15px;
 `;
 
 export const Title = styled.Text`
