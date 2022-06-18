@@ -1,4 +1,3 @@
-import ActionButton from "react-native-action-button-fix";
 import styled from "styled-components/native";
 
 export const Container = styled.View`
@@ -7,10 +6,20 @@ export const Container = styled.View`
     margin: 15px;
 `;
 
-export const ActionButtonMenu = styled(ActionButton)`
-    position: absolute;
-    z-index: 5;
-    left: -4%;
-    top: 15%;
+export const SubMenu = styled.View`
+	display: ${({isVisible}) => isVisible ? "flex" : "none"};
 `;
 
+export const OptionSubMenu = styled.View`
+	flex-direction: row;
+	align-items: flex-start;
+`;
+
+export const LabelSubMenu = styled.View`
+	background-color: #FFF;
+	padding: 5px 10px;
+	border-radius: 5px;
+	margin-top: 5px;
+	margin-left: 15px;
+	elevation: 5;
+`;
