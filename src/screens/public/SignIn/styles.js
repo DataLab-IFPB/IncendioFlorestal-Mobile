@@ -22,7 +22,7 @@ export const Form = styled.View`
 `;
 
 export const LabelVersion = styled.Text`
-  color: ${({theme}) => theme.text.secondary};
+  color: ${({theme}) => theme.colors.text.primary};
   font-size: 12px;
 `;
 

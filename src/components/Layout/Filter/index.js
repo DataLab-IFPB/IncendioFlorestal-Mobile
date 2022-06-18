@@ -14,6 +14,7 @@ import {
 const Filter = ({ visible, closeModal, filterDays, onUpdateDaysSlider }) => {
 
 	const { width } = useWindowDimensions();
+	
 	const [days, setDays] = useState(filterDays);
 	const [initialized, setInitialized] = useState(false);
 

@@ -3,11 +3,14 @@ import React, { useEffect, useState } from "react";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import firebase from "../../../shared/services/firebase";
 import fs from "react-native-fs";
-import { ButtonAction } from "../../../components/UI";
-import { useNetInfo } from "@react-native-community/netinfo";
-import { watermelonDB } from "../../../shared/services/watermelonDB";
-import { loadingActions } from "../../../store/actions";
 import { FlatList } from "react-native";
+import { useDispatch } from "react-redux";
+import { ButtonAction } from "../../../components/UI";
+import { loadingActions, firesIndicesActions } from "../../../store/actions";
+import { useNetInfo } from "@react-native-community/netinfo";
+import { ModalConfirmation } from "../../../components/Layout";
+import { formatDateString } from "../../../shared/utils/formatDate";
+import { watermelonDB } from "../../../shared/services/watermelonDB";
 import {
 	ContainerIconPlayer,
 	ContainerMedia,
@@ -22,9 +25,6 @@ import {
 	Video,
 	TitleLabel
 } from "./styles";
-import { useDispatch } from "react-redux";
-import { formatDateString } from "../../../shared/utils/formatDate";
-import { ModalConfirmation } from "../../../components/Layout";
 
 const Gallery = ({ navigation, route }) => {
 
@@ -32,12 +32,13 @@ const Gallery = ({ navigation, route }) => {
 	const dispatch = useDispatch();
 
 	const { fireIndice } = route.params;
+	const { updateFireIndice } = firesIndicesActions;
 	const { enableLoading, disableLoading } = loadingActions;
 	const { getEvidences, getMedia, removeEvidence } = firebase();
 	const { fetchEvidencesOffline, removeEvidenceOffline } = watermelonDB();
 
-	const [configModal, setConfigModal] = useState({ show: false });
 	const [medias, setMedias] = useState([]);
+	const [configModal, setConfigModal] = useState({ show: false });
 	const [selectedMedia, setSelectedMidia] = useState({ id: null, media: "", path: "", info: "" });
 
 	// Load Data
@@ -105,7 +106,7 @@ const Gallery = ({ navigation, route }) => {
 		});
 	}
 
-	async function confirmDelete() {
+	async function onConfirmDelete() {
 		clear();
 		dispatch(enableLoading("Apagando evidência..."));
 
@@ -124,7 +125,7 @@ const Gallery = ({ navigation, route }) => {
 			dispatch(disableLoading());
 		}
 
-		cancelDelete();
+		onCancelDelete();
 	}
 
 	function clear() {
@@ -134,15 +135,15 @@ const Gallery = ({ navigation, route }) => {
 		});
 	}
 
-	function cancelDelete() {
+	function onCancelDelete() {
 		setConfigModal({ show: false });
 	}
 
-	function openModalConfirmation() {
+	function openModal() {
 		setConfigModal({ show: true });
 	}
 
-	function closeHandler() {
+	function onClose() {
 		navigation.navigate("Map", { fireIndice });
 	}
 
@@ -151,16 +152,18 @@ const Gallery = ({ navigation, route }) => {
 			<ModalConfirmation
 				isVisible={configModal.show}
 				message="Deseja excluir esta evidência?"
-				onConfirm={confirmDelete}
-				onCancel={cancelDelete}
+				onConfirm={onConfirmDelete}
+				onCancel={onCancelDelete}
 			/>
 
 			<Header isEmptyMedias={!!medias.length}>
-				<ButtonAction icon='close' onPress={closeHandler}/>
+				<ButtonAction icon='close' onPress={onClose}/>
+
 				<Title isEmptyMedias={!!medias.length}>
 					GALERIA
 				</Title>
-				{ !!medias.length && <ButtonAction icon='trash' onPress={openModalConfirmation}/> }
+
+				{ !!medias.length && <ButtonAction icon='trash' onPress={openModal}/> }
 			</Header>
 
 			<ContainerMedia>

@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import React from "react";
-import { Button } from "./styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { Button } from "./styles";
 
 const ButtonAction = ({ icon, onPress }) => {
 	return(

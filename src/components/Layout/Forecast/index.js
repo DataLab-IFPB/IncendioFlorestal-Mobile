@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
-import { useTheme } from "styled-components";
 import { weather } from "../../../shared/services/weather";
 import { useNetInfo } from "@react-native-community/netinfo";
 import {
@@ -17,7 +16,6 @@ import {
 const Forecast = ({ userCoordinates }) => {
 
 	const netInfo = useNetInfo();
-	const theme = useTheme();
 
 	const { getForecast } = weather();
 	const [currentWeather, setCurrentWeather] = useState(null);
@@ -64,7 +62,7 @@ const Forecast = ({ userCoordinates }) => {
 			<Container>
 				{/* Velocidade e direcao do vento */}
 				<ContainerInfo>
-					<FontAwesome name='wind' color={theme.text.primary} size={15}/>
+					<FontAwesome name='wind' color="white" size={15}/>
 					{windInfoContainer()}
 				</ContainerInfo>
 

@@ -11,7 +11,7 @@ const watermelonDB = () => {
 
 	const dispatch = useDispatch();
 
-	const { addFireIndice } = firesIndicesActions;
+	const { storeFireIndice } = firesIndicesActions;
 
 	async function saveFireIndiceOffline(data) {
 
@@ -32,7 +32,7 @@ const watermelonDB = () => {
 			data.id = response.id;
 		});
 
-		dispatch(addFireIndice(data));
+		dispatch(storeFireIndice(data));
 	}
 
 	async function saveEvicendeOffline(data) {

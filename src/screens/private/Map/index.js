@@ -7,6 +7,7 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import MapboxGL, { Logger } from "@react-native-mapbox-gl/maps";
 import IconSimple from "react-native-vector-icons/SimpleLineIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTheme } from "styled-components";
 import { MAP_BOX_KEY } from "../../../constants";
 import { useDispatch, useSelector } from "react-redux";
 import { ButtonRecorder } from "../../../components/UI";
@@ -17,6 +18,7 @@ import { PERMISSION_LOCATION_USE } from "../../../constants";
 import { watermelonDB } from "../../../shared/services/watermelonDB";
 import { firesIndicesActions, loadingActions } from "../../../store/actions";
 import { getMoment, formatDatetime } from "../../../shared/utils/formatDate";
+import styles, { ButtonClose, Container, ContainerButtonClose } from "./styles";
 import {
 	Menu,
 	Filter,
@@ -25,7 +27,6 @@ import {
 	ModalConfirmation,
 	ModalNotification
 } from "../../../components/Layout";
-import styles, { ButtonClose, Container, ContainerButtonClose } from "./styles";
 
 const Map = ({ route }) => {
 
@@ -34,9 +35,10 @@ const Map = ({ route }) => {
 	const dispatch = useDispatch();
 	const netInfo = useNetInfo();
 	const mapRef = useRef();
+	const theme = useTheme();
 
 	const { enableLoading, disableLoading } = loadingActions;
-	const { loadFireIndices, loadFireIndicesOffline, addFireIndice } = firesIndicesActions;
+	const { loadFireIndices, loadFireIndicesOffline, storeFireIndice } = firesIndicesActions;
 	const { getForecast } = weather();
 
 	const {
@@ -295,7 +297,7 @@ const Map = ({ route }) => {
 		};
 		const uid = await registerNewFireIndice(newIndice);
 
-		dispatch(addFireIndice({...newIndice, uid}));
+		dispatch(storeFireIndice({...newIndice, uid}));
 		fetchFireIndices();
 		dispatch(disableLoading());
 
@@ -311,7 +313,7 @@ const Map = ({ route }) => {
 
 	function showFireIndiceDetails(fireIndice) {
 
-		const copyFireIndice = {...fireIndice};
+		const copyFireIndice = {...fireIndice, status: fireIndice.status};
 
 		if( typeof copyFireIndice.status === "string" ) {
 			copyFireIndice.status = JSON.parse(copyFireIndice.status);
@@ -363,7 +365,7 @@ const Map = ({ route }) => {
 									<IconSimple
 										name='fire'
 										size={30}
-										color={"#FFF000"}
+										color={theme.colors.icon.secondary}
 										onPress={() => showFireIndiceDetails(register)}
 									/>
 								</View>
@@ -373,7 +375,9 @@ const Map = ({ route }) => {
 										name='fire'
 										size={30}
 										onPress={() => showFireIndiceDetails(register)}
-										color={register.brightness >= 500 ? "#F00" : "#FF4500"}
+										color={register.brightness >= 500 ?
+											theme.colors.icon.primary : theme.colors.icon.tertiary
+										}
 									/>
 								</View>
 							)}

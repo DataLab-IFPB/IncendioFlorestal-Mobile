@@ -8,6 +8,6 @@ export const Touchable = styled.TouchableOpacity`
     margin-bottom: 20px;
     padding: 10px;
     border-radius: 50px;
-    background-color: ${({theme}) => theme.main.secondary};
     elevation: 5;
+    background-color: ${({theme}) => theme.colors.main.tertiary};
 `;

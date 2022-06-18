@@ -76,7 +76,7 @@ export const ItemSlider = styled.TouchableOpacity`
 	margin: 10px;
 	${({isSelected, theme}) => isSelected && `
 		border-radius: 18px;
-		border: 3px solid ${theme.main.primary};
+		border: 3px solid ${theme.colors.main.primary};
 	`};
 `;
 

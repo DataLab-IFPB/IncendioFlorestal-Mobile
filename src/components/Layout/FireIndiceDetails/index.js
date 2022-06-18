@@ -47,7 +47,7 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 	const { updateStatusOffline } = watermelonDB();
 	const { getForecast } = weather();
 	const { updateStatusFireIndice, getFiresIndices } = firebase();
-	const { loadFireIndices } = firesIndicesActions;
+	const { loadFireIndices, updateFireIndice } = firesIndicesActions;
 	const { enableLoading, disableLoading } = loadingActions;
 
 	const [currentWeather, setCurrentWeather] = useState();
@@ -128,7 +128,8 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 			const firesIndicesUpdated = await getFiresIndices();
 			dispatch(loadFireIndices(firesIndicesUpdated));
 		} else {
-			updateStatusOffline(fireIndice.id, JSON.stringify(status));
+			await updateStatusOffline(fireIndice.id, JSON.stringify(status));
+			dispatch(updateFireIndice({ ...fireIndice, status }));
 		}
 
 		onCancelUpdateStatus();

@@ -44,11 +44,17 @@ const firesIndicesSlice = createSlice({
 			return[];
 		},
 
-		addFireIndice(state, action) {
+		storeFireIndice(state, action) {
 			return [
 				...state,
 				action.payload
 			];
+		},
+
+		updateFireIndice(state, action) {
+			const { payload } = action;
+			const filter = state.filter((item) => item.id !== payload.id);
+			return [...filter, payload];
 		}
 	}
 });

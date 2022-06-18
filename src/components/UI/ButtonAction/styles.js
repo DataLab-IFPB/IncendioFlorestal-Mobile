@@ -6,5 +6,5 @@ export const Button = styled.TouchableOpacity`
 	height: 30px;
 	justify-content: center;
 	align-items: center;
-	background-color: ${({theme}) => theme.main.primary};
+	background-color: ${({theme}) => theme.colors.main.primary};
 `;

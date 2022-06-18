@@ -8,8 +8,10 @@ export const Container = styled.View`
 export const ContainerInput = styled.View`
     flex-direction: row;
     border-radius: 10px;
-    background-color: ${({theme}) => theme.colors.secondary};
-    border: ${({theme, isValid}) => isValid ? `2px solid ${theme.colors.invalid}` : "none"};
+	${({theme, isValid}) => `
+		background-color: ${theme.colors.main.secondary};
+		border: ${isValid ? `2px solid ${theme.colors.error.primary}` : "none"}
+	`};
 `;
 
 export const ContainerIcon = styled.View`
@@ -29,11 +31,11 @@ export const Label = styled.Text`
     margin-bottom: 3px;
     font-size: 15px;
     text-transform: capitalize;
-    color: ${({ theme }) => theme.colors.label};
+    color: ${({theme}) => theme.colors.text.primary};
 `;
 
 export const Field = styled.TextInput`
     flex: 1;
     padding: 10px;
-    color: ${({ theme }) => theme.colors.label};
+    color: ${({theme}) => theme.colors.text.primary};
 `;

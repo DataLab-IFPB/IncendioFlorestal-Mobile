@@ -3,19 +3,16 @@ import MapboxGL from "@react-native-mapbox-gl/maps";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { ButtonMenu } from "../../UI";
-import { useTheme } from "styled-components";
 import { Container, ActionButtonMenu } from "./styles";
 
 const Menu = ({ onLocation, onFilter, setMapStyle }) => {
 
-	const theme = useTheme();
-
 	function iconMaterial(name) {
-		return <MaterialIcons name={name} size={20} color={theme.text.primary}/>;
+		return <MaterialIcons name={name} size={20} color="white"/>;
 	}
 
 	function iconFontAwesome(name) {
-		return <FontAwesome name={name} size={15} color={theme.text.primary}/>;
+		return <FontAwesome name={name} size={15} color="white"/>;
 	}
 
 	return(

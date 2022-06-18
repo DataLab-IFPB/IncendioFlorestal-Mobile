@@ -8,7 +8,7 @@ export const Touchable = styled.TouchableOpacity`
     align-items: center;
     justify-content: center;
     background-color: ${({theme, isHighlighted}) => (
-		isHighlighted ? theme.main.primary : theme.main.secondary
+		isHighlighted ? theme.colors.main.primary : theme.colors.main.tertiary
 	)};
 `;
 
@@ -16,5 +16,5 @@ export const Label = styled.Text`
     text-transform: uppercase;
 	font-size: 12px;
 	font-weight: bold;
-    color: ${({theme}) => theme.text.primary};
+    color: #FFF;
 `;

@@ -15,7 +15,7 @@ const TouchableBase = styled.TouchableOpacity`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background-color: #000;
+	background-color: ${({theme}) => theme.colors.main.tertiary};
 	padding: 10px 30px;
 	border-radius: 50px;
 `;

@@ -15,5 +15,5 @@ export const ContainerIndicator = styled.View`
 export const Label = styled.Text`
     margin-top: 10px;
     font-size: 17px;
-    color: ${({theme}) => theme.colors.label};
+    color: ${({theme}) => theme.colors.text.primary};
 `;

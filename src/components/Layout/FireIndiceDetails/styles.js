@@ -65,7 +65,7 @@ export const Button = styled.TouchableOpacity`
 	width: 25%;
 	justify-content: center;
 	align-items: center;
-	background-color: ${({theme}) => theme.colors.primary};
+	background-color: ${({theme}) => theme.colors.main.primary};
 	margin: 0 5px;
 	elevation: 4;
 `;

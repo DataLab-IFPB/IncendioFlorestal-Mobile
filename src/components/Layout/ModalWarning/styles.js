@@ -43,7 +43,7 @@ export const Title = styled.Text`
 `;
 
 export const TextInfo = styled.Text`
-    color: ${({theme}) => theme.colors.label};
+    color: ${({theme}) => theme.colors.text.primary};
     font-size: 16px;
     margin-bottom: 20px;
     text-align: center;

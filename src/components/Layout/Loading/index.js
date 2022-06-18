@@ -1,9 +1,9 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { Logo } from "../../UI";
-import { Label, Container, ContainerIndicator } from "./styles";
-import { Modal, ActivityIndicator } from "react-native";
+import { useSelector } from "react-redux";
 import { useTheme } from "styled-components";
+import { Modal, ActivityIndicator } from "react-native";
+import { Label, Container, ContainerIndicator } from "./styles";
 
 const Loading = () => {
 
@@ -16,7 +16,7 @@ const Loading = () => {
 				<Logo/>
 
 				<ContainerIndicator>
-					<ActivityIndicator size='small' color={theme.colors.primary}/>
+					<ActivityIndicator size='small' color={theme.colors.main.primary}/>
 				</ContainerIndicator>
 
 				<Label>{status.message}</Label>
