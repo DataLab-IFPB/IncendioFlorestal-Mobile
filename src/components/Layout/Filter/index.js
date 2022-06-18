@@ -5,8 +5,8 @@ import { Modal, useWindowDimensions } from "react-native";
 import {
 	RootContainer,
 	Container,
-	ContainerOptions,
 	ContainerSlider,
+	ContainerOptions,
 	Label,
 	LabelSlider
 } from "./styles";
@@ -14,7 +14,7 @@ import {
 const Filter = ({ visible, closeModal, filterDays, onUpdateDaysSlider }) => {
 
 	const { width } = useWindowDimensions();
-	
+
 	const [days, setDays] = useState(filterDays);
 	const [initialized, setInitialized] = useState(false);
 
@@ -24,10 +24,8 @@ const Filter = ({ visible, closeModal, filterDays, onUpdateDaysSlider }) => {
 	}
 
 	function updateDaysHandler(days) {
-
-		if( initialized ) {
+		if (initialized)
 			setDays(days);
-		}
 
 		setInitialized(true);
 	}
@@ -43,7 +41,7 @@ const Filter = ({ visible, closeModal, filterDays, onUpdateDaysSlider }) => {
 
 					<ContainerSlider>
 						<LabelSlider>
-							{`${days} ${days === 1 ? "dia:" : "dias:"}`}
+							{`${days} ${days === 1 ? "dia" : "dias"}`}
 						</LabelSlider>
 						<Slider
 							step={1}

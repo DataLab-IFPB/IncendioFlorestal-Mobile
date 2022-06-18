@@ -12,11 +12,11 @@ import {
 	TextInfo
 } from "./styles";
 
-const ModalWarning = ({message, isVisible, onConfirm}) => {
+const ModalWarning = ({ message, isVisible, onConfirm }) => {
 
 	const theme = useTheme();
 
-	return(
+	return (
 		<Modal animationType='fade' transparent={true} visible={isVisible}>
 			<ContainerRoot>
 				<Container>

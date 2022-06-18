@@ -57,9 +57,8 @@ const watermelonDB = () => {
 		const evidences = await evidencesCollection.query().fetch();
 
 		return evidences.filter((item) => {
-			if( item.fireIndice === fireIndiceId ) {
+			if (item.fireIndice === fireIndiceId) 
 				return item;
-			}
 		});
 	}
 

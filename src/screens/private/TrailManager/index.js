@@ -48,17 +48,16 @@ const TrailManager = ({ navigation, route }) => {
 			dispatch(enableLoading("Carregando dados..."));
 			const data = await getTrails(fireIndice.uid);
 
-			if( data ) {
+			if (data) {
 				Object.keys(data).forEach((key) => {
-					setTrails((currentState) => [...currentState, {...data[key], uid: key}]);
+					setTrails((currentState) => [...currentState, { ...data[key], uid: key }]);
 				});
 			}
 			dispatch(disableLoading());
 		};
 
-		if( trails.length === 0 ) {
+		if (trails.length === 0) 
 			loadTrails();
-		}
 	}, []);
 
 	function closeHandler() {
@@ -98,7 +97,7 @@ const TrailManager = ({ navigation, route }) => {
 	function onDelete(uid) {
 		const trail = trails.find((item) => item.uid === uid);
 
-		if( trail.user === user.registration ) {
+		if (trail.user === user.registration) {
 			setConfigModal({
 				show: true,
 				message: "Deseja realmente remover está trilha?",
@@ -109,14 +108,12 @@ const TrailManager = ({ navigation, route }) => {
 		}
 	}
 
-	return(
+	return (
 		<RootContainer>
 
 			<Header>
 				<ButtonAction icon="close" onPress={closeHandler}/>
-				<Title>
-					TRILHAS
-				</Title>
+				<Title>TRILHAS</Title>
 			</Header>
 
 			<ModalConfirmation
@@ -133,19 +130,19 @@ const TrailManager = ({ navigation, route }) => {
 			/>
 
 			<ContainerTrails>
-				{ trails.length === 0 && (
+				{trails.length === 0 && (
 					<ContainerWarning>
 						<Label>Nenhuma trilha encontrada!</Label>
 					</ContainerWarning>
 				)}
-				{ trails.length > 0 && (
+				{trails.length > 0 && (
 					<FlatList
 						data={trails}
 						keyExtractor={() => Date.now().toString()}
-						renderItem={({item, index}) => (
+						renderItem={({ item, index }) => (
 							<Card key={index}>
 								<Touchable onPress={onDelete.bind(null, item.uid)}>
-									<FontAwesome name="trash" size={15} style={{ margin: 10}}/>
+									<FontAwesome name="trash" size={15} style={{ margin: 10 }}/>
 								</Touchable>
 
 								<LineVertical/>

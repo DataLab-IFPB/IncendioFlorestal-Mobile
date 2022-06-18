@@ -37,9 +37,9 @@ const Map = ({ route }) => {
 	const mapRef = useRef();
 	const theme = useTheme();
 
+	const { getForecast } = weather();
 	const { enableLoading, disableLoading } = loadingActions;
 	const { loadFireIndices, loadFireIndicesOffline, storeFireIndice } = firesIndicesActions;
-	const { getForecast } = weather();
 
 	const {
 		getFiresIndices,
@@ -61,7 +61,7 @@ const Map = ({ route }) => {
 	const [notification, setNofication] = useState({ show: false, message: "" });
 	const [fireIndiceDetails, setFireIndiceDetails] = useState({ isVisible: false, fireIndice: null });
 	const [showModalNewFireIndice, setShowModalNewFireIndice] = useState({ show: false, data: null });
-	const [showButtonRecorderRouter, setShowButtonRecorderRouter] = useState({ show: false, fireIndice: null});
+	const [showButtonRecorderRouter, setShowButtonRecorderRouter] = useState({ show: false, fireIndice: null });
 	const [userGeolocation, setUserGeolocation] = useState({
 		latitude: 0,
 		longitude: 0,
@@ -87,7 +87,7 @@ const Map = ({ route }) => {
 
 	// Monitor do status da rede do dispositivo
 	useEffect(() => {
-		if( netInfo.isConnected !== null && !netInfo.isConnected ) {
+		if (netInfo.isConnected !== null && !netInfo.isConnected) {
 			setNofication({
 				show: true,
 				message: `Sem Conexão!
@@ -100,11 +100,11 @@ const Map = ({ route }) => {
 	useEffect(() => {
 		const params = route.params;
 
-		if( params ) {
+		if (params) {
 			const { recoderTrailIsActive, fireIndice, coordinates } = params;
-			if( recoderTrailIsActive ) {
+			if (recoderTrailIsActive) {
 				setShowButtonRecorderRouter({ show: true, fireIndice });
-			} else if( coordinates ) {
+			} else if (coordinates) {
 				setSourceTrail({
 					type: "FeatureCollection",
 					features: [
@@ -145,9 +145,9 @@ const Map = ({ route }) => {
 					);
 				});
 
-				if( index === data.length - 1 ) {
+				if (index === data.length - 1) 
 					clearFireIndicesOffline();
-				}
+		
 			});
 
 		};
@@ -157,13 +157,12 @@ const Map = ({ route }) => {
 			dispatch(loadFireIndices(data));
 		};
 
-		const verify = async () =>  {
-			if( netInfo.isConnected !== null) {
-				if( netInfo.isConnected ) {
+		const verify = async () => {
+			if (netInfo.isConnected !== null) {
+				if (netInfo.isConnected) 
 					syncDataOffline();
-				} else {
+				else 
 					loadDataOffiline();
-				}
 			}
 		};
 
@@ -179,7 +178,7 @@ const Map = ({ route }) => {
 	// Carregar dados
 	useEffect(() => {
 		const fetchData = async () => {
-			if( netInfo.isConnected ) {
+			if (netInfo.isConnected) {
 				await fetchFireIndices();
 			} else {
 				const data = await fetchFiresIndicesOffline();
@@ -187,9 +186,9 @@ const Map = ({ route }) => {
 			}
 		};
 
-		if( netInfo.isConnected !== null ) {
+		if (netInfo.isConnected !== null) 
 			fetchData();
-		}
+
 	}, [netInfo]);
 
 	useEffect(() => {
@@ -207,7 +206,7 @@ const Map = ({ route }) => {
 		verifyPermission();
 	}, []);
 
-	// load location user
+	// load user location 
 	useEffect(() => {
 		const watchPosition = Geolocation.watchPosition(
 			(position) => {
@@ -231,7 +230,7 @@ const Map = ({ route }) => {
 					longitude: position.coords.longitude,
 				});
 			},
-			(err) => console.warn("Error on get current position user ", err),
+			(err) => console.warn("Error on getting current user position ", err),
 			{
 				enableHighAccuracy: true,
 				timeout: 20000,
@@ -269,11 +268,10 @@ const Map = ({ route }) => {
 		const data = showModalNewFireIndice.data;
 		const indiceCreated = createNewFireIndice(data);
 
-		if( netInfo.isConnected ) {
+		if (netInfo.isConnected) 
 			saveFireIndice(indiceCreated);
-		} else {
+		else 
 			saveFireIndiceOffline(indiceCreated);
-		}
 
 		setShowModalNewFireIndice({ show: false, data: null });
 	}
@@ -297,7 +295,7 @@ const Map = ({ route }) => {
 		};
 		const uid = await registerNewFireIndice(newIndice);
 
-		dispatch(storeFireIndice({...newIndice, uid}));
+		dispatch(storeFireIndice({ ...newIndice, uid }));
 		fetchFireIndices();
 		dispatch(disableLoading());
 
@@ -313,11 +311,10 @@ const Map = ({ route }) => {
 
 	function showFireIndiceDetails(fireIndice) {
 
-		const copyFireIndice = {...fireIndice, status: fireIndice.status};
+		const copyFireIndice = { ...fireIndice, status: fireIndice.status };
 
-		if( typeof copyFireIndice.status === "string" ) {
+		if (typeof copyFireIndice.status === "string") 
 			copyFireIndice.status = JSON.parse(copyFireIndice.status);
-		}
 
 		setFireIndiceDetails({
 			isVisible: true,
@@ -351,8 +348,8 @@ const Map = ({ route }) => {
 	function renderFiresIndices() {
 		return (
 			firesIndicesActivated.map((register, index) => {
-				if(register.active) {
-					return(
+				if (register.active) {
+					return (
 						<MapboxGL.MarkerView
 							key={index}
 							coordinate={[
@@ -389,14 +386,14 @@ const Map = ({ route }) => {
 	}
 
 	function cancelRecoderHandler() {
-		setShowButtonRecorderRouter({ show: false, fireIndice: null});
+		setShowButtonRecorderRouter({ show: false, fireIndice: null });
 	}
 
-	return(
+	return (
 		<React.Fragment>
 			<StatusBar barStyle='light-content' backgroundColor='#000'/>
 
-			{ showModalFilter && (
+			{showModalFilter && (
 				<Filter
 					filterDays={filterDays}
 					visible={showModalFilter}
@@ -405,7 +402,7 @@ const Map = ({ route }) => {
 				/>
 			)}
 
-			{ fireIndiceDetails.fireIndice &&
+			{fireIndiceDetails.fireIndice &&
 				<FireIndiceDetails
 					fireIndice={fireIndiceDetails.fireIndice}
 					isVisible={fireIndiceDetails.isVisible}
@@ -439,7 +436,7 @@ const Map = ({ route }) => {
 					setMapStyle={setMapStyle}
 				/>
 
-				{ showButtonRecorderRouter.show && (
+				{showButtonRecorderRouter.show && (
 					<ButtonRecorder
 						currentCoordinates={userGeolocation}
 						userRegistration={user.registration}
@@ -448,7 +445,7 @@ const Map = ({ route }) => {
 					/>
 				)}
 
-				{ sourceTrail && (
+				{sourceTrail && (
 					<ContainerButtonClose>
 						<ButtonClose onPress={() => setSourceTrail(null)}>
 							<AntDesign name="close" color="#FFF" size={20}/>
@@ -484,7 +481,7 @@ const Map = ({ route }) => {
 						]}
 					/>
 
-					{ sourceTrail && (
+					{sourceTrail && (
 						<MapboxGL.ShapeSource
 							id="trail"
 							shape={sourceTrail}

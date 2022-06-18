@@ -6,7 +6,7 @@ import fs from "react-native-fs";
 import { FlatList } from "react-native";
 import { useDispatch } from "react-redux";
 import { ButtonAction } from "../../../components/UI";
-import { loadingActions, firesIndicesActions } from "../../../store/actions";
+import { loadingActions } from "../../../store/actions";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { ModalConfirmation } from "../../../components/Layout";
 import { formatDateString } from "../../../shared/utils/formatDate";
@@ -32,42 +32,39 @@ const Gallery = ({ navigation, route }) => {
 	const dispatch = useDispatch();
 
 	const { fireIndice } = route.params;
-	const { updateFireIndice } = firesIndicesActions;
 	const { enableLoading, disableLoading } = loadingActions;
 	const { getEvidences, getMedia, removeEvidence } = firebase();
 	const { fetchEvidencesOffline, removeEvidenceOffline } = watermelonDB();
 
-	const [medias, setMedias] = useState([]);
+	const [medias, setMedia] = useState([]);
 	const [configModal, setConfigModal] = useState({ show: false });
-	const [selectedMedia, setSelectedMidia] = useState({ id: null, media: "", path: "", info: "" });
+	const [selectedMedia, setSelectedMedia] = useState({ id: null, media: "", path: "", info: "" });
 
 	// Load Data
 	useEffect(() => {
 		const load = async () => {
-			if( !netInfo.isConnected ) {
-				await loadEvidencesOffline();
-			} else {
+			if (netInfo.isConnected)
 				await loadEvidencesOnline();
-			}
+			else
+				await loadEvidencesOffline();
 		};
 
-		if( netInfo.isConnected !== null ) {
+		if (netInfo.isConnected !== null)
 			load();
-		}
 	}, [netInfo]);
 
 	async function loadEvidencesOnline() {
 		dispatch(enableLoading("Carregando evidências..."));
 
 		const data = await getEvidences(fireIndice.uid);
-		if( data ) {
+		if (data) {
 			Object.keys(data).forEach(async (key, index) => {
 
 				const path = await getMedia(data[key].file);
 				medias.push({ path, uid: key, ...data[key] });
 
-				if( index === 0) {
-					setSelectedMidia({
+				if (index === 0) {
+					setSelectedMedia({
 						path,
 						media: data[key].fileType,
 						info: data[key].createdAt,
@@ -84,9 +81,9 @@ const Gallery = ({ navigation, route }) => {
 		dispatch(enableLoading("Carregando evidências..."));
 		const data = await fetchEvidencesOffline(fireIndice.id);
 
-		if( data[0] ) {
-			setMedias(data);
-			setSelectedMidia({
+		if (data[0]) {
+			setMedia(data);
+			setSelectedMedia({
 				id: data[0].id,
 				media: data[0].fileType,
 				path: data[0].path,
@@ -97,8 +94,8 @@ const Gallery = ({ navigation, route }) => {
 		dispatch(disableLoading());
 	}
 
-	function changeMidiaHandler(item) {
-		setSelectedMidia({
+	function changeMediaHandler(item) {
+		setSelectedMedia({
 			id: item.id,
 			path: item.path,
 			media: item.fileType,
@@ -110,7 +107,11 @@ const Gallery = ({ navigation, route }) => {
 		clear();
 		dispatch(enableLoading("Apagando evidência..."));
 
-		if( !netInfo.isConnected ) {
+		if (netInfo.isConnected) {
+			await removeEvidence(selectedMedia.id);
+			await loadEvidencesOnline();
+			dispatch(disableLoading());
+		} else {
 			try {
 				await fs.unlink(selectedMedia.path.split("///").pop());
 				await removeEvidenceOffline(selectedMedia.id);
@@ -119,18 +120,14 @@ const Gallery = ({ navigation, route }) => {
 			} catch {
 				dispatch(disableLoading());
 			}
-		} else {
-			await removeEvidence(selectedMedia.id);
-			await loadEvidencesOnline();
-			dispatch(disableLoading());
 		}
 
 		onCancelDelete();
 	}
 
 	function clear() {
-		setMedias([]);
-		setSelectedMidia({
+		setMedia([]);
+		setSelectedMedia({
 			id: null, media: "", path: "", info: ""
 		});
 	}
@@ -147,7 +144,7 @@ const Gallery = ({ navigation, route }) => {
 		navigation.navigate("Map", { fireIndice });
 	}
 
-	return(
+	return (
 		<RootContainer>
 			<ModalConfirmation
 				isVisible={configModal.show}
@@ -163,24 +160,24 @@ const Gallery = ({ navigation, route }) => {
 					GALERIA
 				</Title>
 
-				{ !!medias.length && <ButtonAction icon='trash' onPress={openModal}/> }
+				{!!medias.length && <ButtonAction icon='trash' onPress={openModal}/>}
 			</Header>
 
 			<ContainerMedia>
-				{ !medias.length && <Label>Nenhuma evidência registrada</Label> }
+				{!medias.length && <Label>Nenhuma evidência registrada</Label>}
 
-				{ !!medias.length && <Label>
+				{!!medias.length && <Label>
 					<TitleLabel>Registrado em:</TitleLabel>
 					{`\n${formatDateString(selectedMedia.info)}`}
 				</Label>}
 
 				{/* IMAGE */}
-				{ !!medias.length && selectedMedia.media === "image" && (
+				{!!medias.length && selectedMedia.media === "image" && (
 					<Image source={{ uri: selectedMedia.path }}/>
 				)}
 
 				{/* VIDEO */}
-				{ medias.length > 0 && selectedMedia.media === "video" && (
+				{medias.length > 0 && selectedMedia.media === "video" && (
 					<Video
 						controls
 						repeat
@@ -195,9 +192,9 @@ const Gallery = ({ navigation, route }) => {
 					horizontal
 					data={medias}
 					keyExtractor={(item) => item.path}
-					renderItem={({item}) => (
+					renderItem={({ item }) => (
 						<ItemSlider
-							onPress={changeMidiaHandler.bind(null, item)}
+							onPress={changeMediaHandler.bind(null, item)}
 							isSelected={item.path === selectedMedia.path}
 						>
 							{item.media === "video" && (

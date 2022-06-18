@@ -2,7 +2,7 @@ import Menu from "./Menu";
 import Filter from "./Filter";
 import Loading from "./Loading";
 import Forecast from "./Forecast";
-import PickerImage from "./PickerImage";
+import AddEvidence from "./AddEvidence";
 import FireIndiceDetails from "./FireIndiceDetails";
 import ModalWarning from "./ModalWarning";
 import ModalNotification from "./ModalNotification";
@@ -13,7 +13,7 @@ export {
 	Filter,
 	Loading,
 	Forecast,
-	PickerImage,
+	AddEvidence as PickerImage,
 	FireIndiceDetails,
 	ModalWarning,
 	ModalNotification,

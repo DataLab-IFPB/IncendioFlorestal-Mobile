@@ -18,7 +18,7 @@ const firebase = () => {
 		});
 	}
 
-	function updateUidUser(uid, user) {
+	function updateUserUid(uid, user) {
 		return new Promise((resolve) => {
 			const userRef = database()
 				.ref(`/users/${user.ref}`)
@@ -60,12 +60,12 @@ const firebase = () => {
 
 		const data = await getUserData(registration);
 
-		if( data ) {
+		if (data) {
 
 			const user = mountUser(data);
 
 			// Verificar primeiro acesso
-			if( user.birthDate === password && user.firstLogin ) {
+			if (user.birthDate === password && user.firstLogin) {
 				return { user, newUser: true };
 			} else {
 				return auth()
@@ -104,7 +104,7 @@ const firebase = () => {
 		return auth()
 			.createUserWithEmailAndPassword(user.email, password)
 			.then((data) => {
-				updateUidUser(data.user.uid, user);
+				updateUserUid(data.user.uid, user);
 				return { success: true };
 			})
 			.catch(() => {
@@ -163,11 +163,10 @@ const firebase = () => {
 	async function checkAuthState() {
 		return new Promise((resolve, reject) => {
 			auth().onAuthStateChanged((user) => {
-				if( user ) {
+				if (user) 
 					resolve(user);
-				} else {
+				else 
 					reject(new Error());
-				}
 			});
 		});
 	}

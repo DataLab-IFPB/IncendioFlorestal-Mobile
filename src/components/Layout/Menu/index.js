@@ -4,7 +4,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { ButtonMenu } from "../../UI";
 import { Text } from "react-native";
-import { Container, OptionSubMenu, LabelSubMenu, SubMenu } from "./styles";
+import { Container, SubMenuOption, SubMenuLabel, SubMenu } from "./styles";
 
 const Menu = ({ onLocation, onFilter, setMapStyle }) => {
 
@@ -22,7 +22,7 @@ const Menu = ({ onLocation, onFilter, setMapStyle }) => {
 		setShowSubMenu((currentState) => !currentState);
 	}
 
-	return(
+	return (
 		<React.Fragment>
 			<Container>
 				<ButtonMenu onPress={onLocation}>
@@ -39,45 +39,34 @@ const Menu = ({ onLocation, onFilter, setMapStyle }) => {
 
 				{/* SUB-MENU */}
 				<SubMenu isVisible={showSubMenu}>
-					<OptionSubMenu>
+					<SubMenuOption>
 						<ButtonMenu onPress={() => setMapStyle(MapboxGL.StyleURL.Street)}>
 							{iconFontAwesome("city")}
 						</ButtonMenu>
+						<SubMenuLabel>Rua</SubMenuLabel>
+					</SubMenuOption>
 
-						<LabelSubMenu>
-							<Text>Rua</Text>
-						</LabelSubMenu>
-					</OptionSubMenu>
-
-					<OptionSubMenu>
+					<SubMenuOption>
 						<ButtonMenu onPress={() => setMapStyle(MapboxGL.StyleURL.Satellite)}>
 							{iconFontAwesome("satellite")}
 						</ButtonMenu>
+						<SubMenuLabel>Satélite</SubMenuLabel>
+					</SubMenuOption>
 
-						<LabelSubMenu>
-							<Text>Satélite</Text>
-						</LabelSubMenu>
-					</OptionSubMenu>
-
-					<OptionSubMenu>
+					<SubMenuOption>
 						<ButtonMenu onPress={() => setMapStyle(MapboxGL.StyleURL.TrafficDay)}>
 							{iconFontAwesome("car")}
 						</ButtonMenu>
+						<SubMenuLabel>Tráfego</SubMenuLabel>
+					</SubMenuOption>
 
-						<LabelSubMenu>
-							<Text>Tráfego</Text>
-						</LabelSubMenu>
-					</OptionSubMenu>
-
-					<OptionSubMenu>
+					<SubMenuOption>
 						<ButtonMenu onPress={() => setMapStyle(MapboxGL.StyleURL.Outdoors)}>
 							{iconFontAwesome("tree")}
 						</ButtonMenu>
-
-						<LabelSubMenu>
-							<Text>Geográfico</Text>
-						</LabelSubMenu>
-					</OptionSubMenu>
+						<SubMenuLabel>Geográfico</SubMenuLabel>
+					</SubMenuOption>
+					
 				</SubMenu>
 			</Container>
 		</React.Fragment>

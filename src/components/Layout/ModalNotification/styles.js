@@ -25,7 +25,7 @@ export const Label = styled.Text`
     color: #fff;
 `;
 
-export const Touachble = styled.TouchableOpacity`
+export const Touchable = styled.TouchableOpacity`
     margin: 20px 10px 10px 10px;
     padding: 5px 50px;
     border-radius: 15px;

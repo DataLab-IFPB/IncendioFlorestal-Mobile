@@ -16,17 +16,17 @@ const ButtonRecorder = ({ currentCoordinates, userRegistration, uidFireIndice, o
 	const { enableLoading, disableLoading } = loadingActions;
 	const [configDisplay, setConfigDisplay] = useState({ start: true, end: false });
 
-	function startRecorderTraiHandler() {
+	function startRecorderTrailHandler() {
 		AsyncStorage.setItem(
 			RECORDER_ROUTER_INITIAL_COORDINATES,
 			JSON.stringify(currentCoordinates)
 		);
-		setConfigDisplay({ start: false, end: true});
+		setConfigDisplay({ start: false, end: true });
 	}
 
 	async function endRecorderTrailHandler() {
 		dispatch(enableLoading("Salvando trilha..."));
-		setConfigDisplay({ start: false, end: false});
+		setConfigDisplay({ start: false, end: false });
 
 		const data = {
 			initial_coordinates: JSON.parse(await AsyncStorage.getItem(RECORDER_ROUTER_INITIAL_COORDINATES)),
@@ -43,11 +43,11 @@ const ButtonRecorder = ({ currentCoordinates, userRegistration, uidFireIndice, o
 		onCancel();
 	}
 
-	return(
+	return (
 		<Container>
-			{ configDisplay.start && (
+			{configDisplay.start && (
 				<Fragment>
-					<TouchableStart onPress={startRecorderTraiHandler}>
+					<TouchableStart onPress={startRecorderTrailHandler}>
 						<Label>
 							{/* eslint-disable-next-line quotes */}
 							<FontAwesome name="play"/>{`  `}
@@ -62,7 +62,7 @@ const ButtonRecorder = ({ currentCoordinates, userRegistration, uidFireIndice, o
 				</Fragment>
 			)}
 
-			{ configDisplay.end && (
+			{configDisplay.end && (
 				<Fragment>
 					<TouchableEnd onPress={endRecorderTrailHandler}>
 						<Label>
