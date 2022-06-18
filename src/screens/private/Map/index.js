@@ -3,21 +3,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import firebase from "../../../shared/services/firebase";
 import Geolocation from "react-native-geolocation-service";
+import AntDesign from "react-native-vector-icons/AntDesign";
 import MapboxGL, { Logger } from "@react-native-mapbox-gl/maps";
 import IconSimple from "react-native-vector-icons/SimpleLineIcons";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MAP_BOX_KEY } from "../../../constants";
 import { useDispatch, useSelector } from "react-redux";
+import { ButtonRecorder } from "../../../components/UI";
 import { weather } from "../../../shared/services/weather";
 import { BackHandler, View, StatusBar } from "react-native";
 import { useNetInfo } from "@react-native-community/netinfo";
+import { PERMISSION_LOCATION_USE } from "../../../constants";
 import { watermelonDB } from "../../../shared/services/watermelonDB";
 import { firesIndicesActions, loadingActions } from "../../../store/actions";
 import { getMoment, formatDatetime } from "../../../shared/utils/formatDate";
-import { PERMISSION_LOCATION_USE } from "../../../constants";
-import styles, { ButtonClose, Container, ContainerButtonClose } from "./styles";
-import { ButtonRecorder } from "../../../components/UI";
 import {
 	Menu,
 	Filter,
@@ -26,6 +25,7 @@ import {
 	ModalConfirmation,
 	ModalNotification
 } from "../../../components/Layout";
+import styles, { ButtonClose, Container, ContainerButtonClose } from "./styles";
 
 const Map = ({ route }) => {
 
@@ -122,24 +122,32 @@ const Map = ({ route }) => {
 
 	// Sincronizar dados offline
 	useEffect(() => {
-		const saveFireIndiceToWatermelon = async () => {
-			// const data = await fetchFiresIndicesOffline();
-			// data.forEach(async (fireIndice) => {
-			// 	const fireIndiceFormatted = {
-			// 		...fireIndice,
-			// 		status: JSON.parse(fireIndice.status)
-			// 	};
+		const syncDataOffline = async () => {
+			const data = await fetchFiresIndicesOffline();
+			data.forEach(async (fireIndice, index) => {
+				const fireIndiceFormatted = {
+					latitude: fireIndice.longitude,
+					longitude: fireIndice.latitude,
+					daynight: fireIndice.daynight,
+					userCreated: fireIndice.userCreated,
+					active: fireIndice.active,
+					status: JSON.parse(fireIndice.status)
+				};
 
-			// 	//const uidFireIndice = await saveFireIndice(fireIndiceFormatted);
-			// 	// const evidences = await fetchEvidencesOffline(fireIndice.id);
+				const uidFireIndice = await saveFireIndice(fireIndiceFormatted);
+				const evidences = await fetchEvidencesOffline(fireIndice.id);
 
-			// 	// evidences.forEach(async (evidence) => {
-			// 	// 	await registerNewEvidence(evidence.path, user.registration, uidFireIndice);
+				evidences.forEach(async (evidence) => {
+					await registerNewEvidence(
+						evidence.path, evidence.fileType, user.registration, uidFireIndice
+					);
+				});
 
-			// 	// });
-			// });
+				if( index === data.length - 1 ) {
+					clearFireIndicesOffline();
+				}
+			});
 
-			clearFireIndicesOffline();
 		};
 
 		const loadDataOffiline = async () => {
@@ -147,11 +155,17 @@ const Map = ({ route }) => {
 			dispatch(loadFireIndices(data));
 		};
 
-		if( netInfo.isConnected ) {
-			saveFireIndiceToWatermelon();
-		} else {
-			loadDataOffiline();
-		}
+		const verify = async () =>  {
+			if( netInfo.isConnected !== null) {
+				if( netInfo.isConnected ) {
+					syncDataOffline();
+				} else {
+					loadDataOffiline();
+				}
+			}
+		};
+
+		verify();
 	}, [netInfo.isConnected]);
 
 	useEffect(() => {
@@ -160,6 +174,7 @@ const Map = ({ route }) => {
 		});
 	}, []);
 
+	// Carregar dados
 	useEffect(() => {
 		const fetchData = async () => {
 			if( netInfo.isConnected ) {

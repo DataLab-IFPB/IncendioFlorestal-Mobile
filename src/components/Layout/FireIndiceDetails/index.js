@@ -32,6 +32,7 @@ import {
 	ContainerStepIndicador,
 	statusIndicador,
 } from "./styles";
+import { watermelonDB } from "../../../shared/services/watermelonDB";
 
 const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 
@@ -43,6 +44,7 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 	const ICON_SIZE = 20;
 	const LABELS_STATUS = ["Registrado", "Em Atendimento", "Finalizado"];
 
+	const { updateStatusOffline } = watermelonDB();
 	const { getForecast } = weather();
 	const { updateStatusFireIndice, getFiresIndices } = firebase();
 	const { loadFireIndices } = firesIndicesActions;
@@ -125,6 +127,8 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 			await updateStatusFireIndice(fireIndice.uid, status);
 			const firesIndicesUpdated = await getFiresIndices();
 			dispatch(loadFireIndices(firesIndicesUpdated));
+		} else {
+			updateStatusOffline(fireIndice.id, JSON.stringify(status));
 		}
 
 		onCancelUpdateStatus();
@@ -219,9 +223,11 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 							<LabelButton>Galeria</LabelButton>
 						</Button>
 
-						<Button onPress={openTrailManager}>
-							<LabelButton>Trilhas</LabelButton>
-						</Button>
+						{ netInfo.isConnected && (
+							<Button onPress={openTrailManager}>
+								<LabelButton>Trilhas</LabelButton>
+							</Button>
+						)}
 					</ContainerOptions>
 
 					<Space size={8}/>

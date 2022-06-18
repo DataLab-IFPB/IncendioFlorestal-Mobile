@@ -83,13 +83,27 @@ const watermelonDB = () => {
 		});
 	}
 
+	async function updateStatusOffline(id, newStatus) {
+		return new Promise((resolve) => {
+			database.write(async () => {
+				const fireIndice = await database.get(TABLE_FIRES_INDICES).find(id);
+				await fireIndice.update(() => {
+					fireIndice.status = newStatus;
+				});
+			}).finally(() => {
+				resolve();
+			});
+		});
+	}
+
 	return {
 		saveFireIndiceOffline,
 		saveEvicendeOffline,
 		fetchFiresIndicesOffline,
 		fetchEvidencesOffline,
 		clearFireIndicesOffline,
-		removeEvidenceOffline
+		removeEvidenceOffline,
+		updateStatusOffline
 	};
 };
 
