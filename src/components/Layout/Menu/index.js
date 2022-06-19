@@ -5,7 +5,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { ButtonMenu } from "../../UI";
 import { Text, Animated } from "react-native";
-import { Container, OptionSubMenu, LabelSubMenu, SubMenu } from "./styles";
+import { Container, SubMenuOption, SubMenuLabel, SubMenu } from "./styles";
 
 const Menu = ({ onLocation, onFilter, setMapStyle }) => {
 
@@ -66,45 +66,45 @@ const Menu = ({ onLocation, onFilter, setMapStyle }) => {
 				{/* SUB-MENU */}
 				<Animated.View style={{ opacity: subMenuAnimation }}>
 					<SubMenu isVisible={showSubMenu}>
-						<OptionSubMenu>
+						<SubMenuOption>
 							<ButtonMenu onPress={() => setMapStyle(MapboxGL.StyleURL.Street)}>
 								{iconFontAwesome("city")}
 							</ButtonMenu>
 
-							<LabelSubMenu>
+							<SubMenuLabel>
 								<Text>Rua</Text>
-							</LabelSubMenu>
-						</OptionSubMenu>
+							</SubMenuLabel>
+						</SubMenuOption>
 
-						<OptionSubMenu>
+						<SubMenuOption>
 							<ButtonMenu onPress={() => setMapStyle(MapboxGL.StyleURL.Satellite)}>
 								{iconFontAwesome("satellite")}
 							</ButtonMenu>
 
-							<LabelSubMenu>
+							<SubMenuLabel>
 								<Text>Satélite</Text>
-							</LabelSubMenu>
-						</OptionSubMenu>
+							</SubMenuLabel>
+						</SubMenuOption>
 
-						<OptionSubMenu>
+						<SubMenuOption>
 							<ButtonMenu onPress={() => setMapStyle(MapboxGL.StyleURL.TrafficDay)}>
 								{iconFontAwesome("car")}
 							</ButtonMenu>
 
-							<LabelSubMenu>
+							<SubMenuLabel>
 								<Text>Tráfego</Text>
-							</LabelSubMenu>
-						</OptionSubMenu>
+							</SubMenuLabel>
+						</SubMenuOption>
 
-						<OptionSubMenu>
+						<SubMenuOption>
 							<ButtonMenu onPress={() => setMapStyle(MapboxGL.StyleURL.Outdoors)}>
 								{iconFontAwesome("tree")}
 							</ButtonMenu>
 
-							<LabelSubMenu>
+							<SubMenuLabel>
 								<Text>Geográfico</Text>
-							</LabelSubMenu>
-						</OptionSubMenu>
+							</SubMenuLabel>
+						</SubMenuOption>
 					</SubMenu>
 				</Animated.View>
 			</Container>

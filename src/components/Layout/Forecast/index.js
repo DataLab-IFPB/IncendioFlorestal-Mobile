@@ -21,9 +21,9 @@ const Forecast = ({ userCoordinates }) => {
 	const [currentWeather, setCurrentWeather] = useState(null);
 
 	useEffect(() => {
-		if (userCoordinates.latitude && userCoordinates.longitude) 
+		if (userCoordinates.latitude && userCoordinates.longitude)
 			refreshWeather();
-			
+
 	}, [userCoordinates, netInfo.isConnected]);
 
 

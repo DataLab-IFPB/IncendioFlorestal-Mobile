@@ -78,7 +78,7 @@ const AddEvidence = ({ fireIndice }) => {
 
 
 	async function uploadFile() {
-		if (file) 
+		if (file)
 			await registerNewEvidence(file.path, file.mime.split("/")[0], userRegistration, fireIndice.uid);
 	}
 

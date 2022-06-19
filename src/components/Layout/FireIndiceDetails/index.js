@@ -117,6 +117,7 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 				update(key, index);
 			} else if( index === (position - 1) && !status[key] ) {
 				update(key, index);
+			}
 		});
 
 		if (netInfo.isConnected) {
