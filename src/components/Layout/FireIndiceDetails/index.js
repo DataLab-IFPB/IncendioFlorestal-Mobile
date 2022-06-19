@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Modal } from "react-native";
-import PickerImage from "../PickerImage";
+import AddEvidence from "../AddEvidence";
 import ModalConfirmation from "../ModalConfirmation";
 import Feather from "react-native-vector-icons/Feather";
 import StepIndicator from "react-native-step-indicator";
@@ -18,6 +18,7 @@ import { weather } from "../../../shared/services/weather";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { formatDatetime, formatUTC } from "../../../shared/utils/formatDate";
 import { firesIndicesActions, loadingActions } from "../../../store/actions";
+import { watermelonDB } from "../../../shared/services/watermelonDB";
 import {
 	RootContainer,
 	Container,
@@ -32,7 +33,6 @@ import {
 	ContainerStepIndicador,
 	statusIndicador,
 } from "./styles";
-import { watermelonDB } from "../../../shared/services/watermelonDB";
 
 const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 
@@ -44,8 +44,8 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 	const ICON_SIZE = 20;
 	const LABELS_STATUS = ["Registrado", "Em Atendimento", "Finalizado"];
 
-	const { updateStatusOffline } = watermelonDB();
 	const { getForecast } = weather();
+	const { updateStatusOffline } = watermelonDB();
 	const { updateStatusFireIndice, getFiresIndices } = firebase();
 	const { loadFireIndices, updateFireIndice } = firesIndicesActions;
 	const { enableLoading, disableLoading } = loadingActions;
@@ -57,23 +57,19 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 	// Obter dados climáticos
 	useEffect(() => {
 		const loadForecast = async () => {
-			if( fireIndice ) {
-				const data = await getForecast(fireIndice.latitude, fireIndice.longitude);
-				setCurrentWeather(data);
-			}
+			if (fireIndice)
+				setCurrentWeather(await getForecast(fireIndice.latitude, fireIndice.longitude));
 		};
 
-		if( netInfo.isConnected ) {
+		if (netInfo.isConnected)
 			loadForecast();
-		}
 	}, [netInfo.isConnected, fireIndice]);
 
 	// Obter status atual
 	useEffect(() => {
 		Object.values(fireIndice.status).forEach((status, index) => {
-			if( status ) {
+			if (status)
 				setCurrentStatus(index);
-			}
 		});
 	}, []);
 
@@ -88,10 +84,11 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 	}
 
 	function updateStatusHandler(position) {
-		const status = {...fireIndice.status};
+		const status = { ...fireIndice.status };
+
 		Object.keys(status).forEach((key, index) => {
-			if( index === position && position > currentStatus ) {
-				if( !status[key] ) {
+			if (index === position && position > currentStatus) {
+				if (!status[key]) {
 					setConfigModal({
 						show: true,
 						message: `Deseja atualizar o status para "${LABELS_STATUS[position]}?"`,
@@ -108,7 +105,7 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 	async function onConfirmUpdateStatus(position) {
 		dispatch(enableLoading("Atualizando status..."));
 
-		const status = {...fireIndice.status};
+		const status = { ...fireIndice.status };
 
 		const update = (key, index) => {
 			status[key] = formatDatetime(new Date());
@@ -116,14 +113,13 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 		};
 
 		Object.keys(status).forEach((key, index) => {
-			if( index === position ) {
+			if (index === position) {
 				update(key, index);
 			} else if( index === (position - 1) && !status[key] ) {
 				update(key, index);
-			}
 		});
 
-		if( netInfo.isConnected ) {
+		if (netInfo.isConnected) {
 			await updateStatusFireIndice(fireIndice.uid, status);
 			const firesIndicesUpdated = await getFiresIndices();
 			dispatch(loadFireIndices(firesIndicesUpdated));
@@ -144,9 +140,9 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 		});
 	}
 
-	return(
+	return (
 		<Modal transparent animationType="slide" visible={isVisible}>
-		  <RootContainer>
+			<RootContainer>
 
 				<ModalConfirmation
 					isVisible={configModal.show}
@@ -203,17 +199,17 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 							</ContainerInfo>
 
 							<ContainerInfo>
-								<Ionicons  name='thermometer-outline' color='red' size={ICON_SIZE}/>
+								<Ionicons name='thermometer-outline' color='red' size={ICON_SIZE}/>
 								<Label>{currentWeather ? currentWeather.temp_c + "°C" : "-"}</Label>
 							</ContainerInfo>
 
 							<ContainerInfo>
-								<Ionicons  name='water-outline' color='blue' size={ICON_SIZE}/>
+								<Ionicons name='water-outline' color='blue' size={ICON_SIZE}/>
 								<Label>{currentWeather ? currentWeather.humidity + "%" : "-"}</Label>
 							</ContainerInfo>
 
 							<ContainerInfo>
-								<Ionicons  name='thunderstorm-outline' color='skyblue' size={ICON_SIZE}/>
+								<Ionicons name='thunderstorm-outline' color='skyblue' size={ICON_SIZE}/>
 								<Label>{currentWeather ? currentWeather.precip_in + "%" : "-"}</Label>
 							</ContainerInfo>
 						</ContainerDataWeather>
@@ -224,7 +220,7 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 							<LabelButton>Galeria</LabelButton>
 						</Button>
 
-						{ netInfo.isConnected && (
+						{netInfo.isConnected && (
 							<Button onPress={openTrailManager}>
 								<LabelButton>Trilhas</LabelButton>
 							</Button>
@@ -234,11 +230,11 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 					<Space size={8}/>
 
 					<Label isBold>Adicionar Evidências</Label>
-					<PickerImage fireIndice={fireIndice}/>
+					<AddEvidence fireIndice={fireIndice}/>
 
 				</Container>
-		  </RootContainer>
-	  	</Modal>
+			</RootContainer>
+		</Modal>
 	);
 };
 

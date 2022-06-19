@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import firebase from "../../../shared/services/firebase";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { yupResolver } from"@hookform/resolvers/yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { ContainerRoot, Info, Title } from "./styles";
 import { loadingActions } from "../../../store/actions";
 import { ModalWarning } from "../../../components/Layout";
@@ -25,7 +25,7 @@ const FirstLogin = () => {
 	});
 
 	const [showModalWarning, setShowModalWarning] = useState(
-		{ isVisible: false, message: ""}
+		{ isVisible: false, message: "" }
 	);
 
 	useEffect(() => {
@@ -36,12 +36,11 @@ const FirstLogin = () => {
 
 	//  Configurar exibição do modal de aviso para erros nos inputs
 	useEffect(() => {
-		if( Object.keys(errors).length !== 0 ) {
-			if( errors.password ) {
+		if (Object.keys(errors).length !== 0) {
+			if (errors.password) 
 				setShowModalWarning({ message: errors.password.message, isVisible: true });
-			} else if( errors.passwordConfirm ) {
+			else if (errors.passwordConfirm) 
 				setShowModalWarning({ message: errors.passwordConfirm.message, isVisible: true });
-			}
 		}
 	}, [errors]);
 
@@ -50,9 +49,8 @@ const FirstLogin = () => {
 	}
 
 	function onInputFocus(name) {
-		if( errors[name] ) {
+		if (errors[name]) 
 			clearErrors(name);
-		}
 	}
 
 	async function onSubmit(data) {
@@ -60,13 +58,13 @@ const FirstLogin = () => {
 		dispatch(enableLoading("Atualizando cadastro..."));
 
 		const { password } = data;
-		const { user } =  route.params;
+		const { user } = route.params;
 
 		try {
 			await registerNewUser(password, user);
 			dispatch(disableLoading());
 			navigation.navigate("SignIn");
-		} catch(error) {
+		} catch (error) {
 			setShowModalWarning({ message: error.message, isVisible: true });
 		}
 

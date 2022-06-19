@@ -21,10 +21,11 @@ const Forecast = ({ userCoordinates }) => {
 	const [currentWeather, setCurrentWeather] = useState(null);
 
 	useEffect(() => {
-		if(userCoordinates.latitude && userCoordinates.longitude) {
+		if (userCoordinates.latitude && userCoordinates.longitude) 
 			refreshWeather();
-		}
+			
 	}, [userCoordinates, netInfo.isConnected]);
+
 
 	async function refreshWeather() {
 		setCurrentWeather(await getForecast(userCoordinates.longitude, userCoordinates.latitude));
@@ -38,7 +39,7 @@ const Forecast = ({ userCoordinates }) => {
 		return currentWeather === null ? <Label> - </Label> : (
 			<WindInfoContainer>
 				<WindInfoLabel>
-					{renderInfo(currentWeather && currentWeather.wind_kph +  "\nKM/H")}
+					{renderInfo(currentWeather && currentWeather.wind_kph + "\nKM/H")}
 				</WindInfoLabel>
 				<WindIcons>
 					<NorthLabel>N</NorthLabel>
@@ -46,7 +47,7 @@ const Forecast = ({ userCoordinates }) => {
 						name={"arrow-up-outline"}
 						size={17}
 						color={"red"}
-						style={{transform: [{rotate: currentWeather.wind_degree + "deg"}]}}
+						style={{ transform: [{ rotate: currentWeather.wind_degree + "deg" }] }}
 					/>
 				</WindIcons>
 			</WindInfoContainer>
@@ -69,25 +70,19 @@ const Forecast = ({ userCoordinates }) => {
 				{/* Temperatura */}
 				<ContainerInfo>
 					{iconIonicons("thermometer-outline", "red")}
-					<Label>
-						{renderInfo(currentWeather && currentWeather.temp_c + "º")}
-					</Label>
+					<Label> {renderInfo(currentWeather && currentWeather.temp_c + "º")} </Label>
 				</ContainerInfo>
 
 				{/* Humidade */}
 				<ContainerInfo>
 					{iconIonicons("water", "skyblue")}
-					<Label>
-						{renderInfo(currentWeather && Math.floor(currentWeather.humidity) + "%")}
-					</Label>
+					<Label> {renderInfo(currentWeather && Math.floor(currentWeather.humidity) + "%")} </Label>
 				</ContainerInfo>
 
 				{/* Precipitacao */}
 				<ContainerInfo>
 					{iconIonicons("thunderstorm-outline", "skyblue")}
-					<Label>
-						{renderInfo(currentWeather && currentWeather.precip_in + "%")}
-					</Label>
+					<Label> {renderInfo(currentWeather && currentWeather.precip_in + "%")} </Label>
 				</ContainerInfo>
 			</Container>
 		);

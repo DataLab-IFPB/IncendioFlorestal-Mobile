@@ -50,8 +50,8 @@ const SignIn = () => {
 
 	//  Configurar exibição do modal de aviso
 	useEffect(() => {
-		if( Object.keys(errors).length !== 0 ) {
-			if( errors.registration && errors.password ) {
+		if (Object.keys(errors).length !== 0) {
+			if (errors.registration && errors.password) {
 				setShowModalWarning({
 					message: "Informe suas credenciais",
 					isVisible: true
@@ -80,14 +80,14 @@ const SignIn = () => {
 
 			dispatch(disableLoading());
 
-			if( response.message ) {    // Error
+			if (response.message)     // Error
 				setShowModalWarning({ message: response.message, isVisible: true });
-			} else if( response.newUser ) {
+			else if (response.newUser) 
 				navigation.navigate("FirstLogin", { user: response.user });
-			} else if( response.user ) {
+			else if (response.user) 
 				dispatch(authentication(response.user));
-			}
-		} catch(error) {
+
+		} catch (error) {
 			dispatch(disableLoading());
 			setShowModalWarning({ message: error.message, isVisible: true });
 		}
@@ -101,23 +101,20 @@ const SignIn = () => {
 	function onInputFocus(name) {
 		setShowVersionLabel(false);
 
-		if( errors[name] ) {
+		if (errors[name]) 
 			clearErrors(name);
-		}
 	}
 
 	function onConfirmModalHandler() {
-		setShowModalWarning({ isVisible: false, message: ""});
+		setShowModalWarning({ isVisible: false, message: "" });
 	}
 
 	/**
    * Evitar carregar a tela enquanto a verificação
    * do token do usuário está em andamento
    */
-	if( isLoading ) {
-		return(
-			<></>
-		);
+	if (isLoading) {
+		return <></>;
 	}
 
 	return (
@@ -161,7 +158,7 @@ const SignIn = () => {
 					<Button onPress={handleSubmit(onSubmit)}>Entrar</Button>
 				</ContainerForm>
 
-				{ showVersionLabel && (
+				{showVersionLabel && (
 					<ContainerVersion>
 						<LabelVersion>{`Version ${packageJson.version}`}</LabelVersion>
 					</ContainerVersion>

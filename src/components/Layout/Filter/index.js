@@ -7,8 +7,8 @@ import { firesIndicesActions } from "../../../store/actions";
 import {
 	RootContainer,
 	Container,
-	ContainerOptions,
 	ContainerSlider,
+	ContainerOptions,
 	Label,
 	LabelSlider
 } from "./styles";
@@ -29,10 +29,8 @@ const Filter = ({ visible, closeModal, filterDays, onUpdateDaysSlider }) => {
 	}
 
 	function updateDaysHandler(days) {
-
-		if( initialized ) {
+		if (initialized)
 			setDays(days);
-		}
 
 		setInitialized(true);
 	}
@@ -48,7 +46,7 @@ const Filter = ({ visible, closeModal, filterDays, onUpdateDaysSlider }) => {
 
 					<ContainerSlider>
 						<LabelSlider>
-							{`${days} ${days === 1 ? "dia:" : "dias:"}`}
+							{`${days} ${days === 1 ? "dia" : "dias"}`}
 						</LabelSlider>
 						<Slider
 							step={1}

@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal } from "react-native";
-import { Container, RootContainer, Label, Touachble, LabelButton } from "./styles";
+import { Container, RootContainer, Label, Touchable, LabelButton } from "./styles";
 
 const ModalNotification = ({ isVisible, message, onConfirm }) => {
 	return(
@@ -8,9 +8,9 @@ const ModalNotification = ({ isVisible, message, onConfirm }) => {
 			<RootContainer>
 				<Container>
 					<Label>{message}</Label>
-					<Touachble onPress={onConfirm}>
+					<Touchable onPress={onConfirm}>
 						<LabelButton>Ok</LabelButton>
-					</Touachble>
+					</Touchable>
 				</Container>
 			</RootContainer>
 

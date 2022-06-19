@@ -6,25 +6,23 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
 import { Button, Container } from "./styles";
 import { useNetInfo } from "@react-native-community/netinfo";
-import { QUALITY_IMAGE_AND_VIDEO } from "../../../constants";
 import { watermelonDB } from "../../../shared/services/watermelonDB";
+import { RESOLUTION_IMAGE_AND_VIDEO } from "../../../constants";
 
-const PickerImage = ({ fireIndice }) => {
-
-	const netInfo = useNetInfo();
+const AddEvidence = ({ fireIndice }) => {
 
 	const ICON_SIZE = 15;
 
+	const netInfo = useNetInfo();
 	const { registerNewEvidence } = firebase();
 	const { saveEvicendeOffline } = watermelonDB();
 
+	const [file, setFile] = useState(null);
 	const userRegistration = useSelector((state) => state.auth.registration);
 
-	const [file, setFile] = useState(null);
-
 	useEffect(() => {
-		if(file) {
-			if( netInfo.isConnected ) {
+		if (file) {
+			if (netInfo.isConnected) {
 				uploadFile();
 			} else {
 				const data = {
@@ -42,70 +40,65 @@ const PickerImage = ({ fireIndice }) => {
 	function openPickerCam() {
 		ImagePicker.openCamera({
 			forceJpg: true,
-			height: QUALITY_IMAGE_AND_VIDEO.height,
-			compressImageMaxWidth: QUALITY_IMAGE_AND_VIDEO.width,
-			compressImageMaxHeight: QUALITY_IMAGE_AND_VIDEO.height,
+			height: RESOLUTION_IMAGE_AND_VIDEO.height,
+			compressImageMaxWidth: RESOLUTION_IMAGE_AND_VIDEO.width,
+			compressImageMaxHeight: RESOLUTION_IMAGE_AND_VIDEO.height,
 			cropping: true,
 			includeBase64: true,
 			mediaType: "photo",
 			compressImageQuality: 1,
-		})
-			.then((image) => setFile(image));
+		}).then((image) => setFile(image));
 	}
 
 	function openPickerCamRecord() {
 		ImagePicker.openCamera({
-			width: QUALITY_IMAGE_AND_VIDEO.width,
-			height: QUALITY_IMAGE_AND_VIDEO.height,
+			width: RESOLUTION_IMAGE_AND_VIDEO.width,
+			height: RESOLUTION_IMAGE_AND_VIDEO.height,
 			mediaType: "video",
-		})
-			.then((image) => {
-				const validateLenghtRecord = validateLenghtFile(image.duration);
-				if (validateLenghtRecord) {
-					setFile(image);
-				}
-			});
-	}
-
-	function validateLenghtFile(duration) {
-		return Math.round(duration / 1000) <= 300;
+		}).then((image) => {
+			if (validateFileLenght(image.duration))
+				setFile(image);
+		});
 	}
 
 	function openGallery() {
 		ImagePicker.openPicker({
-			width: QUALITY_IMAGE_AND_VIDEO.width,
-			height: QUALITY_IMAGE_AND_VIDEO.height,
+			width: RESOLUTION_IMAGE_AND_VIDEO.width,
+			height: RESOLUTION_IMAGE_AND_VIDEO.height,
 			cropping: false,
 			includeBase64: true,
 			mediaType: "any",
 			compressImageQuality: 1,
-		})
-			.then((image) => setFile(image));
+		}).then((image) => setFile(image));
 	}
 
+	function validateFileLenght(duration) {
+		return Math.round(duration / 1000) <= 300;
+	}
+
+
 	async function uploadFile() {
-		if ( file ) {
+		if (file) 
 			await registerNewEvidence(file.path, file.mime.split("/")[0], userRegistration, fireIndice.uid);
-		}
 	}
 
 	return (
 		<React.Fragment>
 			<Container>
 				<Button onPress={openPickerCam}>
-					<FontAwesome name="camera" size={ICON_SIZE}/>
+					<FontAwesome name="camera" size={ICON_SIZE} />
 				</Button>
 
 				<Button onPress={openPickerCamRecord} >
-					<FontAwesome name="video-camera" size={ICON_SIZE}/>
+					<FontAwesome name="video-camera" size={ICON_SIZE} />
 				</Button>
 
 				<Button onPress={openGallery}>
-					<FontAwesome name="image" size={ICON_SIZE}/>
+					<FontAwesome name="image" size={ICON_SIZE} />
 				</Button>
 			</Container>
 		</React.Fragment>
 	);
 };
 
-export default PickerImage;
+export default AddEvidence;

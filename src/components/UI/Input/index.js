@@ -9,7 +9,7 @@ import {
 	ContainerInput,
 	ContainerIcon,
 	ButtonShowPassword
-}from "./styles";
+} from "./styles";
 
 const Input = ({ icon, label, hasErrors, config, controller }) => {
 

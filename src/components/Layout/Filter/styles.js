@@ -21,15 +21,15 @@ export const Container = styled.View`
 `;
 
 export const ContainerSlider = styled.View`
-  align-items: center;
   width: 80%;
+  align-items: center;
   margin-bottom: 15px;
 `;
 
 export const ContainerOptions = styled.View`
-  margin-top: 10px;
   width: 100%;
   align-items: center;
+  margin-top: 10px;
 `;
 
 export const Label = styled.Text`

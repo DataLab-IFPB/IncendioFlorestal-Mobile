@@ -48,7 +48,7 @@ const Menu = ({ onLocation, onFilter, setMapStyle }) => {
 		}
 	}
 
-	return(
+	return (
 		<React.Fragment>
 			<Container>
 				<ButtonMenu onPress={onLocation}>
