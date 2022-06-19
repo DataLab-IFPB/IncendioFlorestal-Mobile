@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import Slider from "@react-native-community/slider";
+import { Modal } from "react-native";
+import { useDispatch } from "react-redux";
 import { Logo, ButtonModal } from "../../UI";
-import { Modal, useWindowDimensions } from "react-native";
+import { firesIndicesActions } from "../../../store/actions";
 import {
 	RootContainer,
 	Container,
@@ -13,13 +15,16 @@ import {
 
 const Filter = ({ visible, closeModal, filterDays, onUpdateDaysSlider }) => {
 
-	const { width } = useWindowDimensions();
-	
+	const dispatch = useDispatch();
+
+	const { filterFireIndices } = firesIndicesActions;
+
 	const [days, setDays] = useState(filterDays);
 	const [initialized, setInitialized] = useState(false);
 
 	function filterIndices() {
 		onUpdateDaysSlider(days);
+		dispatch(filterFireIndices({ days }));
 		closeModal();
 	}
 
@@ -37,7 +42,7 @@ const Filter = ({ visible, closeModal, filterDays, onUpdateDaysSlider }) => {
 			<RootContainer>
 				<Container>
 
-					<Logo dimension={(width * 0.2)}/>
+					<Logo/>
 
 					<Label>{"Filtrar Registros\nde incêndios"}</Label>
 

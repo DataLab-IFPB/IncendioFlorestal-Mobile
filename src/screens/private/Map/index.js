@@ -70,7 +70,7 @@ const Map = ({ route }) => {
 	});
 
 	const user = useSelector((state) => state.auth);
-	const firesIndicesActivated = useSelector((state) => state.firesIndices);
+	const firesIndicesActivated = useSelector((state) => state.firesIndices.filtered);
 
 	Logger.setLogCallback((log) => {
 		const { message } = log;

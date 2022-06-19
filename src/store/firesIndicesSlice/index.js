@@ -1,13 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { formatISO } from "../../shared/utils/formatDate";
 
 const firesIndicesSlice = createSlice({
 	name: "firesIndices",
-	initialState: [],
+	initialState: {
+		filtered: [],
+		raw: []
+	},
 	reducers: {
 
-		loadFireIndices(_, action) {
-
+		loadFireIndices(state, action) {
 			const { payload } = action;
+			let dateFilter = new Date();
+			dateFilter.setDate(dateFilter.getDate() - 1);
+			dateFilter = new Date(formatISO(dateFilter));
 
 			if( payload ) {
 				const fireIndicesFiltered = Object.keys(payload).map((key) => {
@@ -27,34 +33,77 @@ const firesIndicesSlice = createSlice({
 					};
 				});
 
-				return fireIndicesFiltered;
+				const filtered = fireIndicesFiltered.filter((item) => {
+					const dateFireIndice = new Date(item.status.registered_at.split(" ")[0]);
+					if( dateFireIndice > dateFilter ) {
+						return item;
+					}
+				});
+
+				return {
+					filtered,
+					raw: [...fireIndicesFiltered]
+				};
 			}
 
-			return [];
+			return state;
 		},
 
-		loadFireIndicesOffline(_, action) {
-
+		loadFireIndicesOffline(state, action) {
 			const { payload } = action;
 
 			if( payload ) {
-				return [...action.payload];
+				return {
+					filtered: [...payload],
+					raw: [...payload]
+				};
 			}
 
-			return[];
+			return state;
+		},
+
+		filterFireIndices(state, action) {
+			const { days } = action.payload;
+			let limitDate = new Date(formatISO(new Date()));
+
+			if( days > 1 ) {
+				limitDate.setDate(limitDate.getDate() - 1);
+				limitDate = new Date(formatISO(limitDate));
+			}
+
+			const filtered = state.raw.filter((item) => {
+				const dateFireIndice = new Date(item.status.registered_at.split(" ")[0]);
+				if( dateFireIndice >= limitDate ) {
+					return item;
+				}
+			});
+
+			return {
+				filtered,
+				raw: state.raw
+			};
 		},
 
 		storeFireIndice(state, action) {
-			return [
-				...state,
-				action.payload
-			];
+			const { payload } = action;
+			const filtered = [...state.filtered, payload];
+			const raw = [...state.raw, payload];
+
+			return {
+				filtered,
+				raw
+			};
 		},
 
 		updateFireIndice(state, action) {
 			const { payload } = action;
-			const filter = state.filter((item) => item.id !== payload.id);
-			return [...filter, payload];
+			const filtered = state.filtered.filter((item) => item.id !== payload.id);
+			const raw = state.raw.filter((item) => item.id !== payload.id);
+
+			return {
+				filtered: [...filtered, payload],
+				raw: [...raw, payload]
+			};
 		}
 	}
 });
