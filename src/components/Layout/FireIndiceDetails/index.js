@@ -118,7 +118,7 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 		Object.keys(status).forEach((key, index) => {
 			if( index === position ) {
 				update(key, index);
-			} else if( index === (position - 1) ) {
+			} else if( index === (position - 1) && !status[key] ) {
 				update(key, index);
 			}
 		});
