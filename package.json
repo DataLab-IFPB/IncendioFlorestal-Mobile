@@ -54,7 +54,6 @@
     "react-native-vector-icons": "^8.1.0",
     "react-native-video": "^5.1.1",
     "react-redux": "^7.2.4",
-    "realm": "^10.16.0",
     "redux": "^4.1.0",
     "styled-components": "^5.3.5",
     "yup": "^0.32.11"
