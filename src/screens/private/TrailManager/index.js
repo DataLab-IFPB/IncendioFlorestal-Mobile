@@ -27,7 +27,6 @@ import {
 import { watermelonDB } from "../../../shared/services/watermelonDB";
 
 const TrailManager = ({ navigation, route }) => {
-
 	const dispatch = useDispatch();
 	const netInfo = useNetInfo();
 
@@ -71,7 +70,7 @@ const TrailManager = ({ navigation, route }) => {
 
 	async function loadTrailsOffline() {
 		dispatch(enableLoading("Carregando dados..."));
-		const data = await fetchTrailsOffline(fireIndice._raw.id || fireIndice.id);
+		const data = await fetchTrailsOffline(fireIndice._raw.id);
 
 		if (data) {
 			setTrails(() => data.map((item) => ({
@@ -127,7 +126,9 @@ const TrailManager = ({ navigation, route }) => {
 			await deleteTrailOffline(configModal.data);
 		}
 
-		setTrails((currentState) => currentState.filter((item) => item.uid !== configModal.data));
+		setTrails((currentState) => currentState.filter((item) => {
+			return item.uid !== configModal.data;
+		}));
 
 		handleCloseModal();
 		dispatch(disableLoading());
@@ -176,7 +177,7 @@ const TrailManager = ({ navigation, route }) => {
 				{trails.length > 0 && (
 					<FlatList
 						data={trails}
-						keyExtractor={() => Date.now().toString()}
+						keyExtractor={(item) => item.uid}
 						renderItem={({ item, index }) => (
 							<Card key={index}>
 								<Touchable onPress={onDelete.bind(null, item.uid)}>

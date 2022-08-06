@@ -108,7 +108,8 @@ const Map = ({ route }) => {
 		if (params) {
 			const { recoderTrailIsActive, fireIndice, coordinates } = params;
 			if (recoderTrailIsActive) {
-				setShowButtonRecorderRouter({ show: true, fireIndice });
+				const fireIndiceId = fireIndice._raw.id || fireIndice.id;
+				setShowButtonRecorderRouter({ show: true, fireIndice: fireIndiceId });
 			} else if (coordinates) {
 				setSourceTrail({
 					type: "FeatureCollection",
@@ -445,7 +446,7 @@ const Map = ({ route }) => {
 						currentCoordinates={userGeolocation}
 						userRegistration={user.registration}
 						onCancel={cancelRecoderHandler}
-						uidFireIndice={showButtonRecorderRouter.fireIndice.uid}
+						uidFireIndice={showButtonRecorderRouter.fireIndice}
 					/>
 				)}
 
