@@ -35,7 +35,6 @@ import {
 } from "./styles";
 
 const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
-
 	const theme = useTheme();
 	const netInfo = useNetInfo();
 	const navigation = useNavigation();
@@ -45,7 +44,7 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 	const LABELS_STATUS = ["Registrado", "Em Atendimento", "Finalizado"];
 
 	const { getForecast } = weather();
-	const { updateStatusOffline } = watermelonDB();
+	const { updateStatusOffline } = watermelonDB().fireIndiceManagerDB();
 	const { updateStatusFireIndice, getFiresIndices } = firebase();
 	const { loadFireIndices, updateFireIndice } = firesIndicesActions;
 	const { enableLoading, disableLoading } = loadingActions;
@@ -221,11 +220,9 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 							<LabelButton>Galeria</LabelButton>
 						</Button>
 
-						{netInfo.isConnected && (
-							<Button onPress={openTrailManager}>
-								<LabelButton>Trilhas</LabelButton>
-							</Button>
-						)}
+						<Button onPress={openTrailManager}>
+							<LabelButton>Trilhas</LabelButton>
+						</Button>
 					</ContainerOptions>
 
 					<Space size={8}/>

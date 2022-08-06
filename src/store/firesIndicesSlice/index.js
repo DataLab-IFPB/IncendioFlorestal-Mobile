@@ -8,7 +8,6 @@ const firesIndicesSlice = createSlice({
 		raw: []
 	},
 	reducers: {
-
 		loadFireIndices(state, action) {
 			const { payload } = action;
 			let dateFilter = new Date();

@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 import React, { useEffect, useRef, useState } from "react";
 import firebase from "../../../shared/services/firebase";
@@ -39,7 +38,11 @@ const Map = ({ route }) => {
 
 	const { getForecast } = weather();
 	const { enableLoading, disableLoading } = loadingActions;
-	const { loadFireIndices, loadFireIndicesOffline, storeFireIndice } = firesIndicesActions;
+	const {
+		loadFireIndices,
+		loadFireIndicesOffline,
+		storeFireIndice
+	} = firesIndicesActions;
 
 	const {
 		getFiresIndices,
@@ -52,7 +55,7 @@ const Map = ({ route }) => {
 		clearFireIndicesOffline,
 		fetchFiresIndicesOffline,
 		fetchEvidencesOffline
-	} = watermelonDB();
+	} = watermelonDB().fireIndiceManagerDB();
 
 	const [filterDays, setFilterDays] = useState(1);
 	const [sourceTrail, setSourceTrail] = useState();
@@ -61,7 +64,9 @@ const Map = ({ route }) => {
 	const [notification, setNofication] = useState({ show: false, message: "" });
 	const [fireIndiceDetails, setFireIndiceDetails] = useState({ isVisible: false, fireIndice: null });
 	const [showModalNewFireIndice, setShowModalNewFireIndice] = useState({ show: false, data: null });
-	const [showButtonRecorderRouter, setShowButtonRecorderRouter] = useState({ show: false, fireIndice: null });
+	const [showButtonRecorderRouter, setShowButtonRecorderRouter]
+		= useState({ show: false, fireIndice: null });
+
 	const [userGeolocation, setUserGeolocation] = useState({
 		latitude: 0,
 		longitude: 0,
@@ -145,9 +150,9 @@ const Map = ({ route }) => {
 					);
 				});
 
-				if (index === data.length - 1) 
+				if (index === data.length - 1)
 					clearFireIndicesOffline();
-		
+
 			});
 
 		};
@@ -159,9 +164,9 @@ const Map = ({ route }) => {
 
 		const verify = async () => {
 			if (netInfo.isConnected !== null) {
-				if (netInfo.isConnected) 
+				if (netInfo.isConnected)
 					syncDataOffline();
-				else 
+				else
 					loadDataOffiline();
 			}
 		};
@@ -186,7 +191,7 @@ const Map = ({ route }) => {
 			}
 		};
 
-		if (netInfo.isConnected !== null) 
+		if (netInfo.isConnected !== null)
 			fetchData();
 
 	}, [netInfo]);
@@ -206,7 +211,7 @@ const Map = ({ route }) => {
 		verifyPermission();
 	}, []);
 
-	// load user location 
+	// load user location
 	useEffect(() => {
 		const watchPosition = Geolocation.watchPosition(
 			(position) => {
@@ -268,9 +273,9 @@ const Map = ({ route }) => {
 		const data = showModalNewFireIndice.data;
 		const indiceCreated = createNewFireIndice(data);
 
-		if (netInfo.isConnected) 
+		if (netInfo.isConnected)
 			saveFireIndice(indiceCreated);
-		else 
+		else
 			saveFireIndiceOffline(indiceCreated);
 
 		setShowModalNewFireIndice({ show: false, data: null });
@@ -313,7 +318,7 @@ const Map = ({ route }) => {
 
 		const copyFireIndice = { ...fireIndice, status: fireIndice.status };
 
-		if (typeof copyFireIndice.status === "string") 
+		if (typeof copyFireIndice.status === "string")
 			copyFireIndice.status = JSON.parse(copyFireIndice.status);
 
 		setFireIndiceDetails({
@@ -426,7 +431,6 @@ const Map = ({ route }) => {
 			/>
 
 			<Container>
-
 				{netInfo.isConnected && <Forecast userCoordinates={userGeolocation} />}
 
 				<Menu

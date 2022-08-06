@@ -5,18 +5,21 @@ import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
 import { loadingActions } from "../../../store/actions";
+import { useNetInfo } from "@react-native-community/netinfo";
+import { watermelonDB } from "../../../shared/services/watermelonDB";
 import { RECORDER_ROUTER_INITIAL_COORDINATES } from "../../../constants";
 import { Container, Label, TouchableCancel, TouchableEnd, TouchableStart } from "./styles";
 
 const ButtonRecorder = ({ currentCoordinates, userRegistration, uidFireIndice, onCancel }) => {
-
 	const dispatch = useDispatch();
+	const netInfo = useNetInfo();
 
 	const { registerNewTrail } = firebase();
+	const { saveTrailOffline } = watermelonDB().trailManagerDB();
 	const { enableLoading, disableLoading } = loadingActions;
 	const [configDisplay, setConfigDisplay] = useState({ start: true, end: false });
 
-	function startRecorderTrailHandler() {
+	function handleStartRecorderTrail() {
 		AsyncStorage.setItem(
 			RECORDER_ROUTER_INITIAL_COORDINATES,
 			JSON.stringify(currentCoordinates)
@@ -24,16 +27,23 @@ const ButtonRecorder = ({ currentCoordinates, userRegistration, uidFireIndice, o
 		setConfigDisplay({ start: false, end: true });
 	}
 
-	async function endRecorderTrailHandler() {
+	async function handleEndRecorderTrail() {
 		dispatch(enableLoading("Salvando trilha..."));
 		setConfigDisplay({ start: false, end: false });
 
 		const data = {
-			initial_coordinates: JSON.parse(await AsyncStorage.getItem(RECORDER_ROUTER_INITIAL_COORDINATES)),
+			initial_coordinates: JSON.parse(
+				await AsyncStorage.getItem(RECORDER_ROUTER_INITIAL_COORDINATES)
+			),
 			end_coordinates: currentCoordinates
 		};
 
-		await registerNewTrail(uidFireIndice, userRegistration, data);
+		if (netInfo.isConnected) {
+			await registerNewTrail(uidFireIndice, userRegistration, data);
+		} else {
+			await saveTrailOffline(data, uidFireIndice);
+		}
+
 		cancelHandler();
 		dispatch(disableLoading());
 	}
@@ -47,7 +57,7 @@ const ButtonRecorder = ({ currentCoordinates, userRegistration, uidFireIndice, o
 		<Container>
 			{configDisplay.start && (
 				<Fragment>
-					<TouchableStart onPress={startRecorderTrailHandler}>
+					<TouchableStart onPress={handleStartRecorderTrail}>
 						<Label>
 							{/* eslint-disable-next-line quotes */}
 							<FontAwesome name="play"/>{`  `}
@@ -64,7 +74,7 @@ const ButtonRecorder = ({ currentCoordinates, userRegistration, uidFireIndice, o
 
 			{configDisplay.end && (
 				<Fragment>
-					<TouchableEnd onPress={endRecorderTrailHandler}>
+					<TouchableEnd onPress={handleEndRecorderTrail}>
 						<Label>
 							{/* eslint-disable-next-line quotes */}
 							<FontAwesome name="stop"/>{`   `}

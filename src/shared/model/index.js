@@ -1,4 +1,9 @@
-import EvidenceModel from "./EvidenceModel";
-import FireIndiceModel from "./FireIndiceModel";
+import EvidenceModel from "./evidenceModel";
+import FireIndiceModel from "./fireIndiceModel";
+import TrailModel from "./trailModel";
 
-export { FireIndiceModel, EvidenceModel };
+export {
+	FireIndiceModel,
+	EvidenceModel,
+	TrailModel
+};
