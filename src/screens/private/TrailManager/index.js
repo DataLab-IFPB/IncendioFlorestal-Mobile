@@ -6,9 +6,10 @@ import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { FlatList } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { loadingActions } from "../../../store/actions";
+import { useNetInfo } from "@react-native-community/netinfo";
 import { Button, ButtonAction } from "../../../components/UI";
-import { ModalConfirmation, ModalWarning } from "../../../components/Layout";
 import { ContainerInfo } from "../../../components/Layout/Forecast/styles";
+import { ModalConfirmation, ModalWarning } from "../../../components/Layout";
 import {
 	RootContainer,
 	ContainerOptions,
@@ -23,13 +24,16 @@ import {
 	Header,
 	Title
 } from "./styles";
+import { watermelonDB } from "../../../shared/services/watermelonDB";
 
 const TrailManager = ({ navigation, route }) => {
 
 	const dispatch = useDispatch();
+	const netInfo = useNetInfo();
 
 	const { fireIndice } = route.params;
 	const { getTrails, removeTrail } = firebase();
+	const { fetchTrailsOffline, deleteTrailOffline } = watermelonDB().trailManagerDB();
 	const { fetchDirections } = trail();
 	const { enableLoading, disableLoading } = loadingActions;
 
@@ -44,27 +48,53 @@ const TrailManager = ({ navigation, route }) => {
 	const user = useSelector((state) => state.auth);
 
 	useEffect(() => {
-		const loadTrails = async () => {
-			dispatch(enableLoading("Carregando dados..."));
-			const data = await getTrails(fireIndice.uid);
-
-			if (data) {
-				Object.keys(data).forEach((key) => {
-					setTrails((currentState) => [...currentState, { ...data[key], uid: key }]);
-				});
+		if ( netInfo.isConnected !== null) {
+			if (trails.length === 0 && netInfo.isConnected) {
+				loadTrails();
+			} else {
+				loadTrailsOffline();
 			}
-			dispatch(disableLoading());
-		};
+		}
+	}, [netInfo.isConnected]);
 
-		if (trails.length === 0) 
-			loadTrails();
-	}, []);
+	async function loadTrails() {
+		dispatch(enableLoading("Carregando dados..."));
+		const data = await getTrails(fireIndice.uid);
 
-	function closeHandler() {
+		if (data) {
+			Object.keys(data).forEach((key) => {
+				setTrails((currentState) => [...currentState, { ...data[key], uid: key }]);
+			});
+		}
+		dispatch(disableLoading());
+	}
+
+	async function loadTrailsOffline() {
+		dispatch(enableLoading("Carregando dados..."));
+		const data = await fetchTrailsOffline(fireIndice._raw.id || fireIndice.id);
+
+		if (data) {
+			setTrails(() => data.map((item) => ({
+				uid: item.id,
+				initial_coordinates: {
+					latitude: item.initial_latitude,
+					longitude: item.initial_longitude
+				},
+				end_coordinates: {
+					latitude: item.end_latitude,
+					longitude: item.end_longitude
+				}
+			})));
+		}
+
+		dispatch(disableLoading());
+	}
+
+	function handleCloseScreen() {
 		navigation.navigate("Map");
 	}
 
-	function closeModalHandler() {
+	function handleCloseModal() {
 		setConfigModal({
 			show: false,
 			message: "",
@@ -72,32 +102,41 @@ const TrailManager = ({ navigation, route }) => {
 		});
 	}
 
-	function addNewTrailHandler() {
+	function handleAddNewTrail() {
 		navigation.navigate("Map", { recoderTrailIsActive: true, fireIndice });
 	}
 
 	function showTrail(selectedTrail) {
-		fetchDirections(selectedTrail.initial_coordinates, selectedTrail.end_coordinates)
-			.then((result) => {
-				const { coordinates } = result.data.routes[0].geometry;
-				navigation.navigate("Map", { coordinates });
-			});
+		if (netInfo.isConnected) {
+			fetchDirections(selectedTrail.initial_coordinates, selectedTrail.end_coordinates)
+				.then((result) => {
+					const { coordinates } = result.data.routes[0].geometry;
+					navigation.navigate("Map", { coordinates });
+				});
+		} else {
+			setError("Não é possível exibir a trilha sem conexão!");
+		}
 	}
 
-	async function removeTrailHandler() {
+	async function handleRemoveTrail() {
 		dispatch(enableLoading("Removendo trilha..."));
 
-		await removeTrail(configModal.data);
+		if (netInfo.isConnected) {
+			await removeTrail(configModal.data);
+		} else {
+			await deleteTrailOffline(configModal.data);
+		}
+
 		setTrails((currentState) => currentState.filter((item) => item.uid !== configModal.data));
 
-		closeModalHandler();
+		handleCloseModal();
 		dispatch(disableLoading());
 	}
 
 	function onDelete(uid) {
 		const trail = trails.find((item) => item.uid === uid);
 
-		if (trail.user === user.registration) {
+		if (trail.user === user.registration || !netInfo.isConnected) {
 			setConfigModal({
 				show: true,
 				message: "Deseja realmente remover está trilha?",
@@ -110,17 +149,16 @@ const TrailManager = ({ navigation, route }) => {
 
 	return (
 		<RootContainer>
-
 			<Header>
-				<ButtonAction icon="close" onPress={closeHandler}/>
+				<ButtonAction icon="close" onPress={handleCloseScreen}/>
 				<Title>TRILHAS</Title>
 			</Header>
 
 			<ModalConfirmation
 				isVisible={configModal.show}
 				message={configModal.message}
-				onConfirm={removeTrailHandler}
-				onCancel={closeModalHandler}
+				onConfirm={handleRemoveTrail}
+				onCancel={handleCloseModal}
 			/>
 
 			<ModalWarning
@@ -183,7 +221,7 @@ const TrailManager = ({ navigation, route }) => {
 			</ContainerTrails>
 
 			<ContainerOptions>
-				<Button onPress={addNewTrailHandler}>
+				<Button onPress={handleAddNewTrail}>
 					ADICIONAR NOVA TRILHA
 				</Button>
 			</ContainerOptions>

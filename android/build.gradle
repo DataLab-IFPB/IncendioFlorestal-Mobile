@@ -4,12 +4,11 @@ buildscript {
     ext {
         buildToolsVersion = "29.0.3"
         minSdkVersion = 21
-        compileSdkVersion = 29
-        targetSdkVersion = 29
+        compileSdkVersion = 32
+        targetSdkVersion = 32
         ndkVersion = "20.1.5948944"
-        playServicesVersion = "17.0.0" // or find latest version
+        playServicesVersion = "17.0.0"
         androidXCore = "1.7.0"
-
     }
     repositories {
         google()
@@ -43,6 +42,6 @@ allprojects {
 
         maven { url 'https://www.jitpack.io' }
 
-       
+
     }
 }
