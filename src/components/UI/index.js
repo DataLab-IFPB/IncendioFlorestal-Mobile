@@ -1,19 +1,19 @@
 import Input from "./Input";
-import Button from "./Button";
+import PrimaryButton from "./PrimaryButton";
 import Logo from "./Logo";
 import Loading from "./Loading";
-import ButtonModal from "./ButtonModal";
-import ButtonAction from "./ButtonAction";
-import ButtonMenu from "./ButtonMenu";
-import ButtonRecorder from "./ButtonRecorder";
+import ModalButton from "./ModalButton";
+import ActionButton from "./ActionButton";
+import MenuButton from "./MenuButton";
+import RecorderButton from "./RecorderButton";
 
 export {
-	Button,
 	Logo,
 	Input,
 	Loading,
-	ButtonModal,
-	ButtonMenu,
-	ButtonAction,
-	ButtonRecorder
+	PrimaryButton,
+	ModalButton,
+	MenuButton,
+	ActionButton,
+	RecorderButton
 };

@@ -9,7 +9,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "styled-components";
 import { MAP_BOX_KEY } from "../../../constants";
 import { useDispatch, useSelector } from "react-redux";
-import { ButtonRecorder } from "../../../components/UI";
+import { RecorderButton } from "../../../components/UI";
 import { weather } from "../../../shared/services/weather";
 import { BackHandler, View, StatusBar } from "react-native";
 import { useNetInfo } from "@react-native-community/netinfo";
@@ -57,6 +57,7 @@ const Map = ({ route }) => {
 		fetchEvidencesOffline
 	} = watermelonDB().fireIndiceManagerDB();
 
+	const [mapManagerIsOpen, setMapManagerIsOpen] = useState(false);
 	const [filterDays, setFilterDays] = useState(1);
 	const [sourceTrail, setSourceTrail] = useState();
 	const [showModalFilter, setShowModalFilter] = useState(false);
@@ -253,7 +254,6 @@ const Map = ({ route }) => {
 	}
 
 	function createNewFireIndice(event) {
-
 		const [longitude, latitude] = event.geometry.coordinates;
 
 		return {
@@ -274,10 +274,11 @@ const Map = ({ route }) => {
 		const data = showModalNewFireIndice.data;
 		const indiceCreated = createNewFireIndice(data);
 
-		if (netInfo.isConnected)
+		if (netInfo.isConnected) {
 			saveFireIndice(indiceCreated);
-		else
+		} else {
 			saveFireIndiceOffline(indiceCreated);
+		}
 
 		setShowModalNewFireIndice({ show: false, data: null });
 	}
@@ -319,8 +320,9 @@ const Map = ({ route }) => {
 
 		const copyFireIndice = { ...fireIndice, status: fireIndice.status };
 
-		if (typeof copyFireIndice.status === "string")
+		if (typeof copyFireIndice.status === "string") {
 			copyFireIndice.status = JSON.parse(copyFireIndice.status);
+		}
 
 		setFireIndiceDetails({
 			isVisible: true,
@@ -432,17 +434,22 @@ const Map = ({ route }) => {
 			/>
 
 			<Container>
-				{netInfo.isConnected && <Forecast userCoordinates={userGeolocation} />}
+				{netInfo.isConnected && !mapManagerIsOpen && (
+					<Forecast userCoordinates={userGeolocation}/>
+				)}
 
-				<Menu
-					onLocation={returnToLocaleHandler}
-					onFilter={() => setShowModalFilter(true)}
-					onRecorderRouter={showRocorderRouterHandler}
-					setMapStyle={setMapStyle}
-				/>
+				{!mapManagerIsOpen && (
+					<Menu
+						handleLocation={returnToLocaleHandler}
+						handleFilter={() => setShowModalFilter(true)}
+						onRecorderRouter={showRocorderRouterHandler}
+						handleMapStyle={setMapStyle}
+						handleMapManager={() => setMapManagerIsOpen(true)}
+					/>
+				)}
 
 				{showButtonRecorderRouter.show && (
-					<ButtonRecorder
+					<RecorderButton
 						currentCoordinates={userGeolocation}
 						userRegistration={user.registration}
 						onCancel={cancelRecoderHandler}

@@ -1,12 +1,12 @@
 import React from "react";
 import { Touchable, Label } from "./styles";
 
-const Button = ({ children, onPress }) => {
+const PrimaryButton = ({ message, onPress }) => {
 	return(
 		<Touchable onPress={onPress}>
-			<Label>{children}</Label>
+			<Label>{message}</Label>
 		</Touchable>
 	);
 };
 
-export default Button;
+export default PrimaryButton;

@@ -9,7 +9,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Fontisto from "react-native-vector-icons/Fontisto";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
-import { ButtonAction } from "../../UI";
+import { ActionButton } from "../../UI";
 import { useDispatch } from "react-redux";
 import { ContainerInfo } from "../Forecast/styles";
 import { useTheme } from "styled-components/native";
@@ -152,7 +152,7 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 				/>
 
 				<Container>
-					<ButtonAction icon='close' onPress={onClose}/>
+					<ActionButton icon='close' onPress={onClose}/>
 
 					<ContainerIcon>
 						<SimpleLineIcons

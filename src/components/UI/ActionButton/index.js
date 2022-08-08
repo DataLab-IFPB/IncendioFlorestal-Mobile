@@ -3,7 +3,7 @@ import React from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Button } from "./styles";
 
-const ButtonAction = ({ icon, onPress }) => {
+const ActionButton = ({ icon, onPress }) => {
 	return(
 		<Button onPress={onPress}>
 			<Ionicons
@@ -15,4 +15,4 @@ const ButtonAction = ({ icon, onPress }) => {
 	);
 };
 
-export default ButtonAction;
+export default ActionButton;

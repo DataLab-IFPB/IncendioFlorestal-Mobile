@@ -7,7 +7,7 @@ import { FlatList } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { loadingActions } from "../../../store/actions";
 import { useNetInfo } from "@react-native-community/netinfo";
-import { Button, ButtonAction } from "../../../components/UI";
+import { PrimaryButton, ActionButton } from "../../../components/UI";
 import { ContainerInfo } from "../../../components/Layout/Forecast/styles";
 import { ModalConfirmation, ModalWarning } from "../../../components/Layout";
 import {
@@ -151,7 +151,7 @@ const TrailManager = ({ navigation, route }) => {
 	return (
 		<RootContainer>
 			<Header>
-				<ButtonAction icon="close" onPress={handleCloseScreen}/>
+				<ActionButton icon="close" onPress={handleCloseScreen}/>
 				<Title>TRILHAS</Title>
 			</Header>
 
@@ -222,9 +222,10 @@ const TrailManager = ({ navigation, route }) => {
 			</ContainerTrails>
 
 			<ContainerOptions>
-				<Button onPress={handleAddNewTrail}>
-					ADICIONAR NOVA TRILHA
-				</Button>
+				<PrimaryButton
+					message="ADICIONAR NOVA TRILHA"
+					onPress={handleAddNewTrail}
+				/>
 			</ContainerOptions>
 		</RootContainer>
 	);

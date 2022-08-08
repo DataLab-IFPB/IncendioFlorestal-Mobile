@@ -10,7 +10,7 @@ import { watermelonDB } from "../../../shared/services/watermelonDB";
 import { RECORDER_ROUTER_INITIAL_COORDINATES } from "../../../constants";
 import { Container, Label, TouchableCancel, TouchableEnd, TouchableStart } from "./styles";
 
-const ButtonRecorder = ({ currentCoordinates, userRegistration, uidFireIndice, onCancel }) => {
+const RecorderButton = ({ currentCoordinates, userRegistration, uidFireIndice, onCancel }) => {
 	const dispatch = useDispatch();
 	const netInfo = useNetInfo();
 
@@ -87,4 +87,4 @@ const ButtonRecorder = ({ currentCoordinates, userRegistration, uidFireIndice, o
 	);
 };
 
-export default ButtonRecorder;
+export default RecorderButton;
