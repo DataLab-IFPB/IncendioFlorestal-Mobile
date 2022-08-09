@@ -72,4 +72,4 @@ const Filter = ({ visible, closeModal, filterDays, onUpdateDaysSlider }) => {
 	);
 };
 
-export default Filter;
+export { Filter };

@@ -34,4 +34,4 @@ const ModalWarning = ({ message, isVisible, onConfirm }) => {
 	);
 };
 
-export default ModalWarning;
+export { ModalWarning };

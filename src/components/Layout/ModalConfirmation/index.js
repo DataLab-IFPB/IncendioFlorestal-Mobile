@@ -22,4 +22,4 @@ const ModalNewFireIndice = ({ isVisible, message, onCancel, onConfirm }) => {
 	);
 };
 
-export default ModalNewFireIndice;
+export { ModalNewFireIndice };

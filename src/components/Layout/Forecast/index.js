@@ -91,4 +91,4 @@ const Forecast = ({ userCoordinates }) => {
 	return <></>;
 };
 
-export default Forecast;
+export { Forecast };

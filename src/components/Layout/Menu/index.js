@@ -116,4 +116,4 @@ const Menu = ({ handleLocation, handleFilter, handleMapStyle, handleMapManager }
 	);
 };
 
-export default Menu;
+export { Menu };

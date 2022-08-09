@@ -236,4 +236,4 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 	);
 };
 
-export default FirefireIndiceDetails;
+export { FirefireIndiceDetails };

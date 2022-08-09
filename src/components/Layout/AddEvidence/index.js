@@ -101,4 +101,4 @@ const AddEvidence = ({ fireIndice }) => {
 	);
 };
 
-export default AddEvidence;
+export { AddEvidence };
