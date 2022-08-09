@@ -87,4 +87,4 @@ const RecorderButton = ({ currentCoordinates, userRegistration, uidFireIndice, o
 	);
 };
 
-export default RecorderButton;
+export { RecorderButton };

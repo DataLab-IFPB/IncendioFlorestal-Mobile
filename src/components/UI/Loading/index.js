@@ -16,4 +16,4 @@ const Loading = ({ isVisible }) => {
 	);
 };
 
-export default Loading;
+export { Loading };

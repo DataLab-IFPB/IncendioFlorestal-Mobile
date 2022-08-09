@@ -9,4 +9,4 @@ const MenuButton = ({ children, onPress }) => {
 	);
 };
 
-export default MenuButton;
+export { MenuButton };

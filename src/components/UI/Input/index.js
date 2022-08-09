@@ -55,4 +55,4 @@ const Input = ({ icon, label, hasErrors, config, controller }) => {
 	);
 };
 
-export default Input;
+export { Input };

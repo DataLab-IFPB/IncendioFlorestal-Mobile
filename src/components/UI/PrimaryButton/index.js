@@ -9,4 +9,4 @@ const PrimaryButton = ({ message, onPress }) => {
 	);
 };
 
-export default PrimaryButton;
+export { PrimaryButton };

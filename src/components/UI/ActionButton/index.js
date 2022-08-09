@@ -15,4 +15,4 @@ const ActionButton = ({ icon, onPress }) => {
 	);
 };
 
-export default ActionButton;
+export { ActionButton };

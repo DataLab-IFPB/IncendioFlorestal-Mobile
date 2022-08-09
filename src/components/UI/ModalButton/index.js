@@ -8,4 +8,4 @@ const ModalButton = ({ message, onPress, highlighted = false }) => {
 		</Touchable>
 	);
 };
-export default ModalButton;
+export { ModalButton };
