@@ -24,7 +24,8 @@ import {
 	Forecast,
 	FireIndiceDetails,
 	ModalConfirmation,
-	ModalNotification
+	ModalNotification,
+	MapManagerControl
 } from "../../../components/Layout";
 
 const Map = ({ route }) => {
@@ -63,10 +64,15 @@ const Map = ({ route }) => {
 	const [showModalFilter, setShowModalFilter] = useState(false);
 	const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Street);
 	const [notification, setNofication] = useState({ show: false, message: "" });
-	const [fireIndiceDetails, setFireIndiceDetails] = useState({ isVisible: false, fireIndice: null });
-	const [showModalNewFireIndice, setShowModalNewFireIndice] = useState({ show: false, data: null });
-	const [showButtonRecorderRouter, setShowButtonRecorderRouter]
-		= useState({ show: false, fireIndice: null });
+	const [fireIndiceDetails, setFireIndiceDetails] = useState({
+		isVisible: false, fireIndice: null
+	});
+	const [showModalNewFireIndice, setShowModalNewFireIndice] = useState({
+		show: false, data: null
+	});
+	const [showButtonRecorderRouter, setShowButtonRecorderRouter] = useState({
+		show: false, fireIndice: null
+	});
 
 	const [userGeolocation, setUserGeolocation] = useState({
 		latitude: 0,
@@ -513,6 +519,12 @@ const Map = ({ route }) => {
 
 					{renderFiresIndices()}
 				</MapboxGL.MapView>
+
+				{mapManagerIsOpen && (
+					<MapManagerControl
+						handleCancel={() => setMapManagerIsOpen(false)}
+					/>
+				)}
 			</Container>
 		</React.Fragment>
 	);

@@ -1,7 +1,8 @@
 import styled from "styled-components/native";
 
 export const Container = styled.View`
-	display: flex;
-	flex-direction: column;
+	position: absolute;
+	top: 15px;
+	right: -40px;
 `;
 
