@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import firebase from "../../../shared/services/firebase";
 import fs from "react-native-fs";
-import { FlatList } from "react-native";
+import { FlatList, BackHandler } from "react-native";
 import { useDispatch } from "react-redux";
 import { ButtonAction } from "../../../components/UI";
 import { loadingActions } from "../../../store/actions";
@@ -143,6 +143,14 @@ const Gallery = ({ navigation, route }) => {
 	function onClose() {
 		navigation.navigate("Map", { fireIndice });
 	}
+
+	useEffect(() => {
+		const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+			navigation.navigate("Map");
+		  }
+		);
+		return () => backHandler.remove();
+	  }, []);
 
 	return (
 		<RootContainer>

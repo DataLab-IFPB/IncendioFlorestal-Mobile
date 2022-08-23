@@ -3,7 +3,7 @@ import trail from "../../../shared/services/trail";
 import firebase from "../../../shared/services/firebase";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { FlatList } from "react-native";
+import { FlatList, BackHandler } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { loadingActions } from "../../../store/actions";
 import { useNetInfo } from "@react-native-community/netinfo";
@@ -147,6 +147,14 @@ const TrailManager = ({ navigation, route }) => {
 			setError("Você não tem permissão para excluir essa trilha");
 		}
 	}
+
+	useEffect(() => {
+		const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+			navigation.navigate("Map");
+		  }
+		);
+		return () => backHandler.remove();
+	  }, []);
 
 	return (
 		<RootContainer>
