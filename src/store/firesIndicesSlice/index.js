@@ -23,7 +23,6 @@ const firesIndicesSlice = createSlice({
 						active: fireIndice.active,
 						brightness: fireIndice.brightness,
 						confidence: fireIndice.confidence,
-						daynight: fireIndice.daynight,
 						intensity: fireIndice.frp,
 						latitude: fireIndice.longitude,
 						longitude: fireIndice.latitude,

@@ -23,23 +23,12 @@ function formatDateString(datetime) {
 
 function formatDatetime(date) {
 	const dateFormated = formatISO(date);
-	const time = `${date.getHours()}:${date.getMinutes() < 10 ? "0" : ""}${date.getMinutes()}:00`;
+	const time = `${date.getHours()}:${date.getMinutes() < 10 ? "0" : ""}${date.getMinutes()}`;
 	return `${dateFormated} ${time}`;
 }
 
 function getMoment() {
-	const now = new Date();
-	const momentInstance = moment(now);
-	const currentHour = momentInstance.format("HH");
-	let momentType = "";
-
-	if (currentHour >= 3 && currentHour <= 12) {
-		momentType = "D";
-	} else {
-		momentType = "N";
-	}
-
-	return momentType;
+	return moment(new Date()).format("hh:mm a");
 }
 
 export {

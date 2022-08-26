@@ -22,7 +22,6 @@ const fireIndiceManagerDB = () => {
 				fireIndice.latitude = data.latitude;
 				fireIndice.longitude = data.longitude;
 				fireIndice.active = data.active;
-				fireIndice.daynight = data.daynight;
 				fireIndice.userCreated = data.userCreated;
 				fireIndice.status = JSON.stringify(data.status);
 			});
@@ -46,8 +45,7 @@ const fireIndiceManagerDB = () => {
 
 	async function fetchFiresIndicesOffline() {
 		const firesIndicesCollection = database.get(TABLE_FIRES_INDICES);
-		const firesIndices = await firesIndicesCollection.query().fetch();
-		return firesIndices;
+		return firesIndicesCollection.query().fetch();
 	}
 
 	async function fetchEvidencesOffline(fireIndiceId) {

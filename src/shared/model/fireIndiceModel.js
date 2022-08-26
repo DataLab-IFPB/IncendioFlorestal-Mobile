@@ -7,7 +7,6 @@ class FireIndiceModel extends Model {
 
 	@field("status") status;
 	@field("active") active;
-	@field("daynight") daynight;
 	@field("latitude") latitude;
 	@field("longitude") longitude;
 	@field("userCreated") userCreated;

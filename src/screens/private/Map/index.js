@@ -7,16 +7,15 @@ import MapboxGL, { Logger } from "@react-native-mapbox-gl/maps";
 import IconSimple from "react-native-vector-icons/SimpleLineIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "styled-components";
-import { MAP_BOX_KEY } from "../../../constants";
+import { MAP_BOX_KEY, PERMISSION_LOCATION_USE } from "../../../constants";
 import { useDispatch, useSelector } from "react-redux";
 import { ButtonRecorder } from "../../../components/UI";
 import { weather } from "../../../shared/services/weather";
 import { BackHandler, View, StatusBar } from "react-native";
 import { useNetInfo } from "@react-native-community/netinfo";
-import { PERMISSION_LOCATION_USE } from "../../../constants";
 import { watermelonDB } from "../../../shared/services/watermelonDB";
 import { firesIndicesActions, loadingActions } from "../../../store/actions";
-import { getMoment, formatDatetime } from "../../../shared/utils/formatDate";
+import { formatDatetime } from "../../../shared/utils/formatDate";
 import styles, { ButtonClose, Container, ContainerButtonClose } from "./styles";
 import {
 	Menu,
@@ -81,13 +80,8 @@ const Map = ({ route }) => {
 		const { message } = log;
 
 		// expected warnings - see https://github.com/mapbox/mapbox-gl-native/issues/15341#issuecomment-522889062
-		if (
-			message.match("Request failed due to a permanent error: Canceled") ||
-			message.match("Request failed due to a permanent error: Socket Closed")
-		) {
-			return true;
-		}
-		return false;
+		return message.match("Request failed due to a permanent error: Canceled") ||
+			message.match("Request failed due to a permanent error: Socket Closed");
 	});
 
 	// Monitor do status da rede do dispositivo
@@ -136,7 +130,6 @@ const Map = ({ route }) => {
 				const fireIndiceFormatted = {
 					latitude: fireIndice.longitude,
 					longitude: fireIndice.latitude,
-					daynight: fireIndice.daynight,
 					userCreated: fireIndice.userCreated,
 					active: fireIndice.active,
 					status: JSON.parse(fireIndice.status)
@@ -261,7 +254,6 @@ const Map = ({ route }) => {
 			longitude,
 			userCreated: true,
 			active: true,
-			daynight: getMoment(),
 			status: {
 				registered_at: formatDatetime(new Date()),
 				in_attendance_at: "",
@@ -368,8 +360,8 @@ const Map = ({ route }) => {
 									<IconSimple
 										name='fire'
 										size={30}
-										color={theme.colors.icon.secondary}
 										onPress={() => showFireIndiceDetails(register)}
+										color={theme.colors.icon.secondary}
 									/>
 								</View>
 							) : (

@@ -6,7 +6,6 @@ const FireIndiceSchema = tableSchema({
 		{ name: "status", type: "string" },
 		{ name: "active", type: "boolean" },
 		{ name: "latitude", type: "number" },
-		{ name: "daynight", type: "string" },
 		{ name: "longitude", type: "number" },
 		{ name: "userCreated", type: "boolean" }
 	]

@@ -2,11 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Modal } from "react-native";
 import AddEvidence from "../AddEvidence";
 import ModalConfirmation from "../ModalConfirmation";
-import Feather from "react-native-vector-icons/Feather";
 import StepIndicator from "react-native-step-indicator";
 import firebase from "../../../shared/services/firebase";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import Fontisto from "react-native-vector-icons/Fontisto";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import { ButtonAction } from "../../UI";
@@ -167,16 +165,7 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 
 					<Space size={10}/>
 
-					<Label>Ocorreu de:</Label>
-					<Label isBold>
-						{
-							fireIndice.daynight === "D" ? (
-								<Fontisto name='day-sunny' size={40}/>
-							) : (
-								<Feather name='moon' size={40}/>
-							)
-						}
-					</Label>
+					<Label>Ocorreu às: {fireIndice.status.registered_at.split(" ")[1]}</Label>
 
 					<ContainerStepIndicador>
 						<StepIndicator
