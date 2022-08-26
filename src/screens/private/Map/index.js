@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import firebase from "../../../shared/services/firebase";
 import Geolocation from "react-native-geolocation-service";
+import Foundation from "react-native-vector-icons/Foundation";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import MapboxGL, { Logger } from "@react-native-mapbox-gl/maps";
 import IconSimple from "react-native-vector-icons/SimpleLineIcons";
@@ -17,6 +18,7 @@ import { PERMISSION_LOCATION_USE } from "../../../constants";
 import { watermelonDB } from "../../../shared/services/watermelonDB";
 import { firesIndicesActions, loadingActions } from "../../../store/actions";
 import { getMoment, formatDatetime } from "../../../shared/utils/formatDate";
+import { getZone, Polygon } from "../../../helpers";
 import styles, { ButtonClose, Container, ContainerButtonClose } from "./styles";
 import {
 	Menu,
@@ -59,6 +61,7 @@ const Map = ({ route }) => {
 	} = watermelonDB().fireIndiceManagerDB();
 
 	const [mapManagerIsOpen, setMapManagerIsOpen] = useState(false);
+	const [downloadArea, setDownloadArea] = useState(null);
 	const [filterDays, setFilterDays] = useState(1);
 	const [sourceTrail, setSourceTrail] = useState();
 	const [showModalFilter, setShowModalFilter] = useState(false);
@@ -364,7 +367,7 @@ const Map = ({ route }) => {
 			firesIndicesActivated.map((register, index) => {
 				if (register.active) {
 					return (
-						<MapboxGL.MarkerView
+						<MapboxGL.PointAnnotation
 							key={index}
 							coordinate={[
 								register.latitude,
@@ -392,7 +395,7 @@ const Map = ({ route }) => {
 									/>
 								</View>
 							)}
-						</MapboxGL.MarkerView>
+						</MapboxGL.PointAnnotation>
 					);
 				}
 			})
@@ -401,6 +404,17 @@ const Map = ({ route }) => {
 
 	function cancelRecoderHandler() {
 		setShowButtonRecorderRouter({ show: false, fireIndice: null });
+	}
+
+	function generateDownloadArea(event) {
+		const [longitude, latitude] = event.geometry.coordinates;
+		const area = getZone(latitude, longitude);
+		Polygon.features[0].geometry.coordinates = [];
+		Polygon.features[0].geometry.coordinates.push(area);
+		setDownloadArea({
+			central: [longitude, latitude],
+			area: {...Polygon}
+		});
 	}
 
 	return (
@@ -480,7 +494,16 @@ const Map = ({ route }) => {
 					attributionEnabled={false}
 					style={styles.containerMap}
 					renderToHardwareTextureAndroid={true}
-					onLongPress={(event) => setShowModalNewFireIndice({ show: true, data: event })}
+					onLongPress={(event) => {
+						if (!mapManagerIsOpen) {
+							setShowModalNewFireIndice({ show: true, data: event });
+						}
+					}}
+					onPress={(event) => {
+						if (mapManagerIsOpen) {
+							generateDownloadArea(event);
+						}
+					}}
 					centerCoordinate={[
 						userGeolocation.longitude,
 						userGeolocation.latitude,
@@ -509,6 +532,33 @@ const Map = ({ route }) => {
 								style={{ lineColor: "red", lineWidth: 5 }}
 							/>
 						</MapboxGL.ShapeSource>
+					)}
+
+					{mapManagerIsOpen && downloadArea && (
+						<>
+							<MapboxGL.PointAnnotation
+								id={downloadArea.central.toString()}
+								coordinate={downloadArea.central}
+							>
+								<View>
+									<Foundation name="marker" color="#293462" size={40}/>
+								</View>
+							</MapboxGL.PointAnnotation>
+
+							<MapboxGL.ShapeSource
+								id="downloadArea"
+								shape={downloadArea.area}
+							>
+								<MapboxGL.FillLayer
+									id="polygion"
+									style={{
+										fillOutlineColor: "#7FB77E",
+										fillColor: "#B1D7B4",
+										fillOpacity: 0.5
+									}}
+								/>
+							</MapboxGL.ShapeSource>
+						</>
 					)}
 
 					<MapboxGL.UserLocation
