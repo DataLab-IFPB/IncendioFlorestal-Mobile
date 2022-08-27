@@ -27,7 +27,9 @@ import {
 	FireIndiceDetails,
 	ModalConfirmation,
 	ModalNotification,
-	MapManagerControl
+	MapManagerControl,
+	ModalWarning, 
+	ModalInput
 } from "../../../components/Layout";
 
 const Map = ({ route }) => {
@@ -38,6 +40,7 @@ const Map = ({ route }) => {
 	const netInfo = useNetInfo();
 	const mapRef = useRef();
 	const theme = useTheme();
+	const offlineManager = MapboxGL.offlineManager;
 
 	const { getForecast } = weather();
 	const { enableLoading, disableLoading } = loadingActions;
@@ -67,6 +70,8 @@ const Map = ({ route }) => {
 	const [showModalFilter, setShowModalFilter] = useState(false);
 	const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Street);
 	const [notification, setNofication] = useState({ show: false, message: "" });
+	const [areaName, setAreaName] = useState("");
+	const [error, setError] = useState("");
 	const [fireIndiceDetails, setFireIndiceDetails] = useState({
 		isVisible: false, fireIndice: null
 	});
@@ -76,6 +81,12 @@ const Map = ({ route }) => {
 	const [showButtonRecorderRouter, setShowButtonRecorderRouter] = useState({
 		show: false, fireIndice: null
 	});
+	const [inputModal, setInputModal] = useState({
+        show: false,
+        message: "",
+        label: "",
+        data: null
+    });
 
 	const [userGeolocation, setUserGeolocation] = useState({
 		latitude: 0,
@@ -417,6 +428,66 @@ const Map = ({ route }) => {
 		});
 	}
 
+	function handleCreateArea() {
+		checkConnection(() => {
+			setInputModal({
+				show: true,
+				message: 'nome da área',
+				label: 'Área'
+			});
+		});
+	}
+
+	async function handleAddNewPack() {
+        handleCloseInputModal();
+
+        checkConnection(async () => {
+            const progressListener = (offlineRegion, status) => {
+                console.log(offlineRegion, status);
+
+                if (status.percentage === 100) {
+                    dispatch(disableLoading());
+                } else {
+                    dispatch(enableLoading(~~status.percentage + '%'));
+                }
+            }
+
+            const errorListener = (offlineRegion, err) => {
+                console.warn(offlineRegion, err);
+                setError(err);
+            }
+
+            //TODO Mudar coordenadas
+            await offlineManager.createPack({
+                name: areaName,
+                styleURL: MapboxGL.StyleURL.Street,
+                minZoom: 10,
+                maxZoom: 14,
+                bounds: [
+                    [-38.3835, -12.9002],		//Northeast (superior direito) longitude latitude
+                    [-38.5364, -13.0173]		//Southwest (inferior esquerdo) longitude latitude
+                ]
+            }, progressListener, errorListener).catch(e => console.warn(e));
+        });
+
+    }
+
+	function checkConnection(onConnected) {
+		if (netInfo.isConnected) {
+			onConnected();
+		} else {
+			setError("Não é possível baixar novas áreas sem conexão!");
+		}
+	}
+
+	function handleCloseInputModal() {
+		setInputModal({
+			show: false,
+			message: '',
+			label: ''
+		});
+	}
+
 	return (
 		<React.Fragment>
 			<StatusBar barStyle='light-content' backgroundColor='#000'/>
@@ -438,11 +509,26 @@ const Map = ({ route }) => {
 				/>
 			}
 
+			<ModalWarning
+                isVisible={!!error}
+                message={error}
+                onConfirm={() => setError("")}
+            />
+
 			<ModalNotification
 				isVisible={notification.show}
 				message={notification.message}
 				onConfirm={confirmNofifactionHandler}
 			/>
+
+			<ModalInput
+                isVisible={inputModal.show}
+                message={inputModal.message}
+                onConfirm={() => handleAddNewPack()}
+                onCancel={handleCloseInputModal}
+                onChangeText={newName => setAreaName(newName)}
+                keyboardType='default'
+            />
 
 			<ModalConfirmation
 				isVisible={showModalNewFireIndice.show}
@@ -572,7 +658,8 @@ const Map = ({ route }) => {
 
 				{mapManagerIsOpen && (
 					<MapManagerControl
-						handleCancel={() => setMapManagerIsOpen(false)}
+						onDownload={handleCreateArea}
+						onCancel={() => setMapManagerIsOpen(false)}
 					/>
 				)}
 			</Container>

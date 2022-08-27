@@ -7,4 +7,5 @@ export * from "./FireIndiceDetails";
 export * from "./ModalWarning";
 export * from "./ModalNotification";
 export * from "./ModalConfirmation";
+export * from "./ModalInput";
 export * from "./MapManagerControl";
