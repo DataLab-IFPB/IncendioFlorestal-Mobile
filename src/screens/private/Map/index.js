@@ -1,22 +1,11 @@
 /* eslint-disable no-undef */
 import React, { useEffect, useRef, useState } from "react";
-import firebase from "../../../shared/services/firebase";
-import Geolocation from "react-native-geolocation-service";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import MapboxGL, { Logger } from "@react-native-mapbox-gl/maps";
 import IconSimple from "react-native-vector-icons/SimpleLineIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useTheme } from "styled-components";
-import { MAP_BOX_KEY, PERMISSION_LOCATION_USE } from "../../../constants";
-import { useDispatch, useSelector } from "react-redux";
 import { ButtonRecorder } from "../../../components/UI";
-import { weather } from "../../../shared/services/weather";
-import { BackHandler, View, StatusBar } from "react-native";
-import { useNetInfo } from "@react-native-community/netinfo";
-import { watermelonDB } from "../../../shared/services/watermelonDB";
-import { firesIndicesActions, loadingActions } from "../../../store/actions";
-import { formatDatetime } from "../../../shared/utils/formatDate";
-import styles, { ButtonClose, Container, ContainerButtonClose } from "./styles";
+import { ButtonClose, Container, ContainerButtonClose, ContainerIcon } from "./styles";
 import {
 	Menu,
 	Filter,
@@ -25,6 +14,25 @@ import {
 	ModalConfirmation,
 	ModalNotification
 } from "../../../components/Layout";
+import {
+	useTheme,
+	useNetInfo,
+	useDispatch,
+	useSelector,
+	firesIndicesActions,
+	loadingActions,
+	formatDatetime,
+	getMoment,
+	weather,
+	firebase,
+	watermelonDB,
+	StatusBar,
+	LineString,
+	BackHandler,
+	Geolocation,
+	MAP_BOX_KEY,
+	PERMISSION_LOCATION_USE,
+} from "./protocols";
 
 const Map = ({ route }) => {
 
@@ -61,10 +69,18 @@ const Map = ({ route }) => {
 	const [showModalFilter, setShowModalFilter] = useState(false);
 	const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Street);
 	const [notification, setNofication] = useState({ show: false, message: "" });
-	const [fireIndiceDetails, setFireIndiceDetails] = useState({ isVisible: false, fireIndice: null });
-	const [showModalNewFireIndice, setShowModalNewFireIndice] = useState({ show: false, data: null });
-	const [showButtonRecorderRouter, setShowButtonRecorderRouter]
-		= useState({ show: false, fireIndice: null });
+	const [fireIndiceDetails, setFireIndiceDetails] = useState({
+		isVisible: false,
+		fireIndice: null
+	});
+	const [showModalNewFireIndice, setShowModalNewFireIndice] = useState({
+		show: false,
+		data: null
+	});
+	const [showButtonRecorderRouter, setShowButtonRecorderRouter]= useState({
+		show: false,
+		fireIndice: null
+	});
 
 	const [userGeolocation, setUserGeolocation] = useState({
 		latitude: 0,
@@ -105,19 +121,9 @@ const Map = ({ route }) => {
 				const fireIndiceId = fireIndice._raw.id || fireIndice.id;
 				setShowButtonRecorderRouter({ show: true, fireIndice: fireIndiceId });
 			} else if (coordinates) {
-				setSourceTrail({
-					type: "FeatureCollection",
-					features: [
-						{
-							type: "Feature",
-							properties: {},
-							geometry: {
-								type: "LineString",
-								coordinates
-							}
-						}
-					]
-				});
+				LineString.features[0].geometry.coordinates = [];
+				LineString.features[0].geometry.coordinates = coordinates;
+				setSourceTrail(LineString);
 			}
 		}
 	}, [route]);
@@ -348,7 +354,8 @@ const Map = ({ route }) => {
 			firesIndicesActivated.map((register, index) => {
 				if (register.active) {
 					return (
-						<MapboxGL.MarkerView
+						<MapboxGL.PointAnnotation
+							id={String(index)}
 							key={index}
 							coordinate={[
 								register.latitude,
@@ -356,16 +363,16 @@ const Map = ({ route }) => {
 							]}
 						>
 							{register.userCreated ? (
-								<View style={styles.containerIndexFire}>
+								<ContainerIcon>
 									<IconSimple
 										name='fire'
 										size={30}
 										onPress={() => showFireIndiceDetails(register)}
 										color={theme.colors.icon.secondary}
 									/>
-								</View>
+								</ContainerIcon>
 							) : (
-								<View style={styles.containerIndexFire}>
+								<ContainerIcon>
 									<IconSimple
 										name='fire'
 										size={30}
@@ -374,9 +381,9 @@ const Map = ({ route }) => {
 											theme.colors.icon.primary : theme.colors.icon.tertiary
 										}
 									/>
-								</View>
+								</ContainerIcon>
 							)}
-						</MapboxGL.MarkerView>
+						</MapboxGL.PointAnnotation>
 					);
 				}
 			})
@@ -457,7 +464,7 @@ const Map = ({ route }) => {
 					styleURL={mapStyle}
 					compassEnabled={false}
 					attributionEnabled={false}
-					style={styles.containerMap}
+					style={{ flex: 1 }}
 					renderToHardwareTextureAndroid={true}
 					onLongPress={(event) => setShowModalNewFireIndice({ show: true, data: event })}
 					centerCoordinate={[
