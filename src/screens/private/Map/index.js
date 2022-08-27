@@ -357,6 +357,7 @@ const Map = ({ route }) => {
 						<MapboxGL.PointAnnotation
 							id={String(index)}
 							key={index}
+							onSelected={() => showFireIndiceDetails(register)}
 							coordinate={[
 								register.latitude,
 								register.longitude
@@ -367,7 +368,6 @@ const Map = ({ route }) => {
 									<IconSimple
 										name='fire'
 										size={30}
-										onPress={() => showFireIndiceDetails(register)}
 										color={theme.colors.icon.secondary}
 									/>
 								</ContainerIcon>
@@ -376,7 +376,6 @@ const Map = ({ route }) => {
 									<IconSimple
 										name='fire'
 										size={30}
-										onPress={() => showFireIndiceDetails(register)}
 										color={register.brightness >= 500 ?
 											theme.colors.icon.primary : theme.colors.icon.tertiary
 										}
