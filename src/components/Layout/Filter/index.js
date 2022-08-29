@@ -28,9 +28,10 @@ const Filter = ({ visible, closeModal, filterDays, onUpdateDaysSlider }) => {
 		closeModal();
 	}
 
-	function updateDaysHandler(days) {
-		if (initialized)
+	function handleUpdateDays(days) {
+		if (initialized) {
 			setDays(days);
+		}
 
 		setInitialized(true);
 	}
@@ -57,7 +58,7 @@ const Filter = ({ visible, closeModal, filterDays, onUpdateDaysSlider }) => {
 							minimumTrackTintColor='#000'
 							maximumTrackTintColor='#000'
 							value={filterDays}
-							onValueChange={updateDaysHandler}
+							onValueChange={handleUpdateDays}
 						/>
 					</ContainerSlider>
 

@@ -40,7 +40,8 @@ const firebase = () => {
 			const ref = database()
 				.ref(`/fires/${uid}`)
 				.update({
-					status
+					status,
+					active: status.finished_at ? false : true
 				});
 			resolve(ref);
 		});
@@ -163,9 +164,9 @@ const firebase = () => {
 	async function checkAuthState() {
 		return new Promise((resolve, reject) => {
 			auth().onAuthStateChanged((user) => {
-				if (user) 
+				if (user)
 					resolve(user);
-				else 
+				else
 					reject(new Error());
 			});
 		});

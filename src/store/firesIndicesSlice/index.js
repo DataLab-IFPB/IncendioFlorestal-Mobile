@@ -14,7 +14,7 @@ const firesIndicesSlice = createSlice({
 			dateFilter.setDate(dateFilter.getDate() - 1);
 			dateFilter = new Date(formatISO(dateFilter));
 
-			if( payload ) {
+			if (payload) {
 				const fireIndicesFiltered = Object.keys(payload).map((key) => {
 					const fireIndice = payload[key];
 
@@ -32,9 +32,12 @@ const firesIndicesSlice = createSlice({
 				});
 
 				const filtered = fireIndicesFiltered.filter((item) => {
-					const dateFireIndice = new Date(item.status.registered_at.split(" ")[0]);
-					if( dateFireIndice > dateFilter ) {
-						return item;
+					if (!item.status.finished_at) {
+						const dateFireIndice = new Date(item.status.registered_at.split(" ")[0]);
+
+						if (dateFireIndice > dateFilter) {
+							return item;
+						}
 					}
 				});
 
@@ -50,7 +53,7 @@ const firesIndicesSlice = createSlice({
 		loadFireIndicesOffline(state, action) {
 			const { payload } = action;
 
-			if( payload ) {
+			if (payload) {
 				return {
 					filtered: [...payload],
 					raw: [...payload]
@@ -64,15 +67,18 @@ const firesIndicesSlice = createSlice({
 			const { days } = action.payload;
 			let limitDate = new Date(formatISO(new Date()));
 
-			if( days > 1 ) {
+			if (days > 1) {
 				limitDate.setDate(limitDate.getDate() - 1);
 				limitDate = new Date(formatISO(limitDate));
 			}
 
 			const filtered = state.raw.filter((item) => {
-				const dateFireIndice = new Date(item.status.registered_at.split(" ")[0]);
-				if( dateFireIndice >= limitDate ) {
-					return item;
+				if (!item.status.finished_at) {
+					const dateFireIndice = new Date(item.status.registered_at.split(" ")[0]);
+
+					if (dateFireIndice >= limitDate) {
+						return item;
+					}
 				}
 			});
 
