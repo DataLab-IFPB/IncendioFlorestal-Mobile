@@ -12,9 +12,12 @@ export const ContainerButtonClose = styled.View`
 	z-index: 999;
 `;
 
-export const ContainerIcon = styled.View`
-	width: 100%;
-	height: 100%;
+export const Button = styled.TouchableOpacity`
+	width: 45px;
+	height: 45px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 `;
 
 export const ButtonClose = styled.TouchableOpacity`
