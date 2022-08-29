@@ -5,7 +5,7 @@ import MapboxGL, { Logger } from "@react-native-mapbox-gl/maps";
 import IconSimple from "react-native-vector-icons/SimpleLineIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ButtonRecorder } from "../../../components/UI";
-import { ButtonClose, Container, ContainerButtonClose, ContainerIcon } from "./styles";
+import { ButtonClose, Container, ContainerButtonClose, Button } from "./styles";
 import {
 	Menu,
 	Filter,
@@ -22,7 +22,6 @@ import {
 	firesIndicesActions,
 	loadingActions,
 	formatDatetime,
-	getMoment,
 	weather,
 	firebase,
 	watermelonDB,
@@ -314,7 +313,6 @@ const Map = ({ route }) => {
 	}
 
 	function showFireIndiceDetails(fireIndice) {
-
 		const copyFireIndice = { ...fireIndice, status: fireIndice.status };
 
 		if (typeof copyFireIndice.status === "string")
@@ -356,31 +354,30 @@ const Map = ({ route }) => {
 					return (
 						<MapboxGL.PointAnnotation
 							id={String(index)}
-							key={index}
 							onSelected={() => showFireIndiceDetails(register)}
+							onDeselected={() => showFireIndiceDetails(register)}
+							key={index}
 							coordinate={[
 								register.latitude,
 								register.longitude
 							]}
 						>
 							{register.userCreated ? (
-								<ContainerIcon>
+								<Button >
 									<IconSimple
 										name='fire'
 										size={30}
 										color={theme.colors.icon.secondary}
 									/>
-								</ContainerIcon>
+								</Button>
 							) : (
-								<ContainerIcon>
-									<IconSimple
-										name='fire'
-										size={30}
-										color={register.brightness >= 500 ?
-											theme.colors.icon.primary : theme.colors.icon.tertiary
-										}
-									/>
-								</ContainerIcon>
+								<IconSimple
+									name='fire'
+									size={30}
+									color={register.brightness >= 500 ?
+										theme.colors.icon.primary : theme.colors.icon.tertiary
+									}
+								/>
 							)}
 						</MapboxGL.PointAnnotation>
 					);
