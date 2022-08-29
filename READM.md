@@ -1,23 +1,10 @@
-# Instruções
+![alt Logo](src/assets/logo_100x100.png)
 
-##### Para instalar as bibliotecas é necessário rodar o comando:
+# FOGO NO MATO
 
-- npm install, caso esteja usando o NPM
-- yarn, caso esteja usando o YARN
+![Build Status](https://img.shields.io/badge/version-0.12.2-red)
 
-# Iniciar o servidor de desenvolvimento
+## Features:
 
-- npm run start, se tiver usando o NPM
-- yarn start, se tiver usando o YARN
-
-# Buildar o projeto
-
-###### Se tiver o cli do react native instalado, basta rodar o comando:
-
-- react-native run-android, para rodar no Android
-
-- react-native run-ios, para rodar no IOS
-
-# Telas do projeto
-
-- Para visualizar as telas do app, clique [aqui](screens/READM.md)
+-   Correção na remoção do foco de incêndio, após ser finalizado.
+-   Alteração do ícone de representação do turno no qual foi registrado o incêndio, para exibição da hora.
