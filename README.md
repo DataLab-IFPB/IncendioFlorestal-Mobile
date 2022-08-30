@@ -7,4 +7,5 @@
 ## Features:
 
 -   Correção na remoção do foco de incêndio, após ser finalizado.
+-   Correção na fixação do foco de incêndio, ao mover o mapa.
 -   Alteração do ícone de representação do turno no qual foi registrado o incêndio, para exibição da hora.
