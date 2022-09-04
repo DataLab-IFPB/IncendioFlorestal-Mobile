@@ -2,7 +2,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import firebase from "../../../shared/services/firebase";
 import Geolocation from "react-native-geolocation-service";
-import Foundation from "react-native-vector-icons/Foundation";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import MapboxGL, { Logger } from "@react-native-mapbox-gl/maps";
 import IconSimple from "react-native-vector-icons/SimpleLineIcons";
@@ -18,7 +17,6 @@ import { PERMISSION_LOCATION_USE } from "../../../constants";
 import { watermelonDB } from "../../../shared/services/watermelonDB";
 import { firesIndicesActions, loadingActions } from "../../../store/actions";
 import { getMoment, formatDatetime } from "../../../shared/utils/formatDate";
-import { getZone, Polygon } from "../../../helpers";
 import styles, { ButtonClose, Container, ContainerButtonClose } from "./styles";
 import {
 	Menu,
@@ -28,7 +26,7 @@ import {
 	ModalConfirmation,
 	ModalNotification,
 	MapManagerControl,
-	ModalWarning, 
+	ModalWarning,
 	ModalInput
 } from "../../../components/Layout";
 
@@ -64,7 +62,6 @@ const Map = ({ route }) => {
 	} = watermelonDB().fireIndiceManagerDB();
 
 	const [mapManagerIsOpen, setMapManagerIsOpen] = useState(false);
-	const [downloadArea, setDownloadArea] = useState(null);
 	const [filterDays, setFilterDays] = useState(1);
 	const [sourceTrail, setSourceTrail] = useState();
 	const [showModalFilter, setShowModalFilter] = useState(false);
@@ -81,12 +78,16 @@ const Map = ({ route }) => {
 	const [showButtonRecorderRouter, setShowButtonRecorderRouter] = useState({
 		show: false, fireIndice: null
 	});
+	const [downloadArea, setDownloadArea] = useState({
+		northeast: null,
+		southwest: null
+	});
 	const [inputModal, setInputModal] = useState({
-        show: false,
-        message: "",
-        label: "",
-        data: null
-    });
+		show: false,
+		message: "",
+		label: "",
+		data: null
+	});
 
 	const [userGeolocation, setUserGeolocation] = useState({
 		latitude: 0,
@@ -110,6 +111,7 @@ const Map = ({ route }) => {
 		}
 		return false;
 	});
+
 
 	// Monitor do status da rede do dispositivo
 	useEffect(() => {
@@ -380,6 +382,7 @@ const Map = ({ route }) => {
 					return (
 						<MapboxGL.PointAnnotation
 							key={index}
+							id={`${index}`}
 							coordinate={[
 								register.latitude,
 								register.longitude
@@ -417,60 +420,50 @@ const Map = ({ route }) => {
 		setShowButtonRecorderRouter({ show: false, fireIndice: null });
 	}
 
-	function generateDownloadArea(event) {
-		const [longitude, latitude] = event.geometry.coordinates;
-		const area = getZone(latitude, longitude);
-		Polygon.features[0].geometry.coordinates = [];
-		Polygon.features[0].geometry.coordinates.push(area);
-		setDownloadArea({
-			central: [longitude, latitude],
-			area: {...Polygon}
-		});
+	async function generateDownloadArea(event) {
+		const bounds = event.properties.visibleBounds;
+		const [northeast, southwest] = bounds;
+		setDownloadArea({ northeast, southwest });
 	}
 
 	function handleCreateArea() {
 		checkConnection(() => {
 			setInputModal({
 				show: true,
-				message: 'nome da área',
-				label: 'Área'
+				message: "nome da área",
+				label: "Área"
 			});
 		});
 	}
 
 	async function handleAddNewPack() {
-        handleCloseInputModal();
+		handleCloseInputModal();
 
-        checkConnection(async () => {
-            const progressListener = (offlineRegion, status) => {
-                console.log(offlineRegion, status);
+		checkConnection(async () => {
+			const progressListener = (offlineRegion, status) => {
+				if (status.percentage === 100) {
+					dispatch(disableLoading());
+				} else {
+					dispatch(enableLoading(~~status.percentage + "%"));
+				}
+			};
 
-                if (status.percentage === 100) {
-                    dispatch(disableLoading());
-                } else {
-                    dispatch(enableLoading(~~status.percentage + '%'));
-                }
-            }
+			const errorListener = (offlineRegion, err) => {
+				setError(err);
+			};
 
-            const errorListener = (offlineRegion, err) => {
-                console.warn(offlineRegion, err);
-                setError(err);
-            }
-
-            //TODO Mudar coordenadas
-            await offlineManager.createPack({
-                name: areaName,
-                styleURL: MapboxGL.StyleURL.Street,
-                minZoom: 10,
-                maxZoom: 14,
-                bounds: [
-                    [-38.3835, -12.9002],		//Northeast (superior direito) longitude latitude
-                    [-38.5364, -13.0173]		//Southwest (inferior esquerdo) longitude latitude
-                ]
-            }, progressListener, errorListener).catch(e => console.warn(e));
-        });
-
-    }
+			await offlineManager.createPack({
+				name: areaName,
+				styleURL: MapboxGL.StyleURL.Street,
+				minZoom: 10,
+				maxZoom: 14,
+				bounds: [
+					downloadArea.northeast,		//Northeast (superior direito) longitude latitude
+					downloadArea.southwest		//Southwest (inferior esquerdo) longitude latitude
+				]
+			}, progressListener, errorListener).catch(e => console.warn(e));
+		});
+	}
 
 	function checkConnection(onConnected) {
 		if (netInfo.isConnected) {
@@ -483,8 +476,8 @@ const Map = ({ route }) => {
 	function handleCloseInputModal() {
 		setInputModal({
 			show: false,
-			message: '',
-			label: ''
+			message: "",
+			label: ""
 		});
 	}
 
@@ -510,10 +503,10 @@ const Map = ({ route }) => {
 			}
 
 			<ModalWarning
-                isVisible={!!error}
-                message={error}
-                onConfirm={() => setError("")}
-            />
+				isVisible={!!error}
+				message={error}
+				onConfirm={() => setError("")}
+			/>
 
 			<ModalNotification
 				isVisible={notification.show}
@@ -522,13 +515,13 @@ const Map = ({ route }) => {
 			/>
 
 			<ModalInput
-                isVisible={inputModal.show}
-                message={inputModal.message}
-                onConfirm={() => handleAddNewPack()}
-                onCancel={handleCloseInputModal}
-                onChangeText={newName => setAreaName(newName)}
-                keyboardType='default'
-            />
+				isVisible={inputModal.show}
+				message={inputModal.message}
+				onConfirm={() => handleAddNewPack()}
+				onCancel={handleCloseInputModal}
+				onChangeText={newName => setAreaName(newName)}
+				keyboardType='default'
+			/>
 
 			<ModalConfirmation
 				isVisible={showModalNewFireIndice.show}
@@ -573,7 +566,6 @@ const Map = ({ route }) => {
 
 				<MapboxGL.MapView
 					animated={true}
-					zoomLevel={20}
 					logoEnabled={false}
 					styleURL={mapStyle}
 					compassEnabled={false}
@@ -585,7 +577,7 @@ const Map = ({ route }) => {
 							setShowModalNewFireIndice({ show: true, data: event });
 						}
 					}}
-					onPress={(event) => {
+					onRegionDidChange={(event) => {
 						if (mapManagerIsOpen) {
 							generateDownloadArea(event);
 						}
@@ -597,8 +589,8 @@ const Map = ({ route }) => {
 				>
 					<MapboxGL.Camera
 						ref={mapRef}
-						zoomLevel={13}                    // zoom pra cima
-						minZoomLevel={7}                  // zoom pra baixo
+						zoomLevel={13}
+						minZoomLevel={7}
 						maxZoomLevel={20}
 						animationMode={"flyTo"}
 						animationDuration={1100}
@@ -618,33 +610,6 @@ const Map = ({ route }) => {
 								style={{ lineColor: "red", lineWidth: 5 }}
 							/>
 						</MapboxGL.ShapeSource>
-					)}
-
-					{mapManagerIsOpen && downloadArea && (
-						<>
-							<MapboxGL.PointAnnotation
-								id={downloadArea.central.toString()}
-								coordinate={downloadArea.central}
-							>
-								<View>
-									<Foundation name="marker" color="#293462" size={40}/>
-								</View>
-							</MapboxGL.PointAnnotation>
-
-							<MapboxGL.ShapeSource
-								id="downloadArea"
-								shape={downloadArea.area}
-							>
-								<MapboxGL.FillLayer
-									id="polygion"
-									style={{
-										fillOutlineColor: "#7FB77E",
-										fillColor: "#B1D7B4",
-										fillOpacity: 0.5
-									}}
-								/>
-							</MapboxGL.ShapeSource>
-						</>
 					)}
 
 					<MapboxGL.UserLocation
