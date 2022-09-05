@@ -23,6 +23,8 @@ export const ButtonClose = styled.TouchableOpacity`
 `;
 
 export const ContainerNotification = styled.View`
+	position: absolute;
+	bottom: 20px;
 	width: 100%;
 	align-items: center;
 	justify-content: center;
@@ -31,8 +33,6 @@ export const ContainerNotification = styled.View`
 
 export const Notification = styled.View`
 	flex-direction: row;
-	position: relative;
-	bottom: 7%;
 	width: 85%;
 	padding: 5px;
 	align-items: center;

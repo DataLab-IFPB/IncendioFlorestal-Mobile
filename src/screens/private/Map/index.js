@@ -71,6 +71,7 @@ const Map = ({ route }) => {
 
 	const [mapManagerIsOpen, setMapManagerIsOpen] = useState(false);
 	const [filterDays, setFilterDays] = useState(1);
+	const [mapZoomIsEnabled, setMapZoomIsEnabled] = useState(true);
 	const [sourceTrail, setSourceTrail] = useState();
 	const [showModalFilter, setShowModalFilter] = useState(false);
 	const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Street);
@@ -278,6 +279,18 @@ const Map = ({ route }) => {
 		return () => Geolocation.clearWatch(watchPosition);
 	}, []);
 
+	useEffect(() => {
+		if (mapRef.current) {
+			mapRef.current.zoomTo(13);
+
+			if (mapManagerIsOpen) {
+				setMapZoomIsEnabled(false);
+			} else {
+				setMapZoomIsEnabled(true);
+			}
+		}
+	}, [mapManagerIsOpen]);
+
 	async function fetchFireIndices() {
 		const data = await getFiresIndices();
 		dispatch(loadFireIndices(data));
@@ -448,7 +461,7 @@ const Map = ({ route }) => {
 		handleCloseInputModal();
 
 		checkConnection(async () => {
-			const progressListener = (offlineRegion, status) => {
+			const progressListener = (_, status) => {
 				if (status.percentage === 100) {
 					dispatch(disableLoading());
 				} else {
@@ -456,15 +469,15 @@ const Map = ({ route }) => {
 				}
 			};
 
-			const errorListener = (offlineRegion, err) => {
+			const errorListener = (_, err) => {
 				setError(err);
 			};
 
 			await offlineManager.createPack({
 				name: areaName,
-				styleURL: MapboxGL.StyleURL.Street,
+				styleURL: mapStyle,
 				minZoom: 10,
-				maxZoom: 14,
+				maxZoom: 13,
 				bounds: [
 					downloadArea.northeast,		//Northeast (superior direito) longitude latitude
 					downloadArea.southwest		//Southwest (inferior esquerdo) longitude latitude
@@ -575,6 +588,7 @@ const Map = ({ route }) => {
 				<MapboxGL.MapView
 					animated={true}
 					logoEnabled={false}
+					zoomEnabled={mapZoomIsEnabled}
 					styleURL={mapStyle}
 					compassEnabled={false}
 					attributionEnabled={false}
