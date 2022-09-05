@@ -22,6 +22,30 @@ export const ButtonClose = styled.TouchableOpacity`
 	elevation: 3;
 `;
 
+export const ContainerNotification = styled.View`
+	width: 100%;
+	align-items: center;
+	justify-content: center;
+	elevation: 3;
+`;
+
+export const Notification = styled.View`
+	flex-direction: row;
+	position: relative;
+	bottom: 7%;
+	width: 85%;
+	padding: 5px;
+	align-items: center;
+	justify-content: center;
+	background-color: #000;
+	border-radius: 25px;
+`;
+
+export const TextNotification = styled.Text`
+	color: #FFF;
+	margin-left: 5px;
+	font-weight: bold;
+`;
 
 const { width } = Dimensions.get("window");
 export default StyleSheet.create({

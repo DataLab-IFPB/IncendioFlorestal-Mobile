@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import firebase from "../../../shared/services/firebase";
 import Geolocation from "react-native-geolocation-service";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import MapboxGL, { Logger } from "@react-native-mapbox-gl/maps";
 import IconSimple from "react-native-vector-icons/SimpleLineIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,7 +18,14 @@ import { PERMISSION_LOCATION_USE } from "../../../constants";
 import { watermelonDB } from "../../../shared/services/watermelonDB";
 import { firesIndicesActions, loadingActions } from "../../../store/actions";
 import { getMoment, formatDatetime } from "../../../shared/utils/formatDate";
-import styles, { ButtonClose, Container, ContainerButtonClose } from "./styles";
+import styles, {
+	ButtonClose,
+	Container,
+	ContainerButtonClose,
+	ContainerNotification,
+	Notification,
+	TextNotification
+} from "./styles";
 import {
 	Menu,
 	Filter,
@@ -622,10 +630,25 @@ const Map = ({ route }) => {
 				</MapboxGL.MapView>
 
 				{mapManagerIsOpen && (
-					<MapManagerControl
-						onDownload={handleCreateArea}
-						onCancel={() => setMapManagerIsOpen(false)}
-					/>
+					<>
+						<MapManagerControl
+							onDownload={handleCreateArea}
+							onCancel={() => setMapManagerIsOpen(false)}
+						/>
+
+						<ContainerNotification>
+							<Notification>
+								<Ionicons
+									name="alert-circle-outline"
+									color="#FFF"
+									size={25}
+								/>
+								<TextNotification>
+									Posicione-se sobre a área de download
+								</TextNotification>
+							</Notification>
+						</ContainerNotification>
+					</>
 				)}
 			</Container>
 		</React.Fragment>
