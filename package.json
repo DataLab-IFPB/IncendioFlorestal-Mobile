@@ -51,6 +51,7 @@
     "react-native-screens": "^3.3.0",
     "react-native-splash-screen": "^3.2.0",
     "react-native-step-indicator": "^1.0.3",
+    "react-native-toast-message": "^2.1.5",
     "react-native-vector-icons": "^8.1.0",
     "react-native-video": "^5.1.1",
     "react-redux": "^7.2.4",

@@ -7,6 +7,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import MapboxGL, { Logger } from "@react-native-mapbox-gl/maps";
 import IconSimple from "react-native-vector-icons/SimpleLineIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
 import { useTheme } from "styled-components";
 import { MAP_BOX_KEY } from "../../../constants";
 import { useDispatch, useSelector } from "react-redux";
@@ -120,7 +121,6 @@ const Map = ({ route }) => {
 		}
 		return false;
 	});
-
 
 	// Monitor do status da rede do dispositivo
 	useEffect(() => {
@@ -464,6 +464,12 @@ const Map = ({ route }) => {
 			const progressListener = (_, status) => {
 				if (status.percentage === 100) {
 					dispatch(disableLoading());
+					Toast.show({
+						type: "success",
+						text1: "Área baixada com sucesso!",
+						text2: "Verifique a lista de áreas salvas",
+						visibilityTime: 5000
+					});
 				} else {
 					dispatch(enableLoading(~~status.percentage + "%"));
 				}
