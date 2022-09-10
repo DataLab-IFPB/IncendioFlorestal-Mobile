@@ -1,9 +1,23 @@
 import React from "react";
-import { Logo, ModalButton } from "../../UI";
-import { Modal, TextInput } from "react-native";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { areaNameFormSchema } from "../../../shared/schemas/validation";
+import { Logo, ModalButton, Input } from "../../UI";
+import { Modal, Keyboard } from "react-native";
 import { Container, RootContainer, ContainerOptions, Label } from "../Filter/styles";
 
-const ModalInput = ({ isVisible, label, message, onCancel, onConfirm, onChangeText, keyboardType }) => {
+const ModalInput = ({ isVisible, message, label, onCancel, onConfirm}) => {
+
+	const { control, handleSubmit } = useForm({
+		resolver: yupResolver(areaNameFormSchema)
+	});
+
+	function onSubmit(data) {
+		Keyboard.dismiss();
+		const { areaName } = data;
+		onConfirm(areaName);
+	}
+
 	return (
 		<Modal visible={isVisible} transparent={true} animationType='fade'>
 			<RootContainer>
@@ -12,18 +26,16 @@ const ModalInput = ({ isVisible, label, message, onCancel, onConfirm, onChangeTe
 
 					<Label>{message}</Label>
 
-					<TextInput 
-						style={{ color: 'black', fontSize: 18, borderColor: 'black', borderWidth: 1, borderEndWidth: 10 }}
-						autoFocus={true}
-						textAlign='center'
-						placeholder={label}
-						keyboardType={keyboardType}
-						onChangeText={onChangeText}
-						onSubmitEditing={onConfirm}
+					<Input
+						label={label}
+						controller={{ name: "areaName", control }}
+						config={{
+							keyboardType: "default"
+						}}
 					/>
 
 					<ContainerOptions>
-						<ModalButton highlighted message="confirmar" onPress={onConfirm} />
+						<ModalButton highlighted message="confirmar" onPress={handleSubmit(onSubmit)} />
 						<ModalButton message="cancelar" onPress={onCancel} />
 					</ContainerOptions>
 				</Container>

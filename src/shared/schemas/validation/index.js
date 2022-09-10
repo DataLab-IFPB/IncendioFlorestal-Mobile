@@ -25,4 +25,13 @@ const changePasswordFormSchema = yup.object().shape({
         .oneOf([yup.ref('password'), null], 'Senhas são diferentes')
 });
 
-export { authFormSchema, changePasswordFormSchema };
+const areaNameFormSchema = yup.object().shape({
+    areaName: yup
+        .string()
+        .required('Informe o nome da área')
+        .matches(/^\w+[-#@!&\+]{0,}\w+$/g,
+            'Somente letras, números e caracteres [-, #, @, !, &, +] são permitidos'
+        )
+});
+
+export { authFormSchema, changePasswordFormSchema, areaNameFormSchema };

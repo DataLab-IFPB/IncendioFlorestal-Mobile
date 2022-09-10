@@ -24,7 +24,7 @@ const Input = ({ icon, label, hasErrors, config, controller }) => {
 
 	return(
 		<Container>
-			<Label>{label}:</Label>
+			<Label>{label ? label + ':' : ''}</Label>
 			<ContainerInput isValid={!!hasErrors}>
 				<ContainerIcon>
 					<Icon name={icon} size={25} color={theme.colors.label}/>

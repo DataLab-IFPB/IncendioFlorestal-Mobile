@@ -77,7 +77,6 @@ const Map = ({ route }) => {
 	const [showModalFilter, setShowModalFilter] = useState(false);
 	const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Street);
 	const [notification, setNofication] = useState({ show: false, message: "" });
-	const [areaName, setAreaName] = useState("");
 	const [error, setError] = useState("");
 	const [fireIndiceDetails, setFireIndiceDetails] = useState({
 		isVisible: false, fireIndice: null
@@ -457,7 +456,7 @@ const Map = ({ route }) => {
 		});
 	}
 
-	async function handleAddNewPack() {
+	async function handleAddNewPack(areaName) {
 		handleCloseInputModal();
 
 		checkConnection(async () => {
@@ -544,7 +543,7 @@ const Map = ({ route }) => {
 			<ModalInput
 				isVisible={inputModal.show}
 				message={inputModal.message}
-				onConfirm={() => handleAddNewPack()}
+				onConfirm={handleAddNewPack}
 				onCancel={handleCloseInputModal}
 				onChangeText={newName => setAreaName(newName)}
 				keyboardType='default'

@@ -21,6 +21,7 @@ export const ContainerTrails = styled.View`
 
 export const Header = styled.View`
 	flex-direction: row;
+	justify-content: center;
 	align-items: center;
 `;
 

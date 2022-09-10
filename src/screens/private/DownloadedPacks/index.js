@@ -53,10 +53,10 @@ const DownloadedPacks = () => {
         if (data) {
             setPacks(() => data.map((pack) => ({
                 name: pack.name,
-                neLng: pack.bounds[0][0],
-                neLat: pack.bounds[0][1],
-                swLng: pack.bounds[1][0],
-                swLat: pack.bounds[1][1]
+                neLng: pack.bounds[0][0].toFixed(5),
+                neLat: pack.bounds[0][1].toFixed(5),
+                swLng: pack.bounds[1][0].toFixed(5),
+                swLat: pack.bounds[1][1].toFixed(5)
             })));
         }
         dispatch(disableLoading());
@@ -123,7 +123,7 @@ const DownloadedPacks = () => {
         } else {
             setRemoveAllModal({
                 show: true,
-                message: `Deseja realmente apagar todas as áreas salvas? \nIsso é irreversível!`,
+                message: `Deseja realmente apagar todas as áreas salvas?`,
             });
         }
     }
