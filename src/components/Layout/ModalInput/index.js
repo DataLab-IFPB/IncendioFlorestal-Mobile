@@ -10,11 +10,12 @@ import {
 	ContainerInput,
 	ContainerOptions,
 	Label,
+	Error,
 } from "./styles";
 
 const ModalInput = ({ message, label, onCancel, onConfirm }) => {
 
-	const { control, handleSubmit } = useForm({
+	const { control, handleSubmit, formState: { errors } } = useForm({
 		resolver: yupResolver(areaNameFormSchema)
 	});
 
@@ -44,6 +45,7 @@ const ModalInput = ({ message, label, onCancel, onConfirm }) => {
 								keyboardType: "default"
 							}}
 						/>
+						{errors.areaName && <Error>{errors.areaName.message}</Error>}
 					</ContainerInput>
 
 					<ContainerOptions>

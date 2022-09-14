@@ -455,10 +455,6 @@ const Map = ({ route }) => {
 				}
 			};
 
-			const errorListener = (_, err) => {
-				setError(err);
-			};
-
 			await offlineManager.createPack({
 				name: areaName,
 				styleURL: mapStyle,
@@ -468,7 +464,10 @@ const Map = ({ route }) => {
 					downloadArea.northeast,		//Northeast (superior direito) longitude latitude
 					downloadArea.southwest		//Southwest (inferior esquerdo) longitude latitude
 				]
-			}, progressListener, errorListener).catch(e => console.warn(e));
+			}, progressListener, () => {})
+				.catch(() => {
+					setError("Uma área com o mesmo nome já foi baixada.");
+				});
 		});
 	}
 

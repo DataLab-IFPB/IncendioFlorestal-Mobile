@@ -39,4 +39,10 @@ export const Label = styled.Text`
   margin-top: 5px;
 `;
 
-
+export const Error = styled.Text`
+	font-size: 12px;
+	margin: -10px 0 10px 0;
+	text-align: center;
+	font-weight: bold;
+	color: ${({theme}) => theme.colors.error.primary};
+`;
