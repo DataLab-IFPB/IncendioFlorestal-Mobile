@@ -8,7 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { ModalWarning } from "../../../components/Layout";
-import { Button, Logo, Input } from "../../../components/UI";
+import { PrimaryButton, Logo, Input } from "../../../components/UI";
 import { PERMISSION_LOCATION_USE } from "../../../constants";
 import { authFormSchema } from "../../../shared/schemas/validation";
 import { authActions, loadingActions } from "../../../store/actions";
@@ -82,9 +82,9 @@ const SignIn = () => {
 
 			if (response.message)     // Error
 				setShowModalWarning({ message: response.message, isVisible: true });
-			else if (response.newUser) 
+			else if (response.newUser)
 				navigation.navigate("FirstLogin", { user: response.user });
-			else if (response.user) 
+			else if (response.user)
 				dispatch(authentication(response.user));
 
 		} catch (error) {
@@ -101,7 +101,7 @@ const SignIn = () => {
 	function onInputFocus(name) {
 		setShowVersionLabel(false);
 
-		if (errors[name]) 
+		if (errors[name])
 			clearErrors(name);
 	}
 
@@ -155,7 +155,7 @@ const SignIn = () => {
 						/>
 					</Form>
 
-					<Button onPress={handleSubmit(onSubmit)}>Entrar</Button>
+					<PrimaryButton message="Entrar" onPress={handleSubmit(onSubmit)}/>
 				</ContainerForm>
 
 				{showVersionLabel && (

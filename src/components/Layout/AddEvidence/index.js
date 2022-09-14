@@ -56,8 +56,9 @@ const AddEvidence = ({ fireIndice }) => {
 			height: RESOLUTION_IMAGE_AND_VIDEO.height,
 			mediaType: "video",
 		}).then((image) => {
-			if (validateFileLenght(image.duration))
+			if (validateFileLenght(image.duration)) {
 				setFile(image);
+			}
 		});
 	}
 
@@ -76,14 +77,14 @@ const AddEvidence = ({ fireIndice }) => {
 		return Math.round(duration / 1000) <= 300;
 	}
 
-
 	async function uploadFile() {
-		if (file)
+		if (file) {
 			await registerNewEvidence(file.path, file.mime.split("/")[0], userRegistration, fireIndice.uid);
+		}
 	}
 
 	return (
-		<React.Fragment>
+		<>
 			<Container>
 				<Button onPress={openPickerCam}>
 					<FontAwesome name="camera" size={ICON_SIZE} />
@@ -97,8 +98,8 @@ const AddEvidence = ({ fireIndice }) => {
 					<FontAwesome name="image" size={ICON_SIZE} />
 				</Button>
 			</Container>
-		</React.Fragment>
+		</>
 	);
 };
 
-export default AddEvidence;
+export { AddEvidence };

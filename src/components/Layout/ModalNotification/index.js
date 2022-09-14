@@ -18,4 +18,4 @@ const ModalNotification = ({ isVisible, message, onConfirm }) => {
 	);
 };
 
-export default ModalNotification;
+export { ModalNotification };

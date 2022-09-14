@@ -1,9 +1,9 @@
 import React from "react";
-import { Logo, ButtonModal } from "../../UI";
+import { Logo, ModalButton } from "../../UI";
 import { Modal } from "react-native";
 import { Container, RootContainer, ContainerOptions, Label } from "../Filter/styles";
 
-const ModalNewFireIndice = ({ isVisible, message, onCancel, onConfirm }) => {
+const ModalConfirmation = ({ isVisible, message, onCancel, onConfirm }) => {
 	return (
 		<Modal visible={isVisible} transparent={true} animationType='fade'>
 			<RootContainer>
@@ -13,8 +13,8 @@ const ModalNewFireIndice = ({ isVisible, message, onCancel, onConfirm }) => {
 					<Label>{message}</Label>
 
 					<ContainerOptions>
-						<ButtonModal highlighted message="confirmar" onPress={onConfirm}/>
-						<ButtonModal message="cancelar" onPress={onCancel}/>
+						<ModalButton highlighted message="confirmar" onPress={onConfirm}/>
+						<ModalButton message="cancelar" onPress={onCancel}/>
 					</ContainerOptions>
 				</Container>
 			</RootContainer>
@@ -22,4 +22,4 @@ const ModalNewFireIndice = ({ isVisible, message, onCancel, onConfirm }) => {
 	);
 };
 
-export default ModalNewFireIndice;
+export { ModalConfirmation };

@@ -1,7 +1,7 @@
 import React from "react";
 import Icon from "react-native-vector-icons/Feather";
 import { useTheme } from "styled-components";
-import { Button } from "../../UI";
+import { PrimaryButton } from "../../UI";
 import {
 	ContainerRoot,
 	Container,
@@ -26,7 +26,7 @@ const ModalWarning = ({ message, isVisible, onConfirm }) => {
 					<ContainerContent>
 						<Title>Ooops!!</Title>
 						<TextInfo>{message}</TextInfo>
-						<Button onPress={onConfirm}>Confirmar</Button>
+						<PrimaryButton message="Confirmar" onPress={onConfirm}/>
 					</ContainerContent>
 				</Container>
 			</ContainerRoot>
@@ -34,4 +34,4 @@ const ModalWarning = ({ message, isVisible, onConfirm }) => {
 	);
 };
 
-export default ModalWarning;
+export { ModalWarning };

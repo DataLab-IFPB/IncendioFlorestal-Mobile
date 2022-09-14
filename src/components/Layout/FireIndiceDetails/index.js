@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Modal } from "react-native";
-import AddEvidence from "../AddEvidence";
+import { AddEvidence } from "../AddEvidence";
 import ModalConfirmation from "../ModalConfirmation";
 import StepIndicator from "react-native-step-indicator";
 import firebase from "../../../shared/services/firebase";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
-import { ButtonAction } from "../../UI";
+import { ActionButton } from "../../UI";
 import { useDispatch } from "react-redux";
 import { ContainerInfo } from "../Forecast/styles";
 import { useTheme } from "styled-components/native";
@@ -32,7 +32,7 @@ import {
 	statusIndicador,
 } from "./styles";
 
-const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
+const FireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 	const theme = useTheme();
 	const netInfo = useNetInfo();
 	const navigation = useNavigation();
@@ -141,16 +141,17 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 	return (
 		<Modal transparent animationType="slide" visible={isVisible}>
 			<RootContainer>
-
-				<ModalConfirmation
-					isVisible={configModal.show}
-					message={configModal.message}
-					onConfirm={onConfirmUpdateStatus.bind(null, configModal.data)}
-					onCancel={onCancelUpdateStatus}
-				/>
+				{configModal.show && (
+					<ModalConfirmation
+						isVisible={configModal.show}
+						message={configModal.message}
+						onConfirm={onConfirmUpdateStatus.bind(null, configModal.data)}
+						onCancel={onCancelUpdateStatus}
+					/>
+				)}
 
 				<Container>
-					<ButtonAction icon='close' onPress={onClose}/>
+					<ActionButton icon='close' onPress={onClose}/>
 
 					<ContainerIcon>
 						<SimpleLineIcons
@@ -225,4 +226,4 @@ const FirefireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 	);
 };
 
-export default FirefireIndiceDetails;
+export { FireIndiceDetails };

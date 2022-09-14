@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Slider from "@react-native-community/slider";
 import { Modal } from "react-native";
 import { useDispatch } from "react-redux";
-import { Logo, ButtonModal } from "../../UI";
+import { Logo, ModalButton } from "../../UI";
 import { firesIndicesActions } from "../../../store/actions";
 import {
 	RootContainer,
@@ -63,8 +63,8 @@ const Filter = ({ visible, closeModal, filterDays, onUpdateDaysSlider }) => {
 					</ContainerSlider>
 
 					<ContainerOptions>
-						<ButtonModal highlighted message="filtrar" onPress={filterIndices}/>
-						<ButtonModal message="cancelar" onPress={closeModal}/>
+						<ModalButton highlighted message="filtrar" onPress={filterIndices}/>
+						<ModalButton message="cancelar" onPress={closeModal}/>
 					</ContainerOptions>
 
 				</Container>
@@ -73,4 +73,4 @@ const Filter = ({ visible, closeModal, filterDays, onUpdateDaysSlider }) => {
 	);
 };
 
-export default Filter;
+export { Filter };

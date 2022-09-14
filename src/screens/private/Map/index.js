@@ -1,37 +1,42 @@
 /* eslint-disable no-undef */
 import React, { useEffect, useRef, useState } from "react";
+import firebase  from "../../../shared/services/firebase";
+import Geolocation from "react-native-geolocation-service";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import MapboxGL, { Logger } from "@react-native-mapbox-gl/maps";
 import IconSimple from "react-native-vector-icons/SimpleLineIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ButtonRecorder } from "../../../components/UI";
-import { ButtonClose, Container, ContainerButtonClose, Button } from "./styles";
+import Toast from "react-native-toast-message";
+import { useTheme } from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import { RecorderButton } from "../../../components/UI";
+import { weather } from "../../../shared/services/weather";
+import { BackHandler, StatusBar, TouchableOpacity } from "react-native";
+import { useNetInfo } from "@react-native-community/netinfo";
+import { PERMISSION_LOCATION_USE, MAP_BOX_KEY } from "../../../constants";
+import { watermelonDB } from "../../../shared/services/watermelonDB";
+import { firesIndicesActions, loadingActions } from "../../../store/actions";
+import { formatDatetime } from "../../../shared/utils/formatDate";
+import {
+	ButtonClose,
+	Container,
+	ContainerButtonClose,
+	ContainerNotification,
+	Notification,
+	TextNotification
+} from "./styles";
 import {
 	Menu,
 	Filter,
 	Forecast,
 	FireIndiceDetails,
 	ModalConfirmation,
-	ModalNotification
+	ModalNotification,
+	MapManagerControl,
+	ModalWarning,
+	ModalInput
 } from "../../../components/Layout";
-import {
-	useTheme,
-	useNetInfo,
-	useDispatch,
-	useSelector,
-	firesIndicesActions,
-	loadingActions,
-	formatDatetime,
-	weather,
-	firebase,
-	watermelonDB,
-	StatusBar,
-	LineString,
-	BackHandler,
-	Geolocation,
-	MAP_BOX_KEY,
-	PERMISSION_LOCATION_USE,
-} from "./protocols";
 
 const Map = ({ route }) => {
 
@@ -41,6 +46,7 @@ const Map = ({ route }) => {
 	const netInfo = useNetInfo();
 	const mapRef = useRef();
 	const theme = useTheme();
+	const offlineManager = MapboxGL.offlineManager;
 
 	const { getForecast } = weather();
 	const { enableLoading, disableLoading } = loadingActions;
@@ -63,22 +69,32 @@ const Map = ({ route }) => {
 		fetchEvidencesOffline
 	} = watermelonDB().fireIndiceManagerDB();
 
+	const [mapManagerIsOpen, setMapManagerIsOpen] = useState(false);
 	const [filterDays, setFilterDays] = useState(1);
+	const [mapZoomIsEnabled, setMapZoomIsEnabled] = useState(true);
 	const [sourceTrail, setSourceTrail] = useState();
 	const [showModalFilter, setShowModalFilter] = useState(false);
 	const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Street);
 	const [notification, setNofication] = useState({ show: false, message: "" });
+	const [error, setError] = useState("");
 	const [fireIndiceDetails, setFireIndiceDetails] = useState({
-		isVisible: false,
-		fireIndice: null
+		isVisible: false, fireIndice: null
 	});
 	const [showModalNewFireIndice, setShowModalNewFireIndice] = useState({
-		show: false,
-		data: null
+		show: false, data: null
 	});
-	const [showButtonRecorderRouter, setShowButtonRecorderRouter]= useState({
+	const [showButtonRecorderRouter, setShowButtonRecorderRouter] = useState({
+		show: false, fireIndice: null
+	});
+	const [downloadArea, setDownloadArea] = useState({
+		northeast: null,
+		southwest: null
+	});
+	const [inputModal, setInputModal] = useState({
 		show: false,
-		fireIndice: null
+		message: "",
+		label: "",
+		data: null
 	});
 
 	const [userGeolocation, setUserGeolocation] = useState({
@@ -245,13 +261,24 @@ const Map = ({ route }) => {
 		return () => Geolocation.clearWatch(watchPosition);
 	}, []);
 
+	useEffect(() => {
+		if (mapRef.current) {
+			mapRef.current.zoomTo(13);
+
+			if (mapManagerIsOpen) {
+				setMapZoomIsEnabled(false);
+			} else {
+				setMapZoomIsEnabled(true);
+			}
+		}
+	}, [mapManagerIsOpen]);
+
 	async function fetchFireIndices() {
 		const data = await getFiresIndices();
 		dispatch(loadFireIndices(data));
 	}
 
 	function createNewFireIndice(event) {
-
 		const [longitude, latitude] = event.geometry.coordinates;
 
 		return {
@@ -271,10 +298,11 @@ const Map = ({ route }) => {
 		const data = showModalNewFireIndice.data;
 		const indiceCreated = createNewFireIndice(data);
 
-		if (netInfo.isConnected)
+		if (netInfo.isConnected) {
 			saveFireIndice(indiceCreated);
-		else
+		} else {
 			saveFireIndiceOffline(indiceCreated);
+		}
 
 		setShowModalNewFireIndice({ show: false, data: null });
 	}
@@ -315,8 +343,9 @@ const Map = ({ route }) => {
 	function showFireIndiceDetails(fireIndice) {
 		const copyFireIndice = { ...fireIndice, status: fireIndice.status };
 
-		if (typeof copyFireIndice.status === "string")
+		if (typeof copyFireIndice.status === "string") {
 			copyFireIndice.status = JSON.parse(copyFireIndice.status);
+		}
 
 		setFireIndiceDetails({
 			isVisible: true,
@@ -353,7 +382,7 @@ const Map = ({ route }) => {
 				if (register.active) {
 					return (
 						<MapboxGL.PointAnnotation
-							id={String(index)}
+							id={`${index}`}
 							onSelected={() => showFireIndiceDetails(register)}
 							onDeselected={() => showFireIndiceDetails(register)}
 							key={index}
@@ -363,21 +392,23 @@ const Map = ({ route }) => {
 							]}
 						>
 							{register.userCreated ? (
-								<Button >
+								<TouchableOpacity>
 									<IconSimple
 										name='fire'
 										size={30}
 										color={theme.colors.icon.secondary}
 									/>
-								</Button>
+								</TouchableOpacity>
 							) : (
-								<IconSimple
-									name='fire'
-									size={30}
-									color={register.brightness >= 500 ?
-										theme.colors.icon.primary : theme.colors.icon.tertiary
-									}
-								/>
+								<TouchableOpacity>
+									<IconSimple
+										name='fire'
+										size={30}
+										color={register.brightness >= 500 ?
+											theme.colors.icon.primary : theme.colors.icon.tertiary
+										}
+									/>
+								</TouchableOpacity>
 							)}
 						</MapboxGL.PointAnnotation>
 					);
@@ -390,9 +421,76 @@ const Map = ({ route }) => {
 		setShowButtonRecorderRouter({ show: false, fireIndice: null });
 	}
 
+	async function generateDownloadArea(event) {
+		const bounds = event.properties.visibleBounds;
+		const [northeast, southwest] = bounds;
+		setDownloadArea({ northeast, southwest });
+	}
+
+	function handleCreateArea() {
+		checkConnection(() => {
+			setInputModal({
+				show: true,
+				message: "nome da área",
+				label: "Área"
+			});
+		});
+	}
+
+	async function handleAddNewPack(areaName) {
+		handleCloseInputModal();
+
+		checkConnection(async () => {
+			const progressListener = (_, status) => {
+				if (status.percentage === 100) {
+					dispatch(disableLoading());
+					Toast.show({
+						type: "success",
+						text1: "Área baixada com sucesso!",
+						text2: "Verifique a lista de áreas salvas",
+						visibilityTime: 5000
+					});
+				} else {
+					dispatch(enableLoading(~~status.percentage + "%"));
+				}
+			};
+
+			const errorListener = (_, err) => {
+				setError(err);
+			};
+
+			await offlineManager.createPack({
+				name: areaName,
+				styleURL: mapStyle,
+				minZoom: 10,
+				maxZoom: 13,
+				bounds: [
+					downloadArea.northeast,		//Northeast (superior direito) longitude latitude
+					downloadArea.southwest		//Southwest (inferior esquerdo) longitude latitude
+				]
+			}, progressListener, errorListener).catch(e => console.warn(e));
+		});
+	}
+
+	function checkConnection(onConnected) {
+		if (netInfo.isConnected) {
+			onConnected();
+		} else {
+			setError("Não é possível baixar novas áreas sem conexão!");
+		}
+	}
+
+	function handleCloseInputModal() {
+		setInputModal({
+			show: false,
+			message: "",
+			label: ""
+		});
+	}
+
 	return (
-		<React.Fragment>
-			<StatusBar barStyle='light-content' backgroundColor='#000'/>
+		<>
+			<StatusBar barStyle='light-content' backgroundColor='#000' />
 
 			{showModalFilter && (
 				<Filter
@@ -403,41 +501,68 @@ const Map = ({ route }) => {
 				/>
 			)}
 
-			{fireIndiceDetails.fireIndice &&
+			{fireIndiceDetails.fireIndice && (
 				<FireIndiceDetails
 					fireIndice={fireIndiceDetails.fireIndice}
 					isVisible={fireIndiceDetails.isVisible}
 					onClose={closeModalFireIndiceDetails}
 				/>
-			}
+			)}
 
-			<ModalNotification
-				isVisible={notification.show}
-				message={notification.message}
-				onConfirm={confirmNofifactionHandler}
-			/>
+			{!!error && (
+				<ModalWarning
+					isVisible={!!error}
+					message={error}
+					onConfirm={() => setError("")}
+				/>
+			)}
 
-			<ModalConfirmation
-				isVisible={showModalNewFireIndice.show}
-				message={
-					`${!netInfo.isConnected ? "Registro offline\n\n" : ""}Deseja adicionar um novo registro de incêndio ?`
-				}
-				onConfirm={generateFireIndice}
-				onCancel={() => setShowModalNewFireIndice({ show: false, data: null })}
-			/>
+			{notification.show && (
+				<ModalNotification
+					isVisible={notification.show}
+					message={notification.message}
+					onConfirm={confirmNofifactionHandler}
+				/>
+			)}
+
+			{inputModal.show && (
+				<ModalInput
+					message={inputModal.message}
+					onConfirm={handleAddNewPack}
+					onCancel={handleCloseInputModal}
+					onChangeText={newName => setAreaName(newName)}
+					keyboardType='default'
+				/>
+			)}
+
+			{showModalNewFireIndice.show && (
+				<ModalConfirmation
+					isVisible={showModalNewFireIndice.show}
+					message={
+						`${!netInfo.isConnected ? "Registro offline\n\n" : ""}Deseja adicionar um novo registro de incêndio?`
+					}
+					onConfirm={generateFireIndice}
+					onCancel={() => setShowModalNewFireIndice({ show: false, data: null })}
+				/>
+			)}
 
 			<Container>
-				{netInfo.isConnected && <Forecast userCoordinates={userGeolocation} />}
+				{netInfo.isConnected && !mapManagerIsOpen && (
+					<Forecast userCoordinates={userGeolocation}/>
+				)}
 
-				<Menu
-					onLocation={returnToLocaleHandler}
-					onFilter={() => setShowModalFilter(true)}
-					onRecorderRouter={showRocorderRouterHandler}
-					setMapStyle={setMapStyle}
-				/>
+				{!mapManagerIsOpen && (
+					<Menu
+						handleLocation={returnToLocaleHandler}
+						handleFilter={() => setShowModalFilter(true)}
+						onRecorderRouter={showRocorderRouterHandler}
+						handleMapStyle={setMapStyle}
+						handleMapManager={() => setMapManagerIsOpen(true)}
+					/>
+				)}
 
 				{showButtonRecorderRouter.show && (
-					<ButtonRecorder
+					<RecorderButton
 						currentCoordinates={userGeolocation}
 						userRegistration={user.registration}
 						onCancel={cancelRecoderHandler}
@@ -455,14 +580,23 @@ const Map = ({ route }) => {
 
 				<MapboxGL.MapView
 					animated={true}
-					zoomLevel={20}
 					logoEnabled={false}
+					zoomEnabled={mapZoomIsEnabled}
 					styleURL={mapStyle}
 					compassEnabled={false}
 					attributionEnabled={false}
 					style={{ flex: 1 }}
 					renderToHardwareTextureAndroid={true}
-					onLongPress={(event) => setShowModalNewFireIndice({ show: true, data: event })}
+					onLongPress={(event) => {
+						if (!mapManagerIsOpen) {
+							setShowModalNewFireIndice({ show: true, data: event });
+						}
+					}}
+					onRegionDidChange={(event) => {
+						if (mapManagerIsOpen) {
+							generateDownloadArea(event);
+						}
+					}}
 					centerCoordinate={[
 						userGeolocation.longitude,
 						userGeolocation.latitude,
@@ -470,8 +604,8 @@ const Map = ({ route }) => {
 				>
 					<MapboxGL.Camera
 						ref={mapRef}
-						zoomLevel={13}                    // zoom pra cima
-						minZoomLevel={7}                  // zoom pra baixo
+						zoomLevel={13}
+						minZoomLevel={7}
 						maxZoomLevel={20}
 						animationMode={"flyTo"}
 						animationDuration={1100}
@@ -501,8 +635,30 @@ const Map = ({ route }) => {
 
 					{renderFiresIndices()}
 				</MapboxGL.MapView>
+
+				{mapManagerIsOpen && (
+					<>
+						<MapManagerControl
+							onDownload={handleCreateArea}
+							onCancel={() => setMapManagerIsOpen(false)}
+						/>
+
+						<ContainerNotification>
+							<Notification>
+								<Ionicons
+									name="alert-circle-outline"
+									color="#FFF"
+									size={25}
+								/>
+								<TextNotification>
+									Posicione-se sobre a área de download
+								</TextNotification>
+							</Notification>
+						</ContainerNotification>
+					</>
+				)}
 			</Container>
-		</React.Fragment>
+		</>
 	);
 };
 
