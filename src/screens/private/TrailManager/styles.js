@@ -50,7 +50,9 @@ export const Card = styled.View`
 	margin-bottom: 15px;
 	border: 1px solid #EAEAEA;
 	border-radius: 5px;
-	elevation: 1;
+	width: 100%;
+	background-color: #FFF;
+	elevation: 2;
 `;
 
 export const ContainerInfo = styled.View`

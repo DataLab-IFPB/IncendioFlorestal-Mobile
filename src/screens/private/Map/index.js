@@ -540,14 +540,15 @@ const Map = ({ route }) => {
 				onConfirm={confirmNofifactionHandler}
 			/>
 
-			<ModalInput
-				isVisible={inputModal.show}
-				message={inputModal.message}
-				onConfirm={handleAddNewPack}
-				onCancel={handleCloseInputModal}
-				onChangeText={newName => setAreaName(newName)}
-				keyboardType='default'
-			/>
+			{inputModal.show && (
+				<ModalInput
+					message={inputModal.message}
+					onConfirm={handleAddNewPack}
+					onCancel={handleCloseInputModal}
+					onChangeText={newName => setAreaName(newName)}
+					keyboardType='default'
+				/>
+			)}
 
 			<ModalConfirmation
 				isVisible={showModalNewFireIndice.show}
