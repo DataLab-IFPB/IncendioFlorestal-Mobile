@@ -3,6 +3,7 @@ import { PublicRoutes } from "./public.routes";
 import { PrivateRoutes } from "./private.routes";
 import { useDispatch, useSelector } from "react-redux";
 import firebase from "../shared/services/firebase";
+import Toast from "react-native-toast-message";
 import { NavigationContainer } from "@react-navigation/native";
 import { authActions, loadingActions } from "../store/actions";
 import { useNetInfo } from "@react-native-community/netinfo";
@@ -61,7 +62,12 @@ const Routes = () => {
 	return(
 		<NavigationContainer>
 			{!isAuthenticated && <PublicRoutes/>}
-			{isAuthenticated && <PrivateRoutes/>}
+			{isAuthenticated && (
+				<>
+					<PrivateRoutes/>
+					<Toast/>
+				</>
+			)}
 		</NavigationContainer>
 	);
 };
