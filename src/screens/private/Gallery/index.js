@@ -5,7 +5,7 @@ import firebase from "../../../shared/services/firebase";
 import fs from "react-native-fs";
 import { FlatList, BackHandler } from "react-native";
 import { useDispatch } from "react-redux";
-import { ButtonAction } from "../../../components/UI";
+import { ActionButton } from "../../../components/UI";
 import { loadingActions } from "../../../store/actions";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { ModalConfirmation } from "../../../components/Layout";
@@ -162,13 +162,13 @@ const Gallery = ({ navigation, route }) => {
 			/>
 
 			<Header isEmptyMedias={!!medias.length}>
-				<ButtonAction icon='close' onPress={onClose}/>
+				<ActionButton icon='close' onPress={onClose}/>
 
 				<Title isEmptyMedias={!!medias.length}>
 					GALERIA
 				</Title>
 
-				{!!medias.length && <ButtonAction icon='trash' onPress={openModal}/>}
+				{!!medias.length && <ActionButton icon='trash' onPress={openModal}/>}
 			</Header>
 
 			<ContainerMedia>

@@ -3,11 +3,11 @@ import React, { useState, useRef } from "react";
 import MapboxGL from "@react-native-mapbox-gl/maps";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import { ButtonMenu } from "../../UI";
+import { MenuButton } from "../../UI";
 import { Text, Animated } from "react-native";
 import { Container, SubMenuOption, SubMenuLabel, SubMenu } from "./styles";
 
-const Menu = ({ onLocation, onFilter, setMapStyle }) => {
+const Menu = ({ handleLocation, handleFilter, handleMapStyle, handleMapManager }) => {
 
 	const subMenuAnimation = useRef(new Animated.Value(0)).current;
 	const [showSubMenu, setShowSubMenu] = useState(false);
@@ -51,25 +51,29 @@ const Menu = ({ onLocation, onFilter, setMapStyle }) => {
 	return (
 		<React.Fragment>
 			<Container>
-				<ButtonMenu onPress={onLocation}>
+				<MenuButton onPress={handleLocation}>
 					{iconMaterial("my-location")}
-				</ButtonMenu>
+				</MenuButton>
 
-				<ButtonMenu onPress={onFilter}>
+				<MenuButton onPress={handleFilter}>
 					{iconMaterial("filter-alt")}
-				</ButtonMenu>
+				</MenuButton>
 
-				<ButtonMenu onPress={subMenuHandler}>
+				<MenuButton onPress={handleMapManager}>
+					{iconFontAwesome("download")}
+				</MenuButton>
+
+				<MenuButton onPress={subMenuHandler}>
 					{iconFontAwesome("layer-group")}
-				</ButtonMenu>
+				</MenuButton>
 
 				{/* SUB-MENU */}
 				<Animated.View style={{ opacity: subMenuAnimation }}>
 					<SubMenu isVisible={showSubMenu}>
 						<SubMenuOption>
-							<ButtonMenu onPress={() => setMapStyle(MapboxGL.StyleURL.Street)}>
+							<MenuButton onPress={() => handleMapStyle(MapboxGL.StyleURL.Street)}>
 								{iconFontAwesome("city")}
-							</ButtonMenu>
+							</MenuButton>
 
 							<SubMenuLabel>
 								<Text>Rua</Text>
@@ -77,9 +81,9 @@ const Menu = ({ onLocation, onFilter, setMapStyle }) => {
 						</SubMenuOption>
 
 						<SubMenuOption>
-							<ButtonMenu onPress={() => setMapStyle(MapboxGL.StyleURL.Satellite)}>
+							<MenuButton onPress={() => handleMapStyle(MapboxGL.StyleURL.Satellite)}>
 								{iconFontAwesome("satellite")}
-							</ButtonMenu>
+							</MenuButton>
 
 							<SubMenuLabel>
 								<Text>Satélite</Text>
@@ -87,9 +91,9 @@ const Menu = ({ onLocation, onFilter, setMapStyle }) => {
 						</SubMenuOption>
 
 						<SubMenuOption>
-							<ButtonMenu onPress={() => setMapStyle(MapboxGL.StyleURL.TrafficDay)}>
+							<MenuButton onPress={() => handleMapStyle(MapboxGL.StyleURL.TrafficDay)}>
 								{iconFontAwesome("car")}
-							</ButtonMenu>
+							</MenuButton>
 
 							<SubMenuLabel>
 								<Text>Tráfego</Text>
@@ -97,9 +101,9 @@ const Menu = ({ onLocation, onFilter, setMapStyle }) => {
 						</SubMenuOption>
 
 						<SubMenuOption>
-							<ButtonMenu onPress={() => setMapStyle(MapboxGL.StyleURL.Outdoors)}>
+							<MenuButton onPress={() => handleMapStyle(MapboxGL.StyleURL.Outdoors)}>
 								{iconFontAwesome("tree")}
-							</ButtonMenu>
+							</MenuButton>
 
 							<SubMenuLabel>
 								<Text>Geográfico</Text>
@@ -112,4 +116,4 @@ const Menu = ({ onLocation, onFilter, setMapStyle }) => {
 	);
 };
 
-export default Menu;
+export { Menu };

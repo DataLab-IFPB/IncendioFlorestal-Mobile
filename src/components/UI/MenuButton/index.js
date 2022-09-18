@@ -1,7 +1,7 @@
 import React from "react";
 import { Touchable } from "./styles";
 
-const ButtonMenu = ({ children, onPress }) => {
+const MenuButton = ({ children, onPress }) => {
 	return(
 		<Touchable onPress={onPress}>
 			{children}
@@ -9,4 +9,4 @@ const ButtonMenu = ({ children, onPress }) => {
 	);
 };
 
-export default ButtonMenu;
+export { MenuButton };

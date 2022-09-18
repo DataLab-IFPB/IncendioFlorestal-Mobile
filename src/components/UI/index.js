@@ -1,19 +1,9 @@
-import Input from "./Input";
-import Button from "./Button";
-import Logo from "./Logo";
-import Loading from "./Loading";
-import ButtonModal from "./ButtonModal";
-import ButtonAction from "./ButtonAction";
-import ButtonMenu from "./ButtonMenu";
-import ButtonRecorder from "./ButtonRecorder";
-
-export {
-	Button,
-	Logo,
-	Input,
-	Loading,
-	ButtonModal,
-	ButtonMenu,
-	ButtonAction,
-	ButtonRecorder
-};
+export * from "./Input";
+export * from "./PrimaryButton";
+export * from "./Logo";
+export * from "./Loading";
+export * from "./ModalButton";
+export * from "./ActionButton";
+export * from "./MenuButton";
+export * from "./RecorderButton";
+export * from "./IconButton";

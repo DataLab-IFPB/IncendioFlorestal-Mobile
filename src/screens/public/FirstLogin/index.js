@@ -6,7 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { ContainerRoot, Info, Title } from "./styles";
 import { loadingActions } from "../../../store/actions";
 import { ModalWarning } from "../../../components/Layout";
-import { Button, Input, Logo } from "../../../components/UI";
+import { PrimaryButton, Input, Logo } from "../../../components/UI";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { changePasswordFormSchema } from "../../../shared/schemas/validation";
 import { BackHandler, Keyboard, TouchableWithoutFeedback } from "react-native";
@@ -37,9 +37,9 @@ const FirstLogin = () => {
 	//  Configurar exibição do modal de aviso para erros nos inputs
 	useEffect(() => {
 		if (Object.keys(errors).length !== 0) {
-			if (errors.password) 
+			if (errors.password)
 				setShowModalWarning({ message: errors.password.message, isVisible: true });
-			else if (errors.passwordConfirm) 
+			else if (errors.passwordConfirm)
 				setShowModalWarning({ message: errors.passwordConfirm.message, isVisible: true });
 		}
 	}, [errors]);
@@ -49,7 +49,7 @@ const FirstLogin = () => {
 	}
 
 	function onInputFocus(name) {
-		if (errors[name]) 
+		if (errors[name])
 			clearErrors(name);
 	}
 
@@ -114,7 +114,7 @@ const FirstLogin = () => {
 					}}
 				/>
 
-				<Button onPress={handleSubmit(onSubmit)}>Alterar</Button>
+				<PrimaryButton message="Alterar" onPress={handleSubmit(onSubmit)}/>
 			</ContainerRoot>
 		</TouchableWithoutFeedback>
 	);

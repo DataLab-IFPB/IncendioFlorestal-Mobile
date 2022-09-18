@@ -11,7 +11,14 @@ import {
 	ButtonShowPassword
 } from "./styles";
 
-const Input = ({ icon, label, hasErrors, config, controller }) => {
+const Input = ({
+	icon,
+	label,
+	hasErrors,
+	config,
+	controller,
+	attributes
+}) => {
 
 	const theme = useTheme();
 	const [showPassword, setShowPassword] = useState(false);
@@ -24,7 +31,7 @@ const Input = ({ icon, label, hasErrors, config, controller }) => {
 
 	return(
 		<Container>
-			<Label>{label}:</Label>
+			<Label>{label ? label + ":" : ""}</Label>
 			<ContainerInput isValid={!!hasErrors}>
 				<ContainerIcon>
 					<Icon name={icon} size={25} color={theme.colors.label}/>
@@ -37,6 +44,7 @@ const Input = ({ icon, label, hasErrors, config, controller }) => {
 							{...config}
 							{...(showPassword ? {secureTextEntry: false} : {secureTextEntry: true})}
 							{...(config.secureTextEntry === undefined && {secureTextEntry: false})}
+							{...attributes}
 							autoComplete={false}
 							autoCorrect={false}
 							onChangeText={onChange}
@@ -47,7 +55,11 @@ const Input = ({ icon, label, hasErrors, config, controller }) => {
 
 				{config.secureTextEntry && (
 					<ButtonShowPassword onPress={changeTextDisplayHandler}>
-						<Icon name={iconViewPasswordText} size={20} color={theme.colors.primary}/>
+						<Icon
+							name={iconViewPasswordText}
+							size={20}
+							color={theme.colors.primary}
+						/>
 					</ButtonShowPassword>
 				)}
 			</ContainerInput>
@@ -55,4 +67,4 @@ const Input = ({ icon, label, hasErrors, config, controller }) => {
 	);
 };
 
-export default Input;
+export { Input };
