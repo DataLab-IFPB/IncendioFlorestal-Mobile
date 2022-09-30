@@ -23,8 +23,9 @@ export const ContainerIcon = styled.View`
 export const ContainerWeather = styled.View`
 	padding: 5px 5px 20px 5px;
 	margin-top: 20px;
-	elevation: 4;
+	elevation: 7;
 	border-radius: 5px;
+	background-color: #fff;
 `;
 
 export const ContainerStepIndicador = styled.View`

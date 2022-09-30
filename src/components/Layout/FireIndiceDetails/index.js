@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Modal } from "react-native";
 import { AddEvidence } from "../AddEvidence";
-import ModalConfirmation from "../ModalConfirmation";
+import { ModalConfirmation } from "../ModalConfirmation";
 import StepIndicator from "react-native-step-indicator";
 import firebase from "../../../shared/services/firebase";
 import Ionicons from "react-native-vector-icons/Ionicons";
