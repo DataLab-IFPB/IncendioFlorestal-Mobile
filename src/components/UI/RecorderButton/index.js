@@ -1,16 +1,30 @@
 import React, { Fragment, useState } from "react";
+
 import firebase from "../../../shared/services/firebase";
+import { watermelonDB } from "../../../shared/services/watermelonDB";
+import { loadingActions } from "../../../store/actions";
+
+import { useDispatch } from "react-redux";
+import { useNetInfo } from "@react-native-community/netinfo";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useDispatch } from "react-redux";
-import { loadingActions } from "../../../store/actions";
-import { useNetInfo } from "@react-native-community/netinfo";
-import { watermelonDB } from "../../../shared/services/watermelonDB";
 import { RECORDER_ROUTER_INITIAL_COORDINATES } from "../../../constants";
-import { Container, Label, TouchableCancel, TouchableEnd, TouchableStart } from "./styles";
+import {
+	Container,
+	Label,
+	TouchableCancel,
+	TouchableEnd,
+	TouchableStart
+} from "./styles";
 
-const RecorderButton = ({ currentCoordinates, userRegistration, uidFireIndice, onCancel }) => {
+const RecorderButton = ({
+	currentCoordinates,
+	userRegistration,
+	uidFireIndice,
+	onCancel
+}) => {
 	const dispatch = useDispatch();
 	const netInfo = useNetInfo();
 

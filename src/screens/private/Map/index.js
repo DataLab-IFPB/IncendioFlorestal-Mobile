@@ -18,6 +18,7 @@ import { PERMISSION_LOCATION_USE, MAP_BOX_KEY } from "../../../constants";
 import { watermelonDB } from "../../../shared/services/watermelonDB";
 import { firesIndicesActions, loadingActions } from "../../../store/actions";
 import { formatDatetime } from "../../../shared/utils/formatDate";
+import { LineString } from "../../../helpers";
 import {
 	ButtonClose,
 	Container,
@@ -133,8 +134,7 @@ const Map = ({ route }) => {
 		if (params) {
 			const { recoderTrailIsActive, fireIndice, coordinates } = params;
 			if (recoderTrailIsActive) {
-				const fireIndiceId = fireIndice._raw.id || fireIndice.id;
-				setShowButtonRecorderRouter({ show: true, fireIndice: fireIndiceId });
+				setShowButtonRecorderRouter({ show: true, fireIndice: fireIndice.uid });
 			} else if (coordinates) {
 				LineString.features[0].geometry.coordinates = [];
 				LineString.features[0].geometry.coordinates = coordinates;

@@ -10,6 +10,7 @@ import { useNetInfo } from "@react-native-community/netinfo";
 import { PrimaryButton, ActionButton } from "../../../components/UI";
 import { ContainerInfo } from "../../../components/Layout/Forecast/styles";
 import { ModalConfirmation, ModalWarning } from "../../../components/Layout";
+import { watermelonDB } from "../../../shared/services/watermelonDB";
 import {
 	RootContainer,
 	ContainerOptions,
@@ -24,7 +25,6 @@ import {
 	Header,
 	Title
 } from "./styles";
-import { watermelonDB } from "../../../shared/services/watermelonDB";
 
 const TrailManager = ({ navigation, route }) => {
 	const dispatch = useDispatch();
@@ -70,7 +70,7 @@ const TrailManager = ({ navigation, route }) => {
 
 	async function loadTrailsOffline() {
 		dispatch(enableLoading("Carregando dados..."));
-		const data = await fetchTrailsOffline(fireIndice._raw.id);
+		const data = await fetchTrailsOffline(fireIndice.id);
 
 		if (data) {
 			setTrails(() => data.map((item) => ({
@@ -151,10 +151,10 @@ const TrailManager = ({ navigation, route }) => {
 	useEffect(() => {
 		const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
 			navigation.navigate("Map");
-		  }
-		);
+		});
+
 		return () => backHandler.remove();
-	  }, []);
+	}, []);
 
 	return (
 		<RootContainer>
