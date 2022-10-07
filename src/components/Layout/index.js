@@ -1,6 +1,6 @@
 export * from "./Menu";
 export * from "./Filter";
-export * from "./Loading";
+export * from "./Loader";
 export * from "./Forecast";
 export * from "./AddEvidence";
 export * from "./FireIndiceDetails";

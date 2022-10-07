@@ -9,7 +9,7 @@ import { PublicRoutes } from "./public.routes";
 import { PrivateRoutes } from "./private.routes";
 
 import firebase from "../shared/services/firebase";
-import { authActions, loadingActions } from "../store/actions";
+import { authActions, loaderActions } from "../store/actions";
 
 const Routes = () => {
 
@@ -20,7 +20,7 @@ const Routes = () => {
 
 	const { checkAuthState, getUserData } = firebase();
 	const { authentication } = authActions;
-	const { enableLoading, disableLoading } = loadingActions;
+	const { enableLoading, disableLoading } = loaderActions;
 
 	/**
      * Verificar a validade do token do usuário

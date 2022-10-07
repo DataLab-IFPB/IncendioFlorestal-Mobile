@@ -1,16 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import authSlice from "./authSlice";
-import loadingSlice from "./loadingSlice";
-import firesIndicesSlice from "./firesIndicesSlice";
+import authSlice from "./auth-slice";
+import loaderSlice from "./loader-slice";
+import firesSlice from "./fires-slice";
 
 import reactoTronConfig from "../config/ReactotronConfig";
 
 const store = configureStore({
 	reducer: {
 		auth: authSlice.reducer,
-		firesIndices: firesIndicesSlice.reducer,
-		loading: loadingSlice.reducer
+		fires: firesSlice.reducer,
+		loader: loaderSlice.reducer
 	},
 	middleware: (getDefaultMiddleware) => getDefaultMiddleware({
 		immutableCheck: false,

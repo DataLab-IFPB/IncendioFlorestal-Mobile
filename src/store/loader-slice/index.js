@@ -5,11 +5,10 @@ const initialState = {
 	isActive: false
 };
 
-const loadingSlice = createSlice({
-	name: "loading",
+const loaderSlice = createSlice({
+	name: "loader",
 	initialState,
 	reducers: {
-
 		enableLoading(_, action) {
 			return {
 				message: action.payload,
@@ -23,4 +22,4 @@ const loadingSlice = createSlice({
 	}
 });
 
-export default loadingSlice;
+export default loaderSlice;

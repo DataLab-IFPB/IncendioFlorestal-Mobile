@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 import { where } from "@nozbe/watermelondb/QueryDescription";
 
 import { database } from "../connection";
-import { firesIndicesActions } from "../../../../store/actions";
+import { firesActions } from "../../../../store/actions";
 
 import { formatDatetime } from "../../../utils/formatDate";
 
@@ -12,7 +12,7 @@ const fireIndiceManagerDB = () => {
 
 	const dispatch = useDispatch();
 
-	const { storeFireIndice } = firesIndicesActions;
+	const { storeFires } = firesActions;
 
 	async function saveFireIndiceOffline(data) {
 		const aux = data.latitude;
@@ -31,7 +31,7 @@ const fireIndiceManagerDB = () => {
 			data.id = response.id;
 		});
 
-		dispatch(storeFireIndice(data));
+		dispatch(storeFires(data));
 	}
 
 	async function saveEvicendeOffline(data) {

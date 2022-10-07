@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import trail from "../../../shared/services/trail";
 import firebase from "../../../shared/services/firebase";
-import { loadingActions } from "../../../store/actions";
+import { loaderActions } from "../../../store/actions";
 import watermelonDB from "../../../shared/services/watermelonDB";
 
 import { FlatList, BackHandler } from "react-native";
@@ -36,7 +36,7 @@ const TrailManager = ({ navigation, route }) => {
 	const { getTrails, removeTrail } = firebase();
 	const { fetchTrailsOffline, deleteTrailOffline } = watermelonDB().trailManagerDB();
 	const { fetchDirections } = trail();
-	const { enableLoading, disableLoading } = loadingActions;
+	const { enableLoading, disableLoading } = loaderActions;
 
 	const [trails, setTrails] = useState([]);
 	const [error, setError] = useState("");

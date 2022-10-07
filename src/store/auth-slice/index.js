@@ -13,7 +13,6 @@ const authSlice = createSlice({
 	reducers: {
 
 		authentication(_, action) {
-
 			const { uid, registration, isAdmin } = action.payload;
 			AsyncStorage.setItem("user", JSON.stringify({ uid, registration, isAdmin }));
 

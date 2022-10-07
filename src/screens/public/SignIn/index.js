@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
 import { PERMISSION_LOCATION_USE } from "../../../constants";
-import { authActions, loadingActions } from "../../../store/actions";
+import { authActions, loaderActions } from "../../../store/actions";
 import firebase from "../../../shared/services/firebase";
 import { authFormSchema } from "../../../shared/schemas/validation";
 
@@ -30,9 +30,9 @@ const SignIn = () => {
 
 	const { authenticateUser } = firebase();
 	const { authentication } = authActions;
-	const { enableLoading, disableLoading } = loadingActions;
+	const { enableLoading, disableLoading } = loaderActions;
 
-	const isLoading = useSelector((state) => state.loading.isActive);
+	const isLoading = useSelector((state) => state.loader.isActive);
 
 	const { control, clearErrors, handleSubmit, formState: { errors } } = useForm({
 		resolver: yupResolver(authFormSchema)

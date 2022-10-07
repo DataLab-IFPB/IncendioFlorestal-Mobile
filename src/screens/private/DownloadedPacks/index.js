@@ -4,7 +4,7 @@ import { BackHandler } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import MapboxGL from "@react-native-mapbox-gl/maps";
 
-import { loadingActions } from "../../../store/actions";
+import { loaderActions } from "../../../store/actions";
 
 import { ActionButton } from "../../../components/UI";
 import { ModalConfirmation, ModalWarning } from "../../../components/Layout";
@@ -31,7 +31,7 @@ const DownloadedPacks = () => {
 	const navigation = useNavigation();
 	const offlineManager = MapboxGL.offlineManager;
 
-	const { enableLoading, disableLoading } = loadingActions;
+	const { enableLoading, disableLoading } = loaderActions;
 
 	const [packs, setPacks] = useState([]);
 	const [error, setError] = useState("");

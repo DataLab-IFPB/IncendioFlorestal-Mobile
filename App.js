@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 import store from "./src/store";
 import Theme from "./src/theme";
 import Routes from "./src/routes/routes";
-import { Loading } from "./src/components/Layout";
+import { Loader } from "./src/components/Layout";
 
 export default function App() {
 
@@ -16,8 +16,8 @@ export default function App() {
 	return (
 		<Provider store={store}>
 			<Theme>
-				<Loading/>
-				<Routes/>
+				<Loader />
+				<Routes />
 			</Theme>
 		</Provider>
 	);

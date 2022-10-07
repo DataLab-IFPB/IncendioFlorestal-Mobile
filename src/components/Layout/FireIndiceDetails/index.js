@@ -8,7 +8,7 @@ import watermelonDB from "../../../shared/services/watermelonDB";
 import firebase from "../../../shared/services/firebase";
 import weather from "../../../shared/services/weather";
 import { formatDatetime, formatUTC } from "../../../shared/utils/formatDate";
-import { firesIndicesActions, loadingActions } from "../../../store/actions";
+import { firesActions, loaderActions } from "../../../store/actions";
 
 import { AddEvidence } from "../AddEvidence";
 import { ModalConfirmation } from "../ModalConfirmation";
@@ -46,8 +46,8 @@ const FireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 	const { getForecast } = weather();
 	const { updateStatusOffline } = watermelonDB().fireIndiceManagerDB();
 	const { updateStatusFireIndice, getFiresIndices } = firebase();
-	const { loadFireIndices, updateFireIndice } = firesIndicesActions;
-	const { enableLoading, disableLoading } = loadingActions;
+	const { loadFires, updateFire } = firesActions;
+	const { enableLoading, disableLoading } = loaderActions;
 
 	const [currentWeather, setCurrentWeather] = useState();
 	const [currentStatus, setCurrentStatus] = useState(0);
@@ -122,10 +122,10 @@ const FireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 		if (netInfo.isConnected) {
 			await updateStatusFireIndice(fireIndice.uid, status);
 			const firesIndicesUpdated = await getFiresIndices();
-			dispatch(loadFireIndices(firesIndicesUpdated));
+			dispatch(loadFires(firesIndicesUpdated));
 		} else {
 			await updateStatusOffline(fireIndice.id, JSON.stringify(status));
-			dispatch(updateFireIndice({ ...fireIndice, status }));
+			dispatch(updateFire({ ...fireIndice, status }));
 		}
 
 		onCancelUpdateStatus();

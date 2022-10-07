@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import Slider from "@react-native-community/slider";
 
-import { firesIndicesActions } from "../../../store/actions";
+import { firesActions } from "../../../store/actions";
 
 import { Modal } from "react-native";
 import { Logo, ModalButton } from "../../UI";
@@ -24,14 +24,14 @@ const Filter = ({
 
 	const dispatch = useDispatch();
 
-	const { filterFireIndices } = firesIndicesActions;
+	const { fireFilter } = firesActions;
 
 	const [days, setDays] = useState(filterDays);
 	const [initialized, setInitialized] = useState(false);
 
 	function filterIndices() {
 		onUpdateDaysSlider(days);
-		dispatch(filterFireIndices({ days }));
+		dispatch(fireFilter({ days }));
 		closeModal();
 	}
 

@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useRoute, useNavigation } from "@react-navigation/native";
 
 import firebase from "../../../shared/services/firebase";
-import { loadingActions } from "../../../store/actions";
+import { loaderActions } from "../../../store/actions";
 import { changePasswordFormSchema } from "../../../shared/schemas/validation";
 
 import { Container, Info, Title } from "./styles";
@@ -19,7 +19,7 @@ const FirstLogin = () => {
 	const route = useRoute();
 	const navigation = useNavigation();
 
-	const { enableLoading, disableLoading } = loadingActions;
+	const { enableLoading, disableLoading } = loaderActions;
 
 	const { registerNewUser } = firebase();
 	const { control, handleSubmit, clearErrors, formState: { errors } } = useForm({

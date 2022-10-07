@@ -7,7 +7,7 @@ import { useNetInfo } from "@react-native-community/netinfo";
 import firebase from "../../../shared/services/firebase";
 import { formatDateString } from "../../../shared/utils/formatDate";
 import watermelonDB from "../../../shared/services/watermelonDB";
-import { loadingActions } from "../../../store/actions";
+import { loaderActions } from "../../../store/actions";
 
 import { FlatList, BackHandler } from "react-native";
 import { ActionButton } from "../../../components/UI";
@@ -34,7 +34,7 @@ const Gallery = ({ navigation, route }) => {
 	const dispatch = useDispatch();
 
 	const { fireIndice } = route.params;
-	const { enableLoading, disableLoading } = loadingActions;
+	const { enableLoading, disableLoading } = loaderActions;
 	const { getEvidences, getMedia, removeEvidence } = firebase();
 	const { fetchEvidencesOffline, removeEvidenceOffline } = watermelonDB();
 

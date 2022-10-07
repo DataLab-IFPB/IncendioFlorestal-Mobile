@@ -1,14 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { formatISO } from "../../shared/utils/formatDate";
 
-const firesIndicesSlice = createSlice({
-	name: "firesIndices",
+const fires = createSlice({
+	name: "fires",
 	initialState: {
 		filtered: [],
 		raw: []
 	},
 	reducers: {
-		loadFireIndices(state, action) {
+		loadFires(state, action) {
 			const { payload } = action;
 			let dateFilter = new Date();
 			dateFilter.setDate(dateFilter.getDate() - 1);
@@ -50,7 +50,7 @@ const firesIndicesSlice = createSlice({
 			return state;
 		},
 
-		loadFireIndicesOffline(state, action) {
+		loadFiresOffline(state, action) {
 			const { payload } = action;
 
 			if (payload) {
@@ -63,7 +63,7 @@ const firesIndicesSlice = createSlice({
 			return state;
 		},
 
-		filterFireIndices(state, action) {
+		fireFilter(state, action) {
 			const { days } = action.payload;
 			let limitDate = new Date(formatISO(new Date()));
 
@@ -88,7 +88,7 @@ const firesIndicesSlice = createSlice({
 			};
 		},
 
-		storeFireIndice(state, action) {
+		storeFires(state, action) {
 			const { payload } = action;
 			const filtered = [...state.filtered, payload];
 			const raw = [...state.raw, payload];
@@ -99,7 +99,7 @@ const firesIndicesSlice = createSlice({
 			};
 		},
 
-		updateFireIndice(state, action) {
+		updateFire(state, action) {
 			const { payload } = action;
 			const filtered = state.filtered.filter((item) => item.id !== payload.id);
 			const raw = state.raw.filter((item) => item.id !== payload.id);
@@ -112,4 +112,4 @@ const firesIndicesSlice = createSlice({
 	}
 });
 
-export default firesIndicesSlice;
+export default fires;

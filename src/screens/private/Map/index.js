@@ -12,7 +12,7 @@ import firebase  from "../../../shared/services/firebase";
 import weather from "../../../shared/services/weather";
 import watermelonDB from "../../../shared/services/watermelonDB";
 import { formatDatetime } from "../../../shared/utils/formatDate";
-import { firesIndicesActions, loadingActions } from "../../../store/actions";
+import { firesActions, loaderActions } from "../../../store/actions";
 import { LineString } from "../../../helpers";
 
 import { useTheme } from "styled-components";
@@ -52,12 +52,12 @@ const Map = ({ route }) => {
 	const offlineManager = MapboxGL.offlineManager;
 
 	const { getForecast } = weather();
-	const { enableLoading, disableLoading } = loadingActions;
+	const { enableLoading, disableLoading } = loaderActions;
 	const {
-		loadFireIndices,
-		loadFireIndicesOffline,
-		storeFireIndice
-	} = firesIndicesActions;
+		loadFires,
+		loadFiresOffline,
+		storeFires
+	} = firesActions;
 
 	const {
 		getFiresIndices,
@@ -108,7 +108,7 @@ const Map = ({ route }) => {
 	});
 
 	const user = useSelector((state) => state.auth);
-	const firesIndicesActivated = useSelector((state) => state.firesIndices.filtered);
+	const firesIndicesActivated = useSelector((state) => state.fires.filtered);
 
 	Logger.setLogCallback((log) => {
 		const { message } = log;
@@ -176,7 +176,7 @@ const Map = ({ route }) => {
 
 		const loadDataOffiline = async () => {
 			const data = await fetchFiresIndicesOffline();
-			dispatch(loadFireIndices(data));
+			dispatch(loadFires(data));
 		};
 
 		const verify = async () => {
@@ -204,7 +204,7 @@ const Map = ({ route }) => {
 				await fetchFireIndices();
 			} else {
 				const data = await fetchFiresIndicesOffline();
-				dispatch(loadFireIndicesOffline(data));
+				dispatch(loadFiresOffline(data));
 			}
 		};
 
@@ -277,7 +277,7 @@ const Map = ({ route }) => {
 
 	async function fetchFireIndices() {
 		const data = await getFiresIndices();
-		dispatch(loadFireIndices(data));
+		dispatch(loadFires(data));
 	}
 
 	function createNewFireIndice(event) {
@@ -328,7 +328,7 @@ const Map = ({ route }) => {
 		};
 		const uid = await registerNewFireIndice(newIndice);
 
-		dispatch(storeFireIndice({ ...newIndice, uid }));
+		dispatch(storeFires({ ...newIndice, uid }));
 		fetchFireIndices();
 		dispatch(disableLoading());
 
