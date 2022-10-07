@@ -157,7 +157,8 @@ const FireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 						<SimpleLineIcons
 							name='fire'
 							size={50}
-							color={fireIndice.userCreated ? theme.colors.icon.secondary : theme.colors.icon.primary}
+							color={fireIndice.userCreated ?
+								theme.colors.icon["accent-color-v2"] : theme.colors.icon["accent-color-v1"]}
 						/>
 					</ContainerIcon>
 

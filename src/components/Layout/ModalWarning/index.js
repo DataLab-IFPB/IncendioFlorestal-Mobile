@@ -21,7 +21,7 @@ const ModalWarning = ({ message, isVisible, onConfirm }) => {
 			<ContainerRoot>
 				<Container>
 					<ContainerIcon>
-						<Icon name='alert-circle' size={100} color={theme.colors.main.primary}/>
+						<Icon name='alert-circle' size={100} color={theme.colors.main["primary-v1"]}/>
 					</ContainerIcon>
 					<ContainerContent>
 						<Title>Ooops!!</Title>

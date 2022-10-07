@@ -8,9 +8,16 @@ const Loading = ({ isVisible }) => {
 	const theme = useTheme();
 
 	return (
-		<Modal transparent={true} visible={isVisible} animationType='fade'>
+		<Modal
+			transparent={true}
+			visible={isVisible}
+			animationType='fade'
+		>
 			<Container>
-				<ActivityIndicator size='large' color={theme.colors.main.primary}/>
+				<ActivityIndicator
+					size="large"
+					color={theme.colors.main["primary-v1"]}
+				/>
 			</Container>
 		</Modal>
 	);

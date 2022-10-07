@@ -12,17 +12,17 @@ import { ModalConfirmation } from "../../../components/Layout";
 import { formatDateString } from "../../../shared/utils/formatDate";
 import { watermelonDB } from "../../../shared/services/watermelonDB";
 import {
-	ContainerIconPlayer,
-	ContainerMedia,
-	Header,
-	Image,
+	Container,
+	IconPlayer,
+	Slider,
 	ImageSlider,
 	ItemSlider,
+	Header,
+	Media,
+	Image,
+	Video,
 	Label,
 	Title,
-	RootContainer,
-	Slider,
-	Video,
 	TitleLabel
 } from "./styles";
 
@@ -147,13 +147,13 @@ const Gallery = ({ navigation, route }) => {
 	useEffect(() => {
 		const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
 			navigation.navigate("Map");
-		  }
-		);
+		});
+
 		return () => backHandler.remove();
-	  }, []);
+	}, []);
 
 	return (
-		<RootContainer>
+		<Container>
 			<ModalConfirmation
 				isVisible={configModal.show}
 				message="Deseja excluir esta evidência?"
@@ -162,16 +162,16 @@ const Gallery = ({ navigation, route }) => {
 			/>
 
 			<Header isEmptyMedias={!!medias.length}>
-				<ActionButton icon='close' onPress={onClose}/>
+				<ActionButton icon='close' onPress={onClose} />
 
 				<Title isEmptyMedias={!!medias.length}>
 					GALERIA
 				</Title>
 
-				{!!medias.length && <ActionButton icon='trash' onPress={openModal}/>}
+				{!!medias.length && <ActionButton icon='trash' onPress={openModal} />}
 			</Header>
 
-			<ContainerMedia>
+			<Media>
 				{!medias.length && <Label>Nenhuma evidência registrada</Label>}
 
 				{!!medias.length && <Label>
@@ -181,7 +181,7 @@ const Gallery = ({ navigation, route }) => {
 
 				{/* IMAGE */}
 				{!!medias.length && selectedMedia.media === "image" && (
-					<Image source={{ uri: selectedMedia.path }}/>
+					<Image source={{ uri: selectedMedia.path }} />
 				)}
 
 				{/* VIDEO */}
@@ -193,7 +193,7 @@ const Gallery = ({ navigation, route }) => {
 						source={{ uri: selectedMedia.path }}
 					/>
 				)}
-			</ContainerMedia>
+			</Media>
 
 			<Slider>
 				<FlatList
@@ -206,16 +206,16 @@ const Gallery = ({ navigation, route }) => {
 							isSelected={item.path === selectedMedia.path}
 						>
 							{item.media === "video" && (
-								<ContainerIconPlayer>
-									<FontAwesome name="play-circle" color="#FFF" size={30}/>
-								</ContainerIconPlayer>
+								<IconPlayer>
+									<FontAwesome name="play-circle" color="#FFF" size={30} />
+								</IconPlayer>
 							)}
-							<ImageSlider source={{ uri: item.path }}/>
+							<ImageSlider source={{ uri: item.path }} />
 						</ItemSlider>
 					)}
 				/>
 			</Slider>
-		</RootContainer>
+		</Container>
 	);
 };
 

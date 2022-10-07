@@ -8,22 +8,22 @@ import { useDispatch, useSelector } from "react-redux";
 import { loadingActions } from "../../../store/actions";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { PrimaryButton, ActionButton } from "../../../components/UI";
-import { ContainerInfo } from "../../../components/Layout/Forecast/styles";
 import { ModalConfirmation, ModalWarning } from "../../../components/Layout";
 import { watermelonDB } from "../../../shared/services/watermelonDB";
 import {
-	RootContainer,
-	ContainerOptions,
-	ContainerTrails,
-	Label,
-	Card,
-	Touchable,
+	Container,
 	Content,
+	Options,
+	Header,
+	List,
+	Card,
+	Title,
+	Label,
+	Info,
+	Warning,
+	Touchable,
 	LineVertical,
 	LineHorizontal,
-	ContainerWarning,
-	Header,
-	Title
 } from "./styles";
 
 const TrailManager = ({ navigation, route }) => {
@@ -157,7 +157,7 @@ const TrailManager = ({ navigation, route }) => {
 	}, []);
 
 	return (
-		<RootContainer>
+		<Container>
 			<Header>
 				<ActionButton icon="close" onPress={handleCloseScreen}/>
 				<Title>TRILHAS</Title>
@@ -176,11 +176,11 @@ const TrailManager = ({ navigation, route }) => {
 				onConfirm={() => setError("")}
 			/>
 
-			<ContainerTrails>
+			<List>
 				{trails.length === 0 && (
-					<ContainerWarning>
+					<Warning>
 						<Label>Nenhuma trilha encontrada!</Label>
-					</ContainerWarning>
+					</Warning>
 				)}
 				{trails.length > 0 && (
 					<FlatList
@@ -189,15 +189,15 @@ const TrailManager = ({ navigation, route }) => {
 						renderItem={({ item, index }) => (
 							<Card key={index}>
 								<Touchable onPress={onDelete.bind(null, item.uid)}>
-									<FontAwesome name="trash" size={15} style={{ margin: 10 }}/>
+									<FontAwesome name="trash" size={15} style={{ margin: 10 }} />
 								</Touchable>
 
-								<LineVertical/>
+								<LineVertical />
 
 								<Touchable onPress={showTrail.bind(null, item)}>
 									<Content>
-										<MaterialIcons name="map-marker-plus" size={30}/>
-										<ContainerInfo>
+										<MaterialIcons name="map-marker-plus" size={30} />
+										<Info>
 											<Label>
 												{`Latitude: ${item.initial_coordinates.latitude}`}
 											</Label>
@@ -205,14 +205,14 @@ const TrailManager = ({ navigation, route }) => {
 											<Label>
 												{`Longitude: ${item.initial_coordinates.longitude}`}
 											</Label>
-										</ContainerInfo>
+										</Info>
 									</Content>
 
-									<LineHorizontal/>
+									<LineHorizontal />
 
 									<Content>
-										<MaterialIcons name="map-marker-remove" size={30}/>
-										<ContainerInfo>
+										<MaterialIcons name="map-marker-remove" size={30} />
+										<Info>
 											<Label>
 												{`Latitude: ${item.end_coordinates.latitude}`}
 											</Label>
@@ -220,22 +220,21 @@ const TrailManager = ({ navigation, route }) => {
 											<Label>
 												{`Longitude: ${item.end_coordinates.longitude}`}
 											</Label>
-										</ContainerInfo>
+										</Info>
 									</Content>
 								</Touchable>
 							</Card>
-						)}
-					/>
+						)}/>
 				)}
-			</ContainerTrails>
+			</List>
 
-			<ContainerOptions>
+			<Options>
 				<PrimaryButton
 					message="ADICIONAR NOVA TRILHA"
 					onPress={handleAddNewTrail}
 				/>
-			</ContainerOptions>
-		</RootContainer>
+			</Options>
+		</Container>
 	);
 };
 

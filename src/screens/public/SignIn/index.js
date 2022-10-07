@@ -13,7 +13,13 @@ import { PERMISSION_LOCATION_USE } from "../../../constants";
 import { authFormSchema } from "../../../shared/schemas/validation";
 import { authActions, loadingActions } from "../../../store/actions";
 import { Keyboard, StatusBar, TouchableWithoutFeedback } from "react-native";
-import { ContainerForm, ContainerRoot, ContainerVersion, Form, LabelVersion } from "./styles";
+import {
+	Container,
+	Form,
+	FormContainer,
+	Version,
+	LabelVersion
+} from "./styles";
 
 const SignIn = () => {
 
@@ -119,7 +125,7 @@ const SignIn = () => {
 
 	return (
 		<TouchableWithoutFeedback onPress={onKeyboardHide}>
-			<ContainerRoot>
+			<Container>
 				<StatusBar barStyle='dark-content' backgroundColor='#FFF'/>
 				<ModalWarning
 					message={showModalWarning.message}
@@ -127,7 +133,7 @@ const SignIn = () => {
 					onConfirm={onConfirmModalHandler}
 				/>
 
-				<ContainerForm>
+				<FormContainer>
 					<Logo/>
 
 					<Form>
@@ -156,14 +162,14 @@ const SignIn = () => {
 					</Form>
 
 					<PrimaryButton message="Entrar" onPress={handleSubmit(onSubmit)}/>
-				</ContainerForm>
+				</FormContainer>
 
 				{showVersionLabel && (
-					<ContainerVersion>
+					<Version>
 						<LabelVersion>{`Version ${packageJson.version}`}</LabelVersion>
-					</ContainerVersion>
+					</Version>
 				)}
-			</ContainerRoot>
+			</Container>
 		</TouchableWithoutFeedback>
 	);
 };

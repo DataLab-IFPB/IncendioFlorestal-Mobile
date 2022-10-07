@@ -3,12 +3,12 @@ import firebase from "../../../shared/services/firebase";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { ContainerRoot, Info, Title } from "./styles";
 import { loadingActions } from "../../../store/actions";
 import { ModalWarning } from "../../../components/Layout";
 import { PrimaryButton, Input, Logo } from "../../../components/UI";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { changePasswordFormSchema } from "../../../shared/schemas/validation";
+import { Container, Info, Title } from "./styles";
 import { BackHandler, Keyboard, TouchableWithoutFeedback } from "react-native";
 
 const FirstLogin = () => {
@@ -73,7 +73,7 @@ const FirstLogin = () => {
 
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-			<ContainerRoot>
+			<Container>
 				<ModalWarning
 					message={showModalWarning.message}
 					isVisible={showModalWarning.isVisible}
@@ -115,7 +115,7 @@ const FirstLogin = () => {
 				/>
 
 				<PrimaryButton message="Alterar" onPress={handleSubmit(onSubmit)}/>
-			</ContainerRoot>
+			</Container>
 		</TouchableWithoutFeedback>
 	);
 };

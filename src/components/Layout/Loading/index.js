@@ -11,12 +11,16 @@ const Loading = () => {
 	const status = useSelector((state) => state.loading);
 
 	return(
-		<Modal animationType='fade' visible={status.isActive} statusBarTranslucent>
+		<Modal
+			statusBarTranslucent
+			animationType="fade"
+			visible={status.isActive}
+		>
 			<Container>
 				<Logo/>
 
 				<ContainerIndicator>
-					<ActivityIndicator size='small' color={theme.colors.main.primary}/>
+					<ActivityIndicator size="small" color={theme.colors.main["primary-v1"]} />
 				</ContainerIndicator>
 
 				<Label>{status.message}</Label>

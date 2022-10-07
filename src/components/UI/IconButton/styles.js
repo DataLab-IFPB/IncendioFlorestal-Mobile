@@ -9,10 +9,10 @@ export const Button = styled.TouchableOpacity`
 	margin: 5px 0;
 	padding: 10px;
 	width: 150px;
-	background-color: ${({theme}) => theme.colors.main.tertiary};
+	background-color: ${({theme}) => theme.colors.main["primary-v3"]};
 `;
 
 export const Label = styled.Text`
-	color: #fff;
 	margin-left: 5px;
+	color: ${({theme}) => theme.colors.text["primary-v2"]};
 `;

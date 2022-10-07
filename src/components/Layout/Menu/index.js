@@ -29,11 +29,11 @@ const Menu = ({ handleLocation, handleFilter, handleMapStyle, handleMapManager }
 	}
 
 	function iconMaterial(name) {
-		return <MaterialIcons name={name} size={20} color="white"/>;
+		return <MaterialIcons name={name} size={20} color="white" />;
 	}
 
 	function iconFontAwesome(name) {
-		return <FontAwesome name={name} size={15} color="white"/>;
+		return <FontAwesome name={name} size={15} color="white" />;
 	}
 
 	function subMenuHandler() {

@@ -4,7 +4,11 @@ import { Container, RootContainer, Label, Touchable, LabelButton } from "./style
 
 const ModalNotification = ({ isVisible, message, onConfirm }) => {
 	return(
-		<Modal visible={isVisible} transparent={true} animationType='fade'>
+		<Modal
+			visible={isVisible}
+			transparent={true}
+			animationType="fade"
+		>
 			<RootContainer>
 				<Container>
 					<Label>{message}</Label>

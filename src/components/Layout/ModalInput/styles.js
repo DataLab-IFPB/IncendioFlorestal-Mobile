@@ -44,5 +44,5 @@ export const Error = styled.Text`
 	margin: -10px 0 10px 0;
 	text-align: center;
 	font-weight: bold;
-	color: ${({theme}) => theme.colors.error.primary};
+	color: ${({theme}) => theme.colors.level["error-v1"]};
 `;

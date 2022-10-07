@@ -22,8 +22,8 @@ import { LineString } from "../../../helpers";
 import {
 	ButtonClose,
 	Container,
-	ContainerButtonClose,
-	ContainerNotification,
+	Actions,
+	NotificationContainer,
 	Notification,
 	TextNotification
 } from "./styles";
@@ -396,7 +396,7 @@ const Map = ({ route }) => {
 									<IconSimple
 										name='fire'
 										size={30}
-										color={theme.colors.icon.secondary}
+										color={theme.colors.icon["accent-color-v2"]}
 									/>
 								</TouchableOpacity>
 							) : (
@@ -405,7 +405,8 @@ const Map = ({ route }) => {
 										name='fire'
 										size={30}
 										color={register.brightness >= 500 ?
-											theme.colors.icon.primary : theme.colors.icon.tertiary
+											theme.colors.icon["accent-color-v1"] :
+											theme.colors.icon["accent-color-v3"]
 										}
 									/>
 								</TouchableOpacity>
@@ -547,7 +548,7 @@ const Map = ({ route }) => {
 
 			<Container>
 				{netInfo.isConnected && !mapManagerIsOpen && (
-					<Forecast userCoordinates={userGeolocation}/>
+					<Forecast userCoordinates={userGeolocation} />
 				)}
 
 				{!mapManagerIsOpen && (
@@ -570,11 +571,11 @@ const Map = ({ route }) => {
 				)}
 
 				{sourceTrail && (
-					<ContainerButtonClose>
+					<Actions>
 						<ButtonClose onPress={() => setSourceTrail(null)}>
-							<AntDesign name="close" color="#FFF" size={20}/>
+							<AntDesign name="close" color="#FFF" size={20} />
 						</ButtonClose>
-					</ContainerButtonClose>
+					</Actions>
 				)}
 
 				<MapboxGL.MapView
@@ -642,7 +643,7 @@ const Map = ({ route }) => {
 							onCancel={() => setMapManagerIsOpen(false)}
 						/>
 
-						<ContainerNotification>
+						<NotificationContainer>
 							<Notification>
 								<Ionicons
 									name="alert-circle-outline"
@@ -653,7 +654,7 @@ const Map = ({ route }) => {
 									Posicione-se sobre a área de download
 								</TextNotification>
 							</Notification>
-						</ContainerNotification>
+						</NotificationContainer>
 					</>
 				)}
 			</Container>

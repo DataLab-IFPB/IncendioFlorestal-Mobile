@@ -5,16 +5,19 @@ import { Container, RootContainer, ContainerOptions, Label } from "../Filter/sty
 
 const ModalConfirmation = ({ isVisible, message, onCancel, onConfirm }) => {
 	return (
-		<Modal visible={isVisible} transparent={true} animationType='fade'>
+		<Modal
+			visible={isVisible}
+			transparent={true}
+			animationType="fade"
+		>
 			<RootContainer>
 				<Container>
 					<Logo/>
-
 					<Label>{message}</Label>
 
 					<ContainerOptions>
-						<ModalButton highlighted message="confirmar" onPress={onConfirm}/>
-						<ModalButton message="cancelar" onPress={onCancel}/>
+						<ModalButton highlighted message="confirmar" onPress={onConfirm} />
+						<ModalButton message="cancelar" onPress={onCancel} />
 					</ContainerOptions>
 				</Container>
 			</RootContainer>

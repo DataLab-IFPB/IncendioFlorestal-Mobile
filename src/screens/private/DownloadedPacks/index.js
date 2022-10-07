@@ -9,19 +9,19 @@ import { loadingActions } from "../../../store/actions";
 import { ActionButton } from "../../../components/UI";
 import { ContainerInfo } from "../../../components/Layout/Forecast/styles";
 import { ModalConfirmation, ModalWarning } from "../../../components/Layout";
-import { List } from "./styles";
 import {
-	RootContainer,
-	ContainerTrails,
-	Label,
-	Card,
-	Touchable,
-	Content,
-	LineVertical,
-	ContainerWarning,
+	Container,
+	List,
+	ListContainer,
 	Header,
-	Title
-} from "../TrailManager/styles";
+	Content,
+	Card,
+	Label,
+	Title,
+	Warning,
+	Touchable,
+	LineVertical,
+} from "./styles";
 
 const DownloadedPacks = () => {
 
@@ -131,7 +131,7 @@ const DownloadedPacks = () => {
 	}, []);
 
 	return (
-		<RootContainer>
+		<Container>
 			<Header>
 				<ActionButton icon="close" onPress={handleCloseScreen} />
 				<Title>ÁREAS SALVAS</Title>
@@ -158,11 +158,11 @@ const DownloadedPacks = () => {
 				onConfirm={() => setError("")}
 			/>
 
-			<ContainerTrails>
+			<ListContainer>
 				{packs.length === 0 && (
-					<ContainerWarning>
+					<Warning>
 						<Label>Nenhuma área salva!</Label>
-					</ContainerWarning>
+					</Warning>
 				)}
 				{packs.length > 0 && (
 					<List
@@ -188,8 +188,8 @@ const DownloadedPacks = () => {
 						)}
 					/>
 				)}
-			</ContainerTrails>
-		</RootContainer>
+			</ListContainer>
+		</Container>
 	);
 };
 
