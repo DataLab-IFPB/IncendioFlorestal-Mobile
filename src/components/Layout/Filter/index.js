@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import Slider from "@react-native-community/slider";
-import { Modal } from "react-native";
 import { useDispatch } from "react-redux";
-import { Logo, ModalButton } from "../../UI";
+import Slider from "@react-native-community/slider";
+
 import { firesIndicesActions } from "../../../store/actions";
+
+import { Modal } from "react-native";
+import { Logo, ModalButton } from "../../UI";
 import {
 	RootContainer,
 	Container,
@@ -13,7 +15,12 @@ import {
 	LabelSlider
 } from "./styles";
 
-const Filter = ({ visible, closeModal, filterDays, onUpdateDaysSlider }) => {
+const Filter = ({
+	visible,
+	closeModal,
+	filterDays,
+	onUpdateDaysSlider
+}) => {
 
 	const dispatch = useDispatch();
 

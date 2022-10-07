@@ -71,3 +71,9 @@ export const LineVertical = styled.View`
 	border-radius: 10px;
 	border: 1px solid #D7D7D7;
 `;
+
+export const Info = styled.View`
+  align-items: center;
+  justify-content: center;
+  margin: 0 5px;
+`;

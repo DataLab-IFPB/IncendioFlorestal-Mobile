@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import Icon from "react-native-vector-icons/Feather";
-import { useTheme } from "styled-components";
 import { Controller } from "react-hook-form";
+
+import { useTheme } from "styled-components";
+import Icon from "react-native-vector-icons/Feather";
 import {
 	Field,
 	Label,

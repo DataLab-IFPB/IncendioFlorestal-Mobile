@@ -1,16 +1,15 @@
 import React, { Fragment, useState } from "react";
-
-import firebase from "../../../shared/services/firebase";
-import { watermelonDB } from "../../../shared/services/watermelonDB";
-import { loadingActions } from "../../../store/actions";
-
 import { useDispatch } from "react-redux";
 import { useNetInfo } from "@react-native-community/netinfo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { RECORDER_ROUTER_INITIAL_COORDINATES } from "../../../constants";
+import firebase from "../../../shared/services/firebase";
+import watermelonDB from "../../../shared/services/watermelonDB";
+import { loadingActions } from "../../../store/actions";
+
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
-import { RECORDER_ROUTER_INITIAL_COORDINATES } from "../../../constants";
 import {
 	Container,
 	Label,

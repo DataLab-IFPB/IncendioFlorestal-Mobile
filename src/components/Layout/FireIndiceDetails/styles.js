@@ -66,15 +66,23 @@ export const Button = styled.TouchableOpacity`
 	width: 25%;
 	justify-content: center;
 	align-items: center;
-	background-color: ${({theme}) => theme.colors.main["primary-v1"]};
 	margin: 0 5px;
 	elevation: 4;
+	background-color: ${({theme}) => theme.colors.main["primary-v1"]};
 `;
 
 export const LabelButton = styled.Text`
 	color: #fff;
 	font-weight: bold;
 `;
+
+export const Info = styled.View`
+  align-items: center;
+  justify-content: center;
+  margin: 0 5px;
+`;
+
+
 
 export const statusIndicador = {
 	separatorStrokeWidth: 2,

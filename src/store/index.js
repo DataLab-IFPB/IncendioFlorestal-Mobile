@@ -1,7 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
+
 import authSlice from "./authSlice";
-import firesIndicesSlice from "./firesIndicesSlice";
 import loadingSlice from "./loadingSlice";
+import firesIndicesSlice from "./firesIndicesSlice";
+
 import reactoTronConfig from "../config/ReactotronConfig";
 
 const store = configureStore({

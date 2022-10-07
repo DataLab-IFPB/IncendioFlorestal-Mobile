@@ -1,4 +1,5 @@
 import { appSchema } from "@nozbe/watermelondb";
+
 import TrailSchema from "./TrailSchema";
 import EvidenceSchema from "./EvidenceSchema";
 import FireIndiceSchema from "./FireIndiceSchema";

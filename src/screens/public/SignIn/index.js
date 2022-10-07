@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import packageJson from "../../../../package.json";
 import MapboxGL from "@react-native-mapbox-gl/maps";
-import firebase from "../../../shared/services/firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
+
+import { PERMISSION_LOCATION_USE } from "../../../constants";
+import { authActions, loadingActions } from "../../../store/actions";
+import firebase from "../../../shared/services/firebase";
+import { authFormSchema } from "../../../shared/schemas/validation";
+
 import { ModalWarning } from "../../../components/Layout";
 import { PrimaryButton, Logo, Input } from "../../../components/UI";
-import { PERMISSION_LOCATION_USE } from "../../../constants";
-import { authFormSchema } from "../../../shared/schemas/validation";
-import { authActions, loadingActions } from "../../../store/actions";
 import { Keyboard, StatusBar, TouchableWithoutFeedback } from "react-native";
 import {
 	Container,

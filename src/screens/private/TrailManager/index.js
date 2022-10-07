@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
+import { useNetInfo } from "@react-native-community/netinfo";
+import { useDispatch, useSelector } from "react-redux";
+
 import trail from "../../../shared/services/trail";
 import firebase from "../../../shared/services/firebase";
-import FontAwesome from "react-native-vector-icons/FontAwesome5";
-import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { FlatList, BackHandler } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
 import { loadingActions } from "../../../store/actions";
-import { useNetInfo } from "@react-native-community/netinfo";
+import watermelonDB from "../../../shared/services/watermelonDB";
+
+import { FlatList, BackHandler } from "react-native";
 import { PrimaryButton, ActionButton } from "../../../components/UI";
 import { ModalConfirmation, ModalWarning } from "../../../components/Layout";
-import { watermelonDB } from "../../../shared/services/watermelonDB";
+import FontAwesome from "react-native-vector-icons/FontAwesome5";
+import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import {
 	Container,
 	Content,

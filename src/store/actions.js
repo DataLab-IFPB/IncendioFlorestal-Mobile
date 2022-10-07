@@ -1,6 +1,6 @@
 import authSlice from "./authSlice";
-import fireIndicesSlice from "./firesIndicesSlice";
 import loadingSlice from "./loadingSlice";
+import fireIndicesSlice from "./firesIndicesSlice";
 
 const authActions = authSlice.actions;
 const firesIndicesActions = fireIndicesSlice.actions;

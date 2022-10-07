@@ -1,14 +1,19 @@
 /* eslint-disable no-undef */
 import React, { useState, useRef } from "react";
 import MapboxGL from "@react-native-mapbox-gl/maps";
-import FontAwesome from "react-native-vector-icons/FontAwesome5";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+
 import { MenuButton } from "../../UI";
 import { Text, Animated } from "react-native";
+import FontAwesome from "react-native-vector-icons/FontAwesome5";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { Container, SubMenuOption, SubMenuLabel, SubMenu } from "./styles";
 
-const Menu = ({ handleLocation, handleFilter, handleMapStyle, handleMapManager }) => {
-
+const Menu = ({
+	handleLocation,
+	handleFilter,
+	handleMapStyle,
+	handleMapManager
+}) => {
 	const subMenuAnimation = useRef(new Animated.Value(0)).current;
 	const [showSubMenu, setShowSubMenu] = useState(false);
 

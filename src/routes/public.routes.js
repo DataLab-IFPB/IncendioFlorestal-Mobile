@@ -1,8 +1,8 @@
 import React from "react";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 import SignIn from "../screens/public/SignIn";
 import FirstLogin from "../screens/public/FirstLogin";
-
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const PublicRoutes = () => {
 
@@ -13,8 +13,8 @@ const PublicRoutes = () => {
 			headerShown: false,
 			contentStyle: { backgroundColor: "#FFF" }
 		}}>
-			<Stack.Screen name='SignIn' component={SignIn}/>
-			<Stack.Screen name='FirstLogin' component={FirstLogin}/>
+			<Stack.Screen name='SignIn' component={SignIn} />
+			<Stack.Screen name='FirstLogin' component={FirstLogin} />
 		</Stack.Navigator>
 	);
 };

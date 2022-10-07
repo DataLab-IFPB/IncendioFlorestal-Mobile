@@ -1,7 +1,8 @@
 import React from "react";
-import Icon from "react-native-vector-icons/Feather";
+
 import { useTheme } from "styled-components";
 import { PrimaryButton } from "../../UI";
+import Icon from "react-native-vector-icons/Feather";
 import {
 	ContainerRoot,
 	Container,

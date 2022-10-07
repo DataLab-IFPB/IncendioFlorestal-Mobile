@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Modal } from "react-native";
+import StepIndicator from "react-native-step-indicator";
+import { useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
+import { useNetInfo } from "@react-native-community/netinfo";
+
+import watermelonDB from "../../../shared/services/watermelonDB";
+import firebase from "../../../shared/services/firebase";
+import weather from "../../../shared/services/weather";
+import { formatDatetime, formatUTC } from "../../../shared/utils/formatDate";
+import { firesIndicesActions, loadingActions } from "../../../store/actions";
+
 import { AddEvidence } from "../AddEvidence";
 import { ModalConfirmation } from "../ModalConfirmation";
-import StepIndicator from "react-native-step-indicator";
-import firebase from "../../../shared/services/firebase";
+import { useTheme } from "styled-components/native";
+import { ActionButton } from "../../UI";
+import { Modal } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
-import { ActionButton } from "../../UI";
-import { useDispatch } from "react-redux";
-import { ContainerInfo } from "../Forecast/styles";
-import { useTheme } from "styled-components/native";
-import { useNavigation } from "@react-navigation/native";
-import { weather } from "../../../shared/services/weather";
-import { useNetInfo } from "@react-native-community/netinfo";
-import { formatDatetime, formatUTC } from "../../../shared/utils/formatDate";
-import { firesIndicesActions, loadingActions } from "../../../store/actions";
-import { watermelonDB } from "../../../shared/services/watermelonDB";
 import {
 	RootContainer,
 	Container,
@@ -24,6 +25,7 @@ import {
 	ContainerWeather,
 	ContainerDataWeather,
 	Label,
+	Info,
 	Space,
 	ContainerOptions,
 	Button,
@@ -184,25 +186,25 @@ const FireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 						<Label>Local: {currentWeather ? currentWeather.locale : "Não identificado"}</Label>
 
 						<ContainerDataWeather>
-							<ContainerInfo>
+							<Info>
 								<FontAwesome name='wind' color='#010101' size={ICON_SIZE}/>
 								<Label>{currentWeather ? currentWeather.wind_kph + " KM/H" : "-"}</Label>
-							</ContainerInfo>
+							</Info>
 
-							<ContainerInfo>
+							<Info>
 								<Ionicons name='thermometer-outline' color='red' size={ICON_SIZE}/>
 								<Label>{currentWeather ? currentWeather.temp_c + "°C" : "-"}</Label>
-							</ContainerInfo>
+							</Info>
 
-							<ContainerInfo>
+							<Info>
 								<Ionicons name='water-outline' color='blue' size={ICON_SIZE}/>
 								<Label>{currentWeather ? currentWeather.humidity + "%" : "-"}</Label>
-							</ContainerInfo>
+							</Info>
 
-							<ContainerInfo>
+							<Info>
 								<Ionicons name='thunderstorm-outline' color='skyblue' size={ICON_SIZE}/>
 								<Label>{currentWeather ? currentWeather.precip_in + "%" : "-"}</Label>
-							</ContainerInfo>
+							</Info>
 						</ContainerDataWeather>
 					</ContainerWeather>
 

@@ -1,9 +1,20 @@
 import React from "react";
+
 import { Logo, ModalButton } from "../../UI";
 import { Modal } from "react-native";
-import { Container, RootContainer, ContainerOptions, Label } from "../Filter/styles";
+import {
+	Container,
+	RootContainer,
+	ContainerOptions,
+	Label
+} from "../Filter/styles";
 
-const ModalConfirmation = ({ isVisible, message, onCancel, onConfirm }) => {
+const ModalConfirmation = ({
+	isVisible,
+	message,
+	onCancel,
+	onConfirm 
+}) => {
 	return (
 		<Modal
 			visible={isVisible}

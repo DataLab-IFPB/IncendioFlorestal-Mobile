@@ -1,13 +1,14 @@
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import ImagePicker from "react-native-image-crop-picker";
-import firebase from "../../../shared/services/firebase";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { useSelector } from "react-redux";
-import { Button, Container } from "./styles";
 import { useNetInfo } from "@react-native-community/netinfo";
-import { watermelonDB } from "../../../shared/services/watermelonDB";
+import { useSelector } from "react-redux";
+
 import { RESOLUTION_IMAGE_AND_VIDEO } from "../../../constants";
+import firebase from "../../../shared/services/firebase";
+import watermelonDB from "../../../shared/services/watermelonDB";
+
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { Button, Container } from "./styles";
 
 const AddEvidence = ({ fireIndice }) => {
 

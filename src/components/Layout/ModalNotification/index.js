@@ -1,6 +1,13 @@
 import React from "react";
+
 import { Modal } from "react-native";
-import { Container, RootContainer, Label, Touchable, LabelButton } from "./styles";
+import {
+	Container,
+	RootContainer,
+	Label,
+	Touchable,
+	LabelButton
+} from "./styles";
 
 const ModalNotification = ({ isVisible, message, onConfirm }) => {
 	return(

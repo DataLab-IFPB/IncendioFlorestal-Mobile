@@ -8,4 +8,4 @@ const watermelonDB = () => {
 	};
 };
 
-export { watermelonDB };
+export default watermelonDB;

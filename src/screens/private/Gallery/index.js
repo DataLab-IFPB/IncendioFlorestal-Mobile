@@ -1,16 +1,18 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import FontAwesome from "react-native-vector-icons/FontAwesome5";
-import firebase from "../../../shared/services/firebase";
 import fs from "react-native-fs";
-import { FlatList, BackHandler } from "react-native";
 import { useDispatch } from "react-redux";
-import { ActionButton } from "../../../components/UI";
-import { loadingActions } from "../../../store/actions";
 import { useNetInfo } from "@react-native-community/netinfo";
-import { ModalConfirmation } from "../../../components/Layout";
+
+import firebase from "../../../shared/services/firebase";
 import { formatDateString } from "../../../shared/utils/formatDate";
-import { watermelonDB } from "../../../shared/services/watermelonDB";
+import watermelonDB from "../../../shared/services/watermelonDB";
+import { loadingActions } from "../../../store/actions";
+
+import { FlatList, BackHandler } from "react-native";
+import { ActionButton } from "../../../components/UI";
+import { ModalConfirmation } from "../../../components/Layout";
+import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import {
 	Container,
 	IconPlayer,

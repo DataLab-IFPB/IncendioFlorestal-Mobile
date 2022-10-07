@@ -1,4 +1,5 @@
 import axios from "axios";
+
 import { API_WEATHER_KEY } from "../../../constants";
 import { mountForecast } from "../../utils/weather";
 
@@ -21,4 +22,4 @@ const weather = () => {
 	return { getForecast };
 };
 
-export { weather };
+export default weather;

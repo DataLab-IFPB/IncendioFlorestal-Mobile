@@ -1,8 +1,10 @@
-import { database } from "../connection";
 import { useDispatch } from "react-redux";
-import { formatDatetime } from "../../../utils/formatDate";
 import { where } from "@nozbe/watermelondb/QueryDescription";
+
+import { database } from "../connection";
 import { firesIndicesActions } from "../../../../store/actions";
+
+import { formatDatetime } from "../../../utils/formatDate";
 
 const fireIndiceManagerDB = () => {
 	const TABLE_FIRES_INDICES = "TB_FIRES_INDICES";

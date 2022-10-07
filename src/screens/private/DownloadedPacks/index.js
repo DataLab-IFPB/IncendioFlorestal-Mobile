@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { BackHandler } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import MapboxGL from "@react-native-mapbox-gl/maps";
+
+import { loadingActions } from "../../../store/actions";
+
+import { ActionButton } from "../../../components/UI";
+import { ModalConfirmation, ModalWarning } from "../../../components/Layout";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import MapboxGL from "@react-native-mapbox-gl/maps";
-import { useNavigation } from "@react-navigation/native";
-import { BackHandler } from "react-native";
-import { useDispatch } from "react-redux";
-import { loadingActions } from "../../../store/actions";
-import { ActionButton } from "../../../components/UI";
-import { ContainerInfo } from "../../../components/Layout/Forecast/styles";
-import { ModalConfirmation, ModalWarning } from "../../../components/Layout";
 import {
 	Container,
+	Info,
 	List,
 	ListContainer,
 	Header,
@@ -178,11 +180,11 @@ const DownloadedPacks = () => {
 
 								<Content>
 									<MaterialIcons name="map" size={30} style={{ marginRight: 5 }} />
-									<ContainerInfo>
+									<Info>
 										<Label>
 											{`Nome: ${item.name}`}
 										</Label>
-									</ContainerInfo>
+									</Info>
 								</Content>
 							</Card>
 						)}

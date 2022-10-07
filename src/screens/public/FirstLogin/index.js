@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
-import firebase from "../../../shared/services/firebase";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useRoute, useNavigation } from "@react-navigation/native";
+
+import firebase from "../../../shared/services/firebase";
 import { loadingActions } from "../../../store/actions";
+import { changePasswordFormSchema } from "../../../shared/schemas/validation";
+
+import { Container, Info, Title } from "./styles";
 import { ModalWarning } from "../../../components/Layout";
 import { PrimaryButton, Input, Logo } from "../../../components/UI";
-import { useRoute, useNavigation } from "@react-navigation/native";
-import { changePasswordFormSchema } from "../../../shared/schemas/validation";
-import { Container, Info, Title } from "./styles";
 import { BackHandler, Keyboard, TouchableWithoutFeedback } from "react-native";
 
 const FirstLogin = () => {

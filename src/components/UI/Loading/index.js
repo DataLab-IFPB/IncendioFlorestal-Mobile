@@ -1,4 +1,5 @@
 import React from "react";
+
 import { Modal, ActivityIndicator } from "react-native";
 import { useTheme } from "styled-components";
 import { Container } from "./styles";

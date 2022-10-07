@@ -1,32 +1,26 @@
 /* eslint-disable no-undef */
 import React, { useEffect, useRef, useState } from "react";
-import firebase  from "../../../shared/services/firebase";
 import Geolocation from "react-native-geolocation-service";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import MapboxGL, { Logger } from "@react-native-mapbox-gl/maps";
-import IconSimple from "react-native-vector-icons/SimpleLineIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
-import { useTheme } from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import { RecorderButton } from "../../../components/UI";
-import { weather } from "../../../shared/services/weather";
-import { BackHandler, StatusBar, TouchableOpacity } from "react-native";
 import { useNetInfo } from "@react-native-community/netinfo";
+import { useDispatch, useSelector } from "react-redux";
+
 import { PERMISSION_LOCATION_USE, MAP_BOX_KEY } from "../../../constants";
-import { watermelonDB } from "../../../shared/services/watermelonDB";
-import { firesIndicesActions, loadingActions } from "../../../store/actions";
+import firebase  from "../../../shared/services/firebase";
+import weather from "../../../shared/services/weather";
+import watermelonDB from "../../../shared/services/watermelonDB";
 import { formatDatetime } from "../../../shared/utils/formatDate";
+import { firesIndicesActions, loadingActions } from "../../../store/actions";
 import { LineString } from "../../../helpers";
-import {
-	ButtonClose,
-	Container,
-	Actions,
-	NotificationContainer,
-	Notification,
-	TextNotification
-} from "./styles";
+
+import { useTheme } from "styled-components";
+import { RecorderButton } from "../../../components/UI";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import IconSimple from "react-native-vector-icons/SimpleLineIcons";
+import { BackHandler, StatusBar, TouchableOpacity } from "react-native";
 import {
 	Menu,
 	Filter,
@@ -38,6 +32,14 @@ import {
 	ModalWarning,
 	ModalInput
 } from "../../../components/Layout";
+import {
+	ButtonClose,
+	Container,
+	Actions,
+	NotificationContainer,
+	Notification,
+	TextNotification
+} from "./styles";
 
 const Map = ({ route }) => {
 

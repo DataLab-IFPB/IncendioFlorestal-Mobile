@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import FontAwesome from "react-native-vector-icons/FontAwesome5";
-import { weather } from "../../../shared/services/weather";
 import { useNetInfo } from "@react-native-community/netinfo";
+
+import weather from "../../../shared/services/weather";
+
+import FontAwesome from "react-native-vector-icons/FontAwesome5";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import {
 	Container,
 	ContainerInfo,

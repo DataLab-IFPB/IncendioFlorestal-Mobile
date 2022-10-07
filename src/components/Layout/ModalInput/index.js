@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+
 import { areaNameFormSchema } from "../../../shared/schemas/validation";
+
 import { Logo, ModalButton, Input } from "../../UI";
 import { Modal, Keyboard } from "react-native";
 import {

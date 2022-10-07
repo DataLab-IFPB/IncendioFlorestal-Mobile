@@ -1,7 +1,6 @@
 import axios from "axios";
 import { MAP_BOX_KEY } from "../../../constants";
 
-
 const trail = () => {
 
 	async function fetchDirections(initialCoordinates, endCoordinates) {

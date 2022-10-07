@@ -1,15 +1,15 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-	message: '', 
+	message: "",
 	isActive: false
-}
+};
 
 const loadingSlice = createSlice({
-	name: 'loading',
+	name: "loading",
 	initialState,
 	reducers: {
-		
+
 		enableLoading(_, action) {
 			return {
 				message: action.payload,

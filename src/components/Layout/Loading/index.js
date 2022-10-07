@@ -1,6 +1,7 @@
 import React from "react";
-import { Logo } from "../../UI";
 import { useSelector } from "react-redux";
+
+import { Logo } from "../../UI";
 import { useTheme } from "styled-components";
 import { Modal, ActivityIndicator } from "react-native";
 import { Label, Container, ContainerIndicator } from "./styles";
