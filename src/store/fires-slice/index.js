@@ -19,7 +19,7 @@ const fires = createSlice({
 					const fireIndice = payload[key];
 
 					return {
-						uid: key,
+						id: key,
 						active: fireIndice.active,
 						brightness: fireIndice.brightness,
 						confidence: fireIndice.confidence,
@@ -27,7 +27,8 @@ const fires = createSlice({
 						latitude: fireIndice.longitude,
 						longitude: fireIndice.latitude,
 						userCreated: fireIndice.userCreated,
-						status: fireIndice.status
+						status: typeof(fireIndice.status) === "string" ?
+							JSON.parse(fireIndice.status) : fireIndice.status
 					};
 				});
 
