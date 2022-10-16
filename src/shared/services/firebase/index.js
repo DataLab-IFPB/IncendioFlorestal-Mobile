@@ -237,13 +237,16 @@ const firebase = () => {
 	}
 
 	async function removeEvidence(uid) {
-		const ref = database().ref(`/evidences/${uid}`);
-		ref.once("value")
-			.then(async (value) => {
-				const file = value.val().file;
-				await storage().ref(`/evidences/${file}`).delete();
-				ref.remove();
-			});
+		return new Promise((resolve) => {
+			const ref = database().ref(`/evidences/${uid}`);
+			ref.once("value")
+				.then(async (value) => {
+					const file = value.val().file;
+					await storage().ref(`/evidences/${file}`).delete();
+					ref.remove();
+					resolve();
+				});
+		});
 	}
 
 	return {

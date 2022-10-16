@@ -37,7 +37,7 @@ const Gallery = ({ navigation, route }) => {
 	const { enableLoading, disableLoading } = loaderActions;
 	const { getEvidences, getMedia, removeEvidence } = firebase();
 
-	const [medias, setMedia] = useState([]);
+	const [medias, setMedias] = useState([]);
 	const [configModal, setConfigModal] = useState({ show: false });
 	const [selectedMedia, setSelectedMedia] = useState({ id: null, media: "", path: "", info: "" });
 
@@ -64,13 +64,14 @@ const Gallery = ({ navigation, route }) => {
 
 	async function loadEvidencesOnline() {
 		dispatch(enableLoading("Carregando evidências"));
+		setMedias([]);
 
 		const data = await getEvidences(fire.id);
 		if (data) {
 			Object.keys(data).forEach(async (key, index) => {
 
 				const path = await getMedia(data[key].file);
-				medias.push({ path, id: key, ...data[key] });
+				setMedias((state) => [...state, { path, id: key, ...data[key] }]);
 
 				if (index === 0) {
 					setSelectedMedia({
@@ -90,7 +91,7 @@ const Gallery = ({ navigation, route }) => {
 		dispatch(enableLoading("Carregando evidências"));
 		const data = await getAllEvidenceByFireOffline(fire.id);
 		if (data[0]) {
-			setMedia(data);
+			setMedias(data);
 			setSelectedMedia({
 				id: data[0].id,
 				media: data[0].fileType,
@@ -117,7 +118,6 @@ const Gallery = ({ navigation, route }) => {
 		if (netInfo.isConnected) {
 			await removeEvidence(selectedMedia.id);
 			await loadEvidencesOnline();
-			dispatch(disableLoading());
 		} else {
 			try {
 				await fs.unlink(selectedMedia.path.split("///").pop());
@@ -132,7 +132,7 @@ const Gallery = ({ navigation, route }) => {
 	}
 
 	function clear() {
-		setMedia([]);
+		setMedias([]);
 		setSelectedMedia({
 			id: null, media: "", path: "", info: ""
 		});
