@@ -5,8 +5,7 @@ import { useDispatch } from "react-redux";
 import { useNetInfo } from "@react-native-community/netinfo";
 
 import firebase from "../../../shared/services/firebase";
-import { formatDateString } from "../../../shared/utils/formatDate";
-import watermelonDB from "../../../shared/services/watermelonDB";
+import { formatDateString, formatDatetime } from "../../../shared/utils/formatDate";
 import { loaderActions } from "../../../store/actions";
 
 import { FlatList, BackHandler } from "react-native";
@@ -27,16 +26,16 @@ import {
 	Title,
 	TitleLabel
 } from "./styles";
+import { deleteEvidenceByIdOffline, getAllEvidenceByFireOffline } from "../../../shared/services/realm";
 
 const Gallery = ({ navigation, route }) => {
 
 	const netInfo = useNetInfo();
 	const dispatch = useDispatch();
 
-	const { fireIndice } = route.params;
+	const { fire } = route.params;
 	const { enableLoading, disableLoading } = loaderActions;
 	const { getEvidences, getMedia, removeEvidence } = firebase();
-	const { fetchEvidencesOffline, removeEvidenceOffline } = watermelonDB();
 
 	const [medias, setMedia] = useState([]);
 	const [configModal, setConfigModal] = useState({ show: false });
@@ -55,15 +54,23 @@ const Gallery = ({ navigation, route }) => {
 			load();
 	}, [netInfo]);
 
-	async function loadEvidencesOnline() {
-		dispatch(enableLoading("Carregando evidências..."));
+	useEffect(() => {
+		const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+			navigation.navigate("Map");
+		});
 
-		const data = await getEvidences(fireIndice.uid);
+		return () => backHandler.remove();
+	}, []);
+
+	async function loadEvidencesOnline() {
+		dispatch(enableLoading("Carregando evidências"));
+
+		const data = await getEvidences(fire.id);
 		if (data) {
 			Object.keys(data).forEach(async (key, index) => {
 
 				const path = await getMedia(data[key].file);
-				medias.push({ path, uid: key, ...data[key] });
+				medias.push({ path, id: key, ...data[key] });
 
 				if (index === 0) {
 					setSelectedMedia({
@@ -80,19 +87,17 @@ const Gallery = ({ navigation, route }) => {
 	}
 
 	async function loadEvidencesOffline() {
-		dispatch(enableLoading("Carregando evidências..."));
-		const data = await fetchEvidencesOffline(fireIndice.id);
-
+		dispatch(enableLoading("Carregando evidências"));
+		const data = await getAllEvidenceByFireOffline(fire.id);
 		if (data[0]) {
 			setMedia(data);
 			setSelectedMedia({
 				id: data[0].id,
 				media: data[0].fileType,
 				path: data[0].path,
-				info: data[0].createdAt
+				info: formatDatetime(data[0].createdAt)
 			});
 		}
-
 		dispatch(disableLoading());
 	}
 
@@ -107,7 +112,7 @@ const Gallery = ({ navigation, route }) => {
 
 	async function onConfirmDelete() {
 		clear();
-		dispatch(enableLoading("Apagando evidência..."));
+		dispatch(enableLoading("Apagando evidência"));
 
 		if (netInfo.isConnected) {
 			await removeEvidence(selectedMedia.id);
@@ -116,14 +121,13 @@ const Gallery = ({ navigation, route }) => {
 		} else {
 			try {
 				await fs.unlink(selectedMedia.path.split("///").pop());
-				await removeEvidenceOffline(selectedMedia.id);
+				deleteEvidenceByIdOffline(selectedMedia.id);
 				loadEvidencesOffline();
 				dispatch(disableLoading());
 			} catch {
 				dispatch(disableLoading());
 			}
 		}
-
 		onCancelDelete();
 	}
 
@@ -143,16 +147,8 @@ const Gallery = ({ navigation, route }) => {
 	}
 
 	function onClose() {
-		navigation.navigate("Map", { fireIndice });
+		navigation.navigate("Map", { fire });
 	}
-
-	useEffect(() => {
-		const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
-			navigation.navigate("Map");
-		});
-
-		return () => backHandler.remove();
-	}, []);
 
 	return (
 		<Container>
@@ -201,7 +197,7 @@ const Gallery = ({ navigation, route }) => {
 				<FlatList
 					horizontal
 					data={medias}
-					keyExtractor={(item) => item.path}
+					keyExtractor={(item) => item.id}
 					renderItem={({ item }) => (
 						<ItemSlider
 							onPress={changeMediaHandler.bind(null, item)}

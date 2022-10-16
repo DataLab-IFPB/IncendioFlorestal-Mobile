@@ -118,6 +118,10 @@ const firebase = () => {
 
 		const newReference = database().ref("/fires").push();
 
+		if (typeof fireIndice.status === "string") {
+			fireIndice.status = JSON.parse(fireIndice.status);
+		}
+
 		return new Promise((resolve, eject) => {
 			newReference
 				.set(fireIndice)
@@ -131,7 +135,12 @@ const firebase = () => {
     * e cada índice, conterá um ou vários diretórios referenciando o usuário que
     * registrou a evidência, e a evidẽncia será salva de acordo com o tipo da midia.
     */
-	function registerNewEvidence(file, type, userRegistration, uidFireIndice) {
+	function registerNewEvidence(
+		file,
+		type,
+		userRegistration,
+		uidFireIndice
+	) {
 
 		const fileSplit = file.split("/");
 		const nameFile = fileSplit[fileSplit.length - 1];

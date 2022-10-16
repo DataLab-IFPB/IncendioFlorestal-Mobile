@@ -4,10 +4,10 @@ import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { useNetInfo } from "@react-native-community/netinfo";
 
-import watermelonDB from "../../../shared/services/watermelonDB";
 import firebase from "../../../shared/services/firebase";
 import weather from "../../../shared/services/weather";
 import { formatDatetime, formatUTC } from "../../../shared/utils/formatDate";
+import { updateFireStatusOfflice } from "../../../shared/services/realm";
 import { firesActions, loaderActions } from "../../../store/actions";
 
 import { AddEvidence } from "../AddEvidence";
@@ -34,7 +34,7 @@ import {
 	statusIndicador,
 } from "./styles";
 
-const FireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
+const FireDetails = ({ fire, isVisible, onClose }) => {
 	const theme = useTheme();
 	const netInfo = useNetInfo();
 	const navigation = useNavigation();
@@ -44,7 +44,6 @@ const FireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 	const LABELS_STATUS = ["Registrado", "Em Atendimento", "Finalizado"];
 
 	const { getForecast } = weather();
-	const { updateStatusOffline } = watermelonDB().fireIndiceManagerDB();
 	const { updateStatusFireIndice, getFiresIndices } = firebase();
 	const { loadFires, updateFire } = firesActions;
 	const { enableLoading, disableLoading } = loaderActions;
@@ -56,17 +55,17 @@ const FireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 	// Obter dados climáticos
 	useEffect(() => {
 		const loadForecast = async () => {
-			if (fireIndice)
-				setCurrentWeather(await getForecast(fireIndice.latitude, fireIndice.longitude));
+			if (fire)
+				setCurrentWeather(await getForecast(fire.latitude, fire.longitude));
 		};
 
 		if (netInfo.isConnected)
 			loadForecast();
-	}, [netInfo.isConnected, fireIndice]);
+	}, [netInfo.isConnected, fire]);
 
 	// Obter status atual
 	useEffect(() => {
-		Object.values(fireIndice.status).forEach((status, index) => {
+		Object.values(fire.status).forEach((status, index) => {
 			if (status)
 				setCurrentStatus(index);
 		});
@@ -74,16 +73,16 @@ const FireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 
 	function openGallery() {
 		onClose();
-		navigation.navigate("Gallery", { fireIndice });
+		navigation.navigate("Gallery", { fire });
 	}
 
 	function openTrailManager() {
 		onClose();
-		navigation.navigate("TrailManager", { fireIndice });
+		navigation.navigate("TrailManager", { fire });
 	}
 
 	function updateStatusHandler(position) {
-		const status = { ...fireIndice.status };
+		const status = { ...fire.status };
 
 		Object.keys(status).forEach((key, index) => {
 			if (index === position && position > currentStatus) {
@@ -104,7 +103,7 @@ const FireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 	async function onConfirmUpdateStatus(position) {
 		dispatch(enableLoading("Atualizando status..."));
 
-		const status = { ...fireIndice.status };
+		const status = { ...fire.status };
 
 		const update = (key, index) => {
 			status[key] = formatDatetime(new Date());
@@ -120,12 +119,12 @@ const FireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 		});
 
 		if (netInfo.isConnected) {
-			await updateStatusFireIndice(fireIndice.uid, status);
+			await updateStatusFireIndice(fire.id, status);
 			const firesIndicesUpdated = await getFiresIndices();
 			dispatch(loadFires(firesIndicesUpdated));
 		} else {
-			await updateStatusOffline(fireIndice.id, JSON.stringify(status));
-			dispatch(updateFire({ ...fireIndice, status }));
+			updateFireStatusOfflice(fire.id, JSON.stringify(status));
+			dispatch(updateFire({ ...fire, status }));
 		}
 
 		onCancelUpdateStatus();
@@ -159,17 +158,17 @@ const FireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 						<SimpleLineIcons
 							name='fire'
 							size={50}
-							color={fireIndice.userCreated ?
+							color={fire.userCreated ?
 								theme.colors.icon["accent-color-v2"] : theme.colors.icon["accent-color-v1"]}
 						/>
 					</ContainerIcon>
 
 					<Label>Registrado em:</Label>
-					<Label isBold>{formatUTC(fireIndice.status.registered_at.split(" ")[0])}</Label>
+					<Label isBold>{formatUTC(fire.status.registered_at.split(" ")[0])}</Label>
 
 					<Space size={10}/>
 
-					<Label>Ocorreu às: {fireIndice.status.registered_at.split(" ")[1]}</Label>
+					<Label>Ocorreu às: {fire.status.registered_at.split(" ")[1]}</Label>
 
 					<ContainerStepIndicador>
 						<StepIndicator
@@ -221,7 +220,7 @@ const FireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 					<Space size={8}/>
 
 					<Label isBold>Adicionar Evidências</Label>
-					<AddEvidence fireIndice={fireIndice}/>
+					<AddEvidence fire={fire}/>
 
 				</Container>
 			</RootContainer>
@@ -229,4 +228,4 @@ const FireIndiceDetails = ({ fireIndice, isVisible, onClose }) => {
 	);
 };
 
-export { FireIndiceDetails };
+export { FireDetails };

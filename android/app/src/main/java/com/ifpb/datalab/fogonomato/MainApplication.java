@@ -1,6 +1,7 @@
 package com.ifpb.datalab.fogonomato;
 
 // IMPORT TO USE REACT-NATIVE-VIDEO
+import io.realm.react.RealmReactPackage;
 import com.brentvatne.react.ReactVideoPackage;
 import android.app.Application;
 import android.content.Context;

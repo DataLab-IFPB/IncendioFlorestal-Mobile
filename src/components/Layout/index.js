@@ -3,7 +3,7 @@ export * from "./Filter";
 export * from "./Loader";
 export * from "./Forecast";
 export * from "./AddEvidence";
-export * from "./FireIndiceDetails";
+export * from "./FireDetails";
 export * from "./ModalWarning";
 export * from "./ModalNotification";
 export * from "./ModalConfirmation";

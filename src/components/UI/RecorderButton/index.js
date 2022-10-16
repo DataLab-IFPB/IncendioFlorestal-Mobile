@@ -3,10 +3,9 @@ import { useDispatch } from "react-redux";
 import { useNetInfo } from "@react-native-community/netinfo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { RECORDER_ROUTER_INITIAL_COORDINATES } from "../../../constants";
+import { START_COORDINATES } from "../../../constants";
 import firebase from "../../../shared/services/firebase";
-import watermelonDB from "../../../shared/services/watermelonDB";
-import { loadingActions } from "../../../store/actions";
+import { loaderActions } from "../../../store/actions";
 
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
@@ -17,24 +16,24 @@ import {
 	TouchableEnd,
 	TouchableStart
 } from "./styles";
+import { saveTrailOffline } from "../../../shared/services/realm";
 
 const RecorderButton = ({
 	currentCoordinates,
 	userRegistration,
-	uidFireIndice,
+	fireId,
 	onCancel
 }) => {
 	const dispatch = useDispatch();
 	const netInfo = useNetInfo();
 
 	const { registerNewTrail } = firebase();
-	const { saveTrailOffline } = watermelonDB().trailManagerDB();
-	const { enableLoading, disableLoading } = loadingActions;
+	const { enableLoading, disableLoading } = loaderActions;
 	const [configDisplay, setConfigDisplay] = useState({ start: true, end: false });
 
 	function handleStartRecorderTrail() {
 		AsyncStorage.setItem(
-			RECORDER_ROUTER_INITIAL_COORDINATES,
+			START_COORDINATES,
 			JSON.stringify(currentCoordinates)
 		);
 		setConfigDisplay({ start: false, end: true });
@@ -45,24 +44,27 @@ const RecorderButton = ({
 		setConfigDisplay({ start: false, end: false });
 
 		const data = {
-			initial_coordinates: JSON.parse(
-				await AsyncStorage.getItem(RECORDER_ROUTER_INITIAL_COORDINATES)
+			start_coordinates: JSON.parse(
+				await AsyncStorage.getItem(START_COORDINATES)
 			),
 			end_coordinates: currentCoordinates
 		};
 
 		if (netInfo.isConnected) {
-			await registerNewTrail(uidFireIndice, userRegistration, data);
+			await registerNewTrail(fireId, userRegistration, data);
 		} else {
-			await saveTrailOffline(data, uidFireIndice);
+			saveTrailOffline({
+				fireId,
+				...data
+			});
 		}
 
-		cancelHandler();
+		handleCancel();
 		dispatch(disableLoading());
 	}
 
-	function cancelHandler() {
-		AsyncStorage.removeItem(RECORDER_ROUTER_INITIAL_COORDINATES);
+	function handleCancel() {
+		AsyncStorage.removeItem(START_COORDINATES);
 		onCancel();
 	}
 
@@ -77,7 +79,7 @@ const RecorderButton = ({
 							INICIAR TRILHA
 						</Label>
 					</TouchableStart>
-					<TouchableCancel onPress={cancelHandler}>
+					<TouchableCancel onPress={handleCancel}>
 						<Label>
 							<AntDesign name="close" size={20}/>
 						</Label>
