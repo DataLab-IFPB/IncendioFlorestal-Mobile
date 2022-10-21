@@ -44,7 +44,7 @@ const Filter = ({
 	}
 
 	return (
-		<Modal transparent={true} visible={visible} animationType={"fade"}>
+		<Modal transparent={true} visible={visible} animationType={"fade"} onRequestClose={closeModal}>
 			<RootContainer>
 				<Container>
 

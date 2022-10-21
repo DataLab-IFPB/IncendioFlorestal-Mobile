@@ -71,9 +71,11 @@ const Map = ({ route }) => {
 	const [mapZoomIsEnabled, setMapZoomIsEnabled] = useState(true);
 	const [sourceTrail, setSourceTrail] = useState();
 	const [showModalFilter, setShowModalFilter] = useState(false);
+	const [showSubMenu, setShowSubMenu] = useState(false);
 	const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Street);
 	const [notification, setNofication] = useState();
 	const [error, setError] = useState("");
+	const [showQuitPrompt, setShowQuitPrompt] = useState(false);
 	const [fireDetails, setFireDetails] = useState(null);
 	const [coordsNewFire, setCoordsNewFire] = useState(null);
 	const [recorderRouter, setRecorderRouter] = useState(null);
@@ -195,10 +197,19 @@ const Map = ({ route }) => {
 	}, [netInfo.isConnected]);
 
 	useEffect(() => {
-		BackHandler.addEventListener("hardwareBackPress", () => {
+		const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+			if (mapManagerIsOpen)
+				setMapManagerIsOpen(false);
+			else if(showSubMenu)
+				setShowSubMenu(false);
+			else
+				setShowQuitPrompt(true);
+
 			return true;
 		});
-	}, []);
+
+		return () => backHandler.remove();
+	}, [mapManagerIsOpen, showSubMenu]);
 
 	// Carregar dados
 	useEffect(() => {
@@ -510,6 +521,15 @@ const Map = ({ route }) => {
 				/>
 			)}
 
+			{showQuitPrompt && (
+				<ModalConfirmation
+					isVisible={showQuitPrompt}
+					message={"Tem certeza que deseja sair do app?"}
+					onConfirm={() => BackHandler.exitApp()}
+					onCancel={() => setShowQuitPrompt(false)}
+				/>
+			)}
+
 			<ModalConfirmation
 				isVisible={!!coordsNewFire}
 				message={
@@ -526,6 +546,8 @@ const Map = ({ route }) => {
 
 				{!mapManagerIsOpen && (
 					<Menu
+						showSubMenu={showSubMenu}
+						setShowSubMenu={setShowSubMenu}
 						handleLocation={returnToLocaleHandler}
 						handleFilter={() => setShowModalFilter(true)}
 						onRecorderRouter={() => setRecorderRouter((state) => !state)}

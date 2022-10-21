@@ -150,6 +150,7 @@ const TrailManager = ({ navigation, route }) => {
 	useEffect(() => {
 		const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
 			navigation.navigate("Map");
+			return true;
 		});
 
 		return () => backHandler.remove();

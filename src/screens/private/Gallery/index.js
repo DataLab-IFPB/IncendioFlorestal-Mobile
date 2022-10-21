@@ -54,14 +54,6 @@ const Gallery = ({ navigation, route }) => {
 			load();
 	}, [netInfo]);
 
-	useEffect(() => {
-		const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
-			navigation.navigate("Map");
-		});
-
-		return () => backHandler.remove();
-	}, []);
-
 	async function loadEvidencesOnline() {
 		dispatch(enableLoading("Carregando evidências"));
 		setMedias([]);
@@ -149,6 +141,15 @@ const Gallery = ({ navigation, route }) => {
 	function onClose() {
 		navigation.navigate("Map", { fire });
 	}
+
+	useEffect(() => {
+		const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+			onClose();
+			return true;
+		});
+
+		return () => backHandler.remove();
+	}, []);
 
 	return (
 		<Container>

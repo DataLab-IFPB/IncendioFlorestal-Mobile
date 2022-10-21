@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 import MapboxGL from "@react-native-mapbox-gl/maps";
 
 import { MenuButton } from "../../UI";
@@ -9,13 +9,14 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { Container, SubMenuOption, SubMenuLabel, SubMenu } from "./styles";
 
 const Menu = ({
+	showSubMenu,
+	setShowSubMenu,
 	handleLocation,
 	handleFilter,
 	handleMapStyle,
 	handleMapManager
 }) => {
 	const subMenuAnimation = useRef(new Animated.Value(0)).current;
-	const [showSubMenu, setShowSubMenu] = useState(false);
 
 	function fadeInSubMenu() {
 		Animated.timing(subMenuAnimation, {

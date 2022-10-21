@@ -140,7 +140,7 @@ const FireDetails = ({ fire, isVisible, onClose }) => {
 	}
 
 	return (
-		<Modal transparent animationType="slide" visible={isVisible}>
+		<Modal transparent animationType="slide" visible={isVisible} onRequestClose={onClose}>
 			<RootContainer>
 				{configModal.show && (
 					<ModalConfirmation

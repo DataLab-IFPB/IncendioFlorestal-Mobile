@@ -20,6 +20,7 @@ const ModalConfirmation = ({
 			visible={isVisible}
 			transparent={true}
 			animationType="fade"
+			onRequestClose={onCancel}
 		>
 			<RootContainer>
 				<Container>

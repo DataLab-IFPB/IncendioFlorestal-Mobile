@@ -128,6 +128,7 @@ const DownloadedPacks = () => {
 	useEffect(() => {
 		const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
 			handleCloseScreen();
+			return true;
 		});
 		return () => backHandler.remove();
 	}, []);
