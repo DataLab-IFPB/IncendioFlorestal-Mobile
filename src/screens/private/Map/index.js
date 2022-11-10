@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import React, { useEffect, useRef, useState } from "react";
 import Geolocation from "react-native-geolocation-service";
-import MapboxGL, { Logger } from "@react-native-mapbox-gl/maps";
+import MapboxGL, { Logger } from "@rnmapbox/maps";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import { useNetInfo } from "@react-native-community/netinfo";
@@ -43,6 +43,7 @@ import { clearAllFiresOffline, getAllEvidenceByFireOffline, getAllFiresOffline, 
 
 const Map = ({ route }) => {
 
+	MapboxGL.setWellKnownTileServer("Mapbox");
 	MapboxGL.setAccessToken(MAP_BOX_KEY);
 
 	const dispatch = useDispatch();
@@ -156,7 +157,7 @@ const Map = ({ route }) => {
 					await registerNewEvidence(
 						evidence.path,
 						evidence.fileType,
-						user.registration, 
+						user.registration,
 						uidFireIndice
 					);
 				});

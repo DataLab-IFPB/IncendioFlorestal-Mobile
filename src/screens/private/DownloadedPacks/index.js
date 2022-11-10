@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { BackHandler } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import MapboxGL from "@react-native-mapbox-gl/maps";
+import MapboxGL from "@rnmapbox/maps";
 
 import { loaderActions } from "../../../store/actions";
 

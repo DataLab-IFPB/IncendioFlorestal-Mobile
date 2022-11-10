@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import React, { useRef } from "react";
-import MapboxGL from "@react-native-mapbox-gl/maps";
+import MapboxGL from "@rnmapbox/maps";
 
 import { MenuButton } from "../../UI";
 import { Text, Animated } from "react-native";
