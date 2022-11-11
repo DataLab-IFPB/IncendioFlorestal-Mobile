@@ -363,10 +363,8 @@ const Map = ({ route }) => {
 			firesIndicesActivated.map((register, index) => {
 				if (register.active && !register.status.finished_at) {
 					return (
-						<MapboxGL.PointAnnotation
+						<MapboxGL.MarkerView
 							id={`${index}`}
-							onSelected={() => showFireDetails(register)}
-							onDeselected={() => showFireDetails(register)}
 							key={index}
 							coordinate={[
 								register.latitude,
@@ -374,7 +372,9 @@ const Map = ({ route }) => {
 							]}
 						>
 							{register.userCreated ? (
-								<TouchableOpacity>
+								<TouchableOpacity
+									onPress={() => showFireDetails(register)}
+								>
 									<IconSimple
 										name='fire'
 										size={30}
@@ -382,7 +382,9 @@ const Map = ({ route }) => {
 									/>
 								</TouchableOpacity>
 							) : (
-								<TouchableOpacity>
+								<TouchableOpacity
+									onPress={() => showFireDetails(register)}
+								>
 									<IconSimple
 										name='fire'
 										size={30}
@@ -393,7 +395,7 @@ const Map = ({ route }) => {
 									/>
 								</TouchableOpacity>
 							)}
-						</MapboxGL.PointAnnotation>
+						</MapboxGL.MarkerView>
 					);
 				}
 			})
