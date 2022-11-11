@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import Slider from "@react-native-community/slider";
+import Slider from "react-native-slider";
 
 import { firesActions } from "../../../store/actions";
 
@@ -44,7 +44,12 @@ const Filter = ({
 	}
 
 	return (
-		<Modal transparent={true} visible={visible} animationType={"fade"} onRequestClose={closeModal}>
+		<Modal
+			transparent={true}
+			visible={visible}
+			animationType="fade"
+			onRequestClose={closeModal}
+		>
 			<RootContainer>
 				<Container>
 
@@ -61,9 +66,9 @@ const Filter = ({
 							minimumValue={1}
 							maximumValue={2}
 							style={{width: "100%"}}
-							thumbTintColor={"#000"}
-							minimumTrackTintColor='#000'
-							maximumTrackTintColor='#000'
+							thumbTintColor="#454545"
+							minimumTrackTintColor='#454545'
+							maximumTrackTintColor='#454545'
 							value={filterDays}
 							onValueChange={handleUpdateDays}
 						/>

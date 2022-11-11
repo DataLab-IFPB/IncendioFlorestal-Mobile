@@ -225,7 +225,6 @@ const Map = ({ route }) => {
 
 		if (netInfo.isConnected !== null)
 			fetchData();
-
 	}, [netInfo]);
 
 	useEffect(() => {
@@ -318,9 +317,7 @@ const Map = ({ route }) => {
 	}
 
 	async function saveFireIndice(fireIndice) {
-
 		dispatch(enableLoading("Salvando novo registro"));
-
 		const weather = await getForecast(fireIndice.longitude, fireIndice.latitude);
 		const newIndice = {
 			brightness: null,
@@ -359,14 +356,6 @@ const Map = ({ route }) => {
 		}
 
 		setFireDetails(copy);
-	}
-
-	function updateDaysSliderHandler(days) {
-		setFilterDays(days);
-	}
-
-	function closeModalFilter() {
-		setShowModalFilter(false);
 	}
 
 	function _renderFires() {
@@ -481,14 +470,12 @@ const Map = ({ route }) => {
 		<>
 			<StatusBar barStyle='light-content' backgroundColor='#000' />
 
-			{showModalFilter && (
-				<Filter
-					filterDays={filterDays}
-					visible={showModalFilter}
-					closeModal={closeModalFilter}
-					onUpdateDaysSlider={updateDaysSliderHandler}
-				/>
-			)}
+			<Filter
+				filterDays={filterDays}
+				visible={showModalFilter}
+				closeModal={() => setShowModalFilter(false)}
+				onUpdateDaysSlider={setFilterDays}
+			/>
 
 			{	!!fireDetails && (
 				<FireDetails
