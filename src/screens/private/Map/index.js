@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import Geolocation from "react-native-geolocation-service";
 import MapboxGL, { Logger } from "@rnmapbox/maps";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -12,6 +12,14 @@ import firebase  from "../../../shared/services/firebase";
 import weather from "../../../shared/services/weather";
 import { firesActions, loaderActions } from "../../../store/actions";
 import { LineString } from "../../../helpers";
+import { createFireOutbreak } from "../../../helpers/fires";
+import {
+	clearAllFiresOffline,
+	getAllEvidenceByFireOffline,
+	getAllFiresOffline,
+	getAllTrailsByFireOffline,
+	saveFireOffline
+} from "../../../shared/services/realm";
 
 import { useTheme } from "styled-components";
 import { RecorderButton } from "../../../components/UI";
@@ -38,8 +46,6 @@ import {
 	Notification,
 	TextNotification
 } from "./styles";
-import { createFireOutbreak } from "../../../helpers/fires";
-import { clearAllFiresOffline, getAllEvidenceByFireOffline, getAllFiresOffline, getAllTrailsByFireOffline, saveFireOffline } from "../../../shared/services/realm";
 
 const Map = ({ route }) => {
 
@@ -99,7 +105,8 @@ const Map = ({ route }) => {
 	});
 
 	const user = useSelector((state) => state.auth);
-	const firesIndicesActivated = useSelector((state) => state.fires.filtered);
+	const fires = useSelector((state) => state.fires.filtered);
+	const activeFires = useMemo(() => fires, [fires]);
 
 	Logger.setLogCallback((log) => {
 		const { message } = log;
@@ -360,11 +367,10 @@ const Map = ({ route }) => {
 
 	function _renderFires() {
 		return (
-			firesIndicesActivated.map((register, index) => {
+			activeFires.map((register, index) => {
 				if (register.active && !register.status.finished_at) {
 					return (
 						<MapboxGL.MarkerView
-							id={`${index}`}
 							key={index}
 							coordinate={[
 								register.latitude,
