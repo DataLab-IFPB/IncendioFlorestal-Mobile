@@ -34,7 +34,7 @@ import {
 	statusIndicador,
 } from "./styles";
 
-const FireDetails = ({ fire, isVisible, onClose }) => {
+const FireDetails = ({ fire, onClose }) => {
 	const theme = useTheme();
 	const netInfo = useNetInfo();
 	const navigation = useNavigation();
@@ -140,7 +140,7 @@ const FireDetails = ({ fire, isVisible, onClose }) => {
 	}
 
 	return (
-		<Modal transparent animationType="slide" visible={isVisible} onRequestClose={onClose}>
+		<Modal transparent animationType="slide" visible onRequestClose={onClose}>
 			<RootContainer>
 				{configModal.show && (
 					<ModalConfirmation

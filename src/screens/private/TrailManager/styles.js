@@ -41,7 +41,7 @@ export const Title = styled.Text`
 	font-size: 18px;
 	letter-spacing: 3px;
 	text-align: center;
-	width: 85%;
+	width: 80%;
 `;
 
 export const Card = styled.View`

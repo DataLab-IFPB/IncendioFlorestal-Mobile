@@ -6,3 +6,4 @@ export * from "./ActionButton";
 export * from "./MenuButton";
 export * from "./RecorderButton";
 export * from "./IconButton";
+export * from "./FirePoint";

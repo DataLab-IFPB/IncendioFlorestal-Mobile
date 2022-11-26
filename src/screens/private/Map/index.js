@@ -1,13 +1,13 @@
 /* eslint-disable no-undef */
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import Geolocation from "react-native-geolocation-service";
 import MapboxGL, { Logger } from "@rnmapbox/maps";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { useDispatch, useSelector } from "react-redux";
 
-import { PERMISSION_LOCATION_USE, MAP_BOX_KEY } from "../../../constants";
+import { usePermission } from "../../../hooks/usePermission";
+import { MAP_BOX_KEY } from "../../../constants";
 import firebase  from "../../../shared/services/firebase";
 import weather from "../../../shared/services/weather";
 import { firesActions, loaderActions } from "../../../store/actions";
@@ -21,12 +21,10 @@ import {
 	saveFireOffline
 } from "../../../shared/services/realm";
 
-import { useTheme } from "styled-components";
-import { RecorderButton } from "../../../components/UI";
+import { RecorderButton, FirePoint } from "../../../components/UI";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import IconSimple from "react-native-vector-icons/SimpleLineIcons";
-import { BackHandler, StatusBar, TouchableOpacity } from "react-native";
+import { BackHandler, StatusBar } from "react-native";
 import {
 	Menu,
 	Filter,
@@ -55,7 +53,7 @@ const Map = ({ route }) => {
 	const dispatch = useDispatch();
 	const netInfo = useNetInfo();
 	const mapRef = useRef();
-	const theme = useTheme();
+	const { verifyPermission } = usePermission();
 	const offlineManager = MapboxGL.offlineManager;
 
 	const { getForecast } = weather();
@@ -80,7 +78,6 @@ const Map = ({ route }) => {
 	const [showModalFilter, setShowModalFilter] = useState(false);
 	const [showSubMenu, setShowSubMenu] = useState(false);
 	const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Street);
-	const [notification, setNofication] = useState();
 	const [error, setError] = useState("");
 	const [showQuitPrompt, setShowQuitPrompt] = useState(false);
 	const [fireDetails, setFireDetails] = useState(null);
@@ -110,27 +107,13 @@ const Map = ({ route }) => {
 
 	Logger.setLogCallback((log) => {
 		const { message } = log;
-
-		// expected warnings - see https://github.com/mapbox/mapbox-gl-native/issues/15341#issuecomment-522889062
 		return message.match("Request failed due to a permanent error: Canceled") ||
 			message.match("Request failed due to a permanent error: Socket Closed");
 	});
 
-	// Monitor do status da rede do dispositivo
-	useEffect(() => {
-		if (netInfo.isConnected !== null && !netInfo.isConnected) {
-			setNofication(
-				`Sem Conexão!
-        \nTodos os registros cadastrados manualmente serão enviado para a base de dados ao se conectar novamente.`
-			);
-		}
-	}, [netInfo]);
-
 	// Exibir trilhas
 	useEffect(() => {
 		const params = route.params;
-
-
 		if (params) {
 			const { recoderTrailIsActive, fire, coordinates } = params;
 			if (recoderTrailIsActive) {
@@ -200,7 +183,6 @@ const Map = ({ route }) => {
 				}
 			}
 		};
-
 		verify();
 	}, [netInfo.isConnected]);
 
@@ -235,17 +217,6 @@ const Map = ({ route }) => {
 	}, [netInfo]);
 
 	useEffect(() => {
-		async function verifyPermission() {
-			const permission = await AsyncStorage.getItem(PERMISSION_LOCATION_USE);
-
-			if (!permission) {
-				const request = await MapboxGL.requestAndroidLocationPermissions();
-				await AsyncStorage.setItem(
-					PERMISSION_LOCATION_USE,
-					JSON.stringify(request),
-				);
-			}
-		}
 		verifyPermission();
 	}, []);
 
@@ -355,59 +326,6 @@ const Map = ({ route }) => {
 		]);
 	}
 
-	function showFireDetails(fire) {
-		const copy = JSON.parse(JSON.stringify(fire));
-
-		if (typeof copy.status === "string") {
-			copy.status = JSON.parse(copy.status);
-		}
-
-		setFireDetails(copy);
-	}
-
-	function _renderFires() {
-		return (
-			activeFires.map((register, index) => {
-				if (register.active && !register.status.finished_at) {
-					return (
-						<MapboxGL.MarkerView
-							key={index}
-							coordinate={[
-								register.latitude,
-								register.longitude
-							]}
-						>
-							{register.userCreated ? (
-								<TouchableOpacity
-									onPress={() => showFireDetails(register)}
-								>
-									<IconSimple
-										name='fire'
-										size={30}
-										color={theme.colors.icon["accent-color-v2"]}
-									/>
-								</TouchableOpacity>
-							) : (
-								<TouchableOpacity
-									onPress={() => showFireDetails(register)}
-								>
-									<IconSimple
-										name='fire'
-										size={30}
-										color={register.brightness >= 500 ?
-											theme.colors.icon["accent-color-v1"] :
-											theme.colors.icon["accent-color-v3"]
-										}
-									/>
-								</TouchableOpacity>
-							)}
-						</MapboxGL.MarkerView>
-					);
-				}
-			})
-		);
-	}
-
 	async function generateDownloadArea(event) {
 		const bounds = event.properties.visibleBounds;
 		const [northeast, southwest] = bounds;
@@ -474,21 +392,38 @@ const Map = ({ route }) => {
 		});
 	}
 
+	const renderFires = useCallback(() => {
+		return (
+			activeFires.map((register) => {
+				if (register.active && !register.status.finished_at) {
+					return (
+						<FirePoint
+							key={register.id}
+							register={register}
+							setFireDetails={setFireDetails}
+						/>
+					);
+				}
+			})
+		);
+	});
+
 	return (
 		<>
 			<StatusBar barStyle='light-content' backgroundColor='#000' />
+			<ModalNotification />
 
-			<Filter
-				filterDays={filterDays}
-				visible={showModalFilter}
-				closeModal={() => setShowModalFilter(false)}
-				onUpdateDaysSlider={setFilterDays}
-			/>
+			{showModalFilter && (
+				<Filter
+					filterDays={filterDays}
+					closeModal={() => setShowModalFilter(false)}
+					onUpdateDaysSlider={setFilterDays}
+				/>
+			)}
 
-			{	!!fireDetails && (
+			{!!fireDetails && (
 				<FireDetails
 					fire={fireDetails}
-					isVisible={!!fireDetails}
 					onClose={() => setFireDetails(null)}
 				/>
 			)}
@@ -500,12 +435,6 @@ const Map = ({ route }) => {
 					onConfirm={() => setError("")}
 				/>
 			)}
-
-			<ModalNotification
-				isVisible={!!notification}
-				message={notification}
-				onConfirm={() => setNofication("")}
-			/>
 
 			{inputModal.show && (
 				<ModalInput
@@ -520,7 +449,7 @@ const Map = ({ route }) => {
 			{showQuitPrompt && (
 				<ModalConfirmation
 					isVisible={showQuitPrompt}
-					message={"Tem certeza que deseja sair do app?"}
+					message={"Tem certeza que deseja sair do aplicativo?"}
 					onConfirm={() => BackHandler.exitApp()}
 					onCancel={() => setShowQuitPrompt(false)}
 				/>
@@ -624,7 +553,7 @@ const Map = ({ route }) => {
 						renderMode='native'
 					/>
 
-					{_renderFires()}
+					{renderFires()}
 				</MapboxGL.MapView>
 
 				{mapManagerIsOpen && (

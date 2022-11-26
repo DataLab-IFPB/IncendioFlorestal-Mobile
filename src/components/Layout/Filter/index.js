@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import Slider from "react-native-slider";
 
@@ -16,7 +16,6 @@ import {
 } from "./styles";
 
 const Filter = ({
-	visible,
 	closeModal,
 	filterDays,
 	onUpdateDaysSlider
@@ -27,34 +26,35 @@ const Filter = ({
 	const { fireFilter } = firesActions;
 
 	const [days, setDays] = useState(filterDays);
+	const [load, setLoad] = useState(false);
 	const [initialized, setInitialized] = useState(false);
 
-	function filterIndices() {
-		onUpdateDaysSlider(days);
-		dispatch(fireFilter({ days }));
-		closeModal();
-	}
+	useEffect(() => {
+		if (load) {
+			onUpdateDaysSlider(days);
+			dispatch(fireFilter({ days }));
+			closeModal();
+			setLoad(false);
+		}
+	}, [load]);
 
 	function handleUpdateDays(days) {
 		if (initialized) {
 			setDays(days);
 		}
-
 		setInitialized(true);
 	}
 
 	return (
 		<Modal
 			transparent={true}
-			visible={visible}
+			visible
 			animationType="fade"
 			onRequestClose={closeModal}
 		>
 			<RootContainer>
 				<Container>
-
 					<Logo/>
-
 					<Label>{"Filtrar Registros\nde incêndios"}</Label>
 
 					<ContainerSlider>
@@ -75,7 +75,12 @@ const Filter = ({
 					</ContainerSlider>
 
 					<ContainerOptions>
-						<ModalButton highlighted message="filtrar" onPress={filterIndices}/>
+						<ModalButton
+							highlighted
+							message="filtrar"
+							load={load}
+							onPress={() => setLoad(true)}
+						/>
 						<ModalButton message="cancelar" onPress={closeModal}/>
 					</ContainerOptions>
 
