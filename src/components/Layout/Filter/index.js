@@ -1,9 +1,11 @@
-import React, { useState } from "react";
-import Slider from "@react-native-community/slider";
-import { Modal } from "react-native";
+import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
+import Slider from "react-native-slider";
+
+import { firesActions } from "../../../store/actions";
+
+import { Modal } from "react-native";
 import { Logo, ModalButton } from "../../UI";
-import { firesIndicesActions } from "../../../store/actions";
 import {
 	RootContainer,
 	Container,
@@ -13,36 +15,46 @@ import {
 	LabelSlider
 } from "./styles";
 
-const Filter = ({ visible, closeModal, filterDays, onUpdateDaysSlider }) => {
+const Filter = ({
+	closeModal,
+	filterDays,
+	onUpdateDaysSlider
+}) => {
 
 	const dispatch = useDispatch();
 
-	const { filterFireIndices } = firesIndicesActions;
+	const { fireFilter } = firesActions;
 
 	const [days, setDays] = useState(filterDays);
+	const [load, setLoad] = useState(false);
 	const [initialized, setInitialized] = useState(false);
 
-	function filterIndices() {
-		onUpdateDaysSlider(days);
-		dispatch(filterFireIndices({ days }));
-		closeModal();
-	}
+	useEffect(() => {
+		if (load) {
+			onUpdateDaysSlider(days);
+			dispatch(fireFilter({ days }));
+			closeModal();
+			setLoad(false);
+		}
+	}, [load]);
 
 	function handleUpdateDays(days) {
 		if (initialized) {
 			setDays(days);
 		}
-
 		setInitialized(true);
 	}
 
 	return (
-		<Modal transparent={true} visible={visible} animationType={"fade"}>
+		<Modal
+			transparent={true}
+			visible
+			animationType="fade"
+			onRequestClose={closeModal}
+		>
 			<RootContainer>
 				<Container>
-
 					<Logo/>
-
 					<Label>{"Filtrar Registros\nde incêndios"}</Label>
 
 					<ContainerSlider>
@@ -54,16 +66,21 @@ const Filter = ({ visible, closeModal, filterDays, onUpdateDaysSlider }) => {
 							minimumValue={1}
 							maximumValue={2}
 							style={{width: "100%"}}
-							thumbTintColor={"#000"}
-							minimumTrackTintColor='#000'
-							maximumTrackTintColor='#000'
+							thumbTintColor="#454545"
+							minimumTrackTintColor='#454545'
+							maximumTrackTintColor='#454545'
 							value={filterDays}
 							onValueChange={handleUpdateDays}
 						/>
 					</ContainerSlider>
 
 					<ContainerOptions>
-						<ModalButton highlighted message="filtrar" onPress={filterIndices}/>
+						<ModalButton
+							highlighted
+							message="filtrar"
+							load={load}
+							onPress={() => setLoad(true)}
+						/>
 						<ModalButton message="cancelar" onPress={closeModal}/>
 					</ContainerOptions>
 

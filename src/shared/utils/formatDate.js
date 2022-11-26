@@ -1,7 +1,6 @@
 import moment from "moment";
 
 function formatUTC(date) {
-
 	if (date === null || date === undefined) {
 		return " - ";
 	}

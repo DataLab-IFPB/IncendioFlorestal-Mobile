@@ -1,6 +1,7 @@
 import storage from "@react-native-firebase/storage";
 import auth from "@react-native-firebase/auth";
 import database from "@react-native-firebase/database";
+
 import { formatDatetime, formatISO } from "../../utils/formatDate";
 
 const firebase = () => {
@@ -117,6 +118,10 @@ const firebase = () => {
 
 		const newReference = database().ref("/fires").push();
 
+		if (typeof fireIndice.status === "string") {
+			fireIndice.status = JSON.parse(fireIndice.status);
+		}
+
 		return new Promise((resolve, eject) => {
 			newReference
 				.set(fireIndice)
@@ -130,7 +135,12 @@ const firebase = () => {
     * e cada índice, conterá um ou vários diretórios referenciando o usuário que
     * registrou a evidência, e a evidẽncia será salva de acordo com o tipo da midia.
     */
-	function registerNewEvidence(file, type, userRegistration, uidFireIndice) {
+	function registerNewEvidence(
+		file,
+		type,
+		userRegistration,
+		uidFireIndice
+	) {
 
 		const fileSplit = file.split("/");
 		const nameFile = fileSplit[fileSplit.length - 1];
@@ -227,13 +237,16 @@ const firebase = () => {
 	}
 
 	async function removeEvidence(uid) {
-		const ref = database().ref(`/evidences/${uid}`);
-		ref.once("value")
-			.then(async (value) => {
-				const file = value.val().file;
-				await storage().ref(`/evidences/${file}`).delete();
-				ref.remove();
-			});
+		return new Promise((resolve) => {
+			const ref = database().ref(`/evidences/${uid}`);
+			ref.once("value")
+				.then(async (value) => {
+					const file = value.val().file;
+					await storage().ref(`/evidences/${file}`).delete();
+					ref.remove();
+					resolve();
+				});
+		});
 	}
 
 	return {

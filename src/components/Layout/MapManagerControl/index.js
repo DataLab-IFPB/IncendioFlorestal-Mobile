@@ -1,6 +1,6 @@
-/* eslint-disable react/react-in-jsx-scope */
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
+
 import { IconButton } from "../../UI";
 import { Container } from "./styles";
 

@@ -2,25 +2,36 @@ import React from "react";
 import { ThemeProvider } from "styled-components";
 
 const configTheme = {
+	font: {
+		size: {
+			title: 15,
+			normal: 12,
+			large: 14,
+		}
+	},
+
 	colors: {
 		icon: {
-			primary: "#F00000",
-			secondary: "#FFF000",
-			tertiary: "#FF4500"
+			"accent-color-v1": "#F00000",
+			"accent-color-v2": "#FFF000",
+			"accent-color-v3": "#FF4500"
 		},
 
 		text: {
-			primary: "#67686A"
+			"primary-v1": "#67686A",
+			"primary-v2": "#FFF"
 		},
 
 		main: {
-			primary:   "#C00000",
-			secondary: "#EAEAEA",
-			tertiary: "#000000"
+			"primary-v1":   "#C00000",
+			"primary-v2": "#EAEAEA",
+			"primary-v3": "#000000"
 		},
 
-		error: {
-			primary: "#C00000"
+		level: {
+			"error-v1": "#C00000",
+			"warning-v1": "#007E33",
+			"success-v1": "#FF8800"
 		},
 	}
 };

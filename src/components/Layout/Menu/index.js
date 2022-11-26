@@ -1,16 +1,22 @@
 /* eslint-disable no-undef */
-import React, { useState, useRef } from "react";
-import MapboxGL from "@react-native-mapbox-gl/maps";
-import FontAwesome from "react-native-vector-icons/FontAwesome5";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import React, { useRef } from "react";
+import MapboxGL from "@rnmapbox/maps";
+
 import { MenuButton } from "../../UI";
 import { Text, Animated } from "react-native";
+import FontAwesome from "react-native-vector-icons/FontAwesome5";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { Container, SubMenuOption, SubMenuLabel, SubMenu } from "./styles";
 
-const Menu = ({ handleLocation, handleFilter, handleMapStyle, handleMapManager }) => {
-
+const Menu = ({
+	showSubMenu,
+	setShowSubMenu,
+	handleLocation,
+	handleFilter,
+	handleMapStyle,
+	handleMapManager
+}) => {
 	const subMenuAnimation = useRef(new Animated.Value(0)).current;
-	const [showSubMenu, setShowSubMenu] = useState(false);
 
 	function fadeInSubMenu() {
 		Animated.timing(subMenuAnimation, {
@@ -29,11 +35,11 @@ const Menu = ({ handleLocation, handleFilter, handleMapStyle, handleMapManager }
 	}
 
 	function iconMaterial(name) {
-		return <MaterialIcons name={name} size={20} color="white"/>;
+		return <MaterialIcons name={name} size={20} color="white" />;
 	}
 
 	function iconFontAwesome(name) {
-		return <FontAwesome name={name} size={15} color="white"/>;
+		return <FontAwesome name={name} size={15} color="white" />;
 	}
 
 	function subMenuHandler() {
@@ -101,7 +107,9 @@ const Menu = ({ handleLocation, handleFilter, handleMapStyle, handleMapManager }
 						</SubMenuOption>
 
 						<SubMenuOption>
-							<MenuButton onPress={() => handleMapStyle(MapboxGL.StyleURL.Outdoors)}>
+							<MenuButton onPress={() => {
+								handleMapStyle("mapbox://styles/mapbox/outdoors-v11");
+							}}>
 								{iconFontAwesome("tree")}
 							</MenuButton>
 

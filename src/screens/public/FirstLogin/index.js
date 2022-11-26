@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
-import firebase from "../../../shared/services/firebase";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { ContainerRoot, Info, Title } from "./styles";
-import { loadingActions } from "../../../store/actions";
+import { useRoute, useNavigation } from "@react-navigation/native";
+
+import firebase from "../../../shared/services/firebase";
+import { loaderActions } from "../../../store/actions";
+import { changePasswordFormSchema } from "../../../shared/schemas/validation";
+
+import { Container, Info, Title } from "./styles";
 import { ModalWarning } from "../../../components/Layout";
 import { PrimaryButton, Input, Logo } from "../../../components/UI";
-import { useRoute, useNavigation } from "@react-navigation/native";
-import { changePasswordFormSchema } from "../../../shared/schemas/validation";
 import { BackHandler, Keyboard, TouchableWithoutFeedback } from "react-native";
 
 const FirstLogin = () => {
@@ -17,7 +19,7 @@ const FirstLogin = () => {
 	const route = useRoute();
 	const navigation = useNavigation();
 
-	const { enableLoading, disableLoading } = loadingActions;
+	const { enableLoading, disableLoading } = loaderActions;
 
 	const { registerNewUser } = firebase();
 	const { control, handleSubmit, clearErrors, formState: { errors } } = useForm({
@@ -73,7 +75,7 @@ const FirstLogin = () => {
 
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-			<ContainerRoot>
+			<Container>
 				<ModalWarning
 					message={showModalWarning.message}
 					isVisible={showModalWarning.isVisible}
@@ -115,7 +117,7 @@ const FirstLogin = () => {
 				/>
 
 				<PrimaryButton message="Alterar" onPress={handleSubmit(onSubmit)}/>
-			</ContainerRoot>
+			</Container>
 		</TouchableWithoutFeedback>
 	);
 };

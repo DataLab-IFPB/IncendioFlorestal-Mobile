@@ -15,7 +15,7 @@ const TouchableBase = styled.TouchableOpacity`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background-color: ${({theme}) => theme.colors.main.tertiary};
+	background-color: ${({theme}) => theme.colors.main["primary-v3"]};
 	padding: 10px 30px;
 	border-radius: 50px;
 `;
@@ -36,6 +36,6 @@ export const TouchableCancel = styled(TouchableBase)`
 export const TouchableEnd = styled(TouchableBase)``;
 
 export const Label =  styled.Text`
-	color: #FFF;
+	color: ${({theme}) => theme.colors.text["primary-v2"]};
 	font-weight: bold;
 `;

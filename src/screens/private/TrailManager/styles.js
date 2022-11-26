@@ -1,18 +1,18 @@
 import styled from "styled-components/native";
 
-export const RootContainer = styled.View`
+export const Container = styled.View`
 	flex: 1;
 	padding: 15px;
 `;
 
-export const ContainerOptions = styled.View`
+export const Options = styled.View`
 	position: absolute;
 	bottom: 10px;
 	width: 100%;
 	margin: 10px 10px 10px 15px;
 `;
 
-export const ContainerTrails = styled.View`
+export const List = styled.View`
 	justify-content: center;
 	align-items: center;
 	margin-top: 30px;
@@ -25,15 +25,15 @@ export const Header = styled.View`
 	align-items: center;
 `;
 
-export const ContainerWarning = styled.View`
+export const Warning = styled.View`
 	flex: 1;
 	align-items: center;
 	justify-content: center;
 `;
 
 export const Label = styled.Text`
-	font-size: 16px;
 	width: 100%;
+	font-size: 16px;
 `;
 
 export const Title = styled.Text`
@@ -41,24 +41,24 @@ export const Title = styled.Text`
 	font-size: 18px;
 	letter-spacing: 3px;
 	text-align: center;
-	width: 85%;
+	width: 80%;
 `;
 
 export const Card = styled.View`
 	flex-direction: row;
+	width: 100%;
+	elevation: 2;
 	padding: 10px;
 	margin-bottom: 15px;
-	border: 1px solid #EAEAEA;
 	border-radius: 5px;
-	width: 100%;
+	border: 1px solid #EAEAEA;
 	background-color: #FFF;
-	elevation: 2;
 `;
 
-export const ContainerInfo = styled.View`
-	flex-direction: column;
-	justify-content: flex-start;
-	flex: 1;
+export const Info = styled.View`
+  align-items: center;
+  justify-content: center;
+  margin: 0 5px;
 `;
 
 export const Content = styled.View`
@@ -74,10 +74,10 @@ export const Touchable = styled.TouchableOpacity`
 `;
 
 export const LineVertical = styled.View`
-	border: 1px solid #D7D7D7;
-	border-radius: 10px;
-	margin: 0 5px;
 	height: 100%;
+	margin: 0 5px;
+	border-radius: 10px;
+	border: 1px solid #D7D7D7;
 `;
 
 export const LineHorizontal = styled(LineVertical)`

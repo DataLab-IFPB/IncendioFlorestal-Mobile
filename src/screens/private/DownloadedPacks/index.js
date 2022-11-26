@@ -1,27 +1,29 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { BackHandler } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import MapboxGL from "@rnmapbox/maps";
+
+import { loaderActions } from "../../../store/actions";
+
+import { ActionButton } from "../../../components/UI";
+import { ModalConfirmation, ModalWarning } from "../../../components/Layout";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import MapboxGL from "@react-native-mapbox-gl/maps";
-import { useNavigation } from "@react-navigation/native";
-import { BackHandler } from "react-native";
-import { useDispatch } from "react-redux";
-import { loadingActions } from "../../../store/actions";
-import { ActionButton } from "../../../components/UI";
-import { ContainerInfo } from "../../../components/Layout/Forecast/styles";
-import { ModalConfirmation, ModalWarning } from "../../../components/Layout";
-import { List } from "./styles";
 import {
-	RootContainer,
-	ContainerTrails,
-	Label,
-	Card,
-	Touchable,
-	Content,
-	LineVertical,
-	ContainerWarning,
+	Container,
+	Info,
+	List,
+	ListContainer,
 	Header,
-	Title
-} from "../TrailManager/styles";
+	Content,
+	Card,
+	Label,
+	Title,
+	Warning,
+	Touchable,
+	LineVertical,
+} from "./styles";
 
 const DownloadedPacks = () => {
 
@@ -29,7 +31,7 @@ const DownloadedPacks = () => {
 	const navigation = useNavigation();
 	const offlineManager = MapboxGL.offlineManager;
 
-	const { enableLoading, disableLoading } = loadingActions;
+	const { enableLoading, disableLoading } = loaderActions;
 
 	const [packs, setPacks] = useState([]);
 	const [error, setError] = useState("");
@@ -126,12 +128,13 @@ const DownloadedPacks = () => {
 	useEffect(() => {
 		const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
 			handleCloseScreen();
+			return true;
 		});
 		return () => backHandler.remove();
 	}, []);
 
 	return (
-		<RootContainer>
+		<Container>
 			<Header>
 				<ActionButton icon="close" onPress={handleCloseScreen} />
 				<Title>ÁREAS SALVAS</Title>
@@ -158,11 +161,11 @@ const DownloadedPacks = () => {
 				onConfirm={() => setError("")}
 			/>
 
-			<ContainerTrails>
+			<ListContainer>
 				{packs.length === 0 && (
-					<ContainerWarning>
+					<Warning>
 						<Label>Nenhuma área salva!</Label>
-					</ContainerWarning>
+					</Warning>
 				)}
 				{packs.length > 0 && (
 					<List
@@ -178,18 +181,18 @@ const DownloadedPacks = () => {
 
 								<Content>
 									<MaterialIcons name="map" size={30} style={{ marginRight: 5 }} />
-									<ContainerInfo>
+									<Info>
 										<Label>
 											{`Nome: ${item.name}`}
 										</Label>
-									</ContainerInfo>
+									</Info>
 								</Content>
 							</Card>
 						)}
 					/>
 				)}
-			</ContainerTrails>
-		</RootContainer>
+			</ListContainer>
+		</Container>
 	);
 };
 

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import Icon from "react-native-vector-icons/Feather";
-import { useTheme } from "styled-components";
 import { Controller } from "react-hook-form";
+
+import { useTheme } from "styled-components";
+import Icon from "react-native-vector-icons/Feather";
 import {
 	Field,
 	Label,
@@ -34,7 +35,7 @@ const Input = ({
 			<Label>{label ? label + ":" : ""}</Label>
 			<ContainerInput isValid={!!hasErrors}>
 				<ContainerIcon>
-					<Icon name={icon} size={25} color={theme.colors.label}/>
+					<Icon name={icon} size={25} color={theme.colors.text["primary-v1"]}/>
 				</ContainerIcon>
 				<Controller
 					name={controller.name}
@@ -58,7 +59,7 @@ const Input = ({
 						<Icon
 							name={iconViewPasswordText}
 							size={20}
-							color={theme.colors.primary}
+							color={theme.colors.text["primary-v1"]}
 						/>
 					</ButtonShowPassword>
 				)}

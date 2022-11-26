@@ -1,13 +1,15 @@
 import React, { useEffect } from "react";
+import Toast from "react-native-toast-message";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { NavigationContainer } from "@react-navigation/native";
+import { useNetInfo } from "@react-native-community/netinfo";
+import { useDispatch, useSelector } from "react-redux";
+
 import { PublicRoutes } from "./public.routes";
 import { PrivateRoutes } from "./private.routes";
-import { useDispatch, useSelector } from "react-redux";
+
 import firebase from "../shared/services/firebase";
-import Toast from "react-native-toast-message";
-import { NavigationContainer } from "@react-navigation/native";
-import { authActions, loadingActions } from "../store/actions";
-import { useNetInfo } from "@react-native-community/netinfo";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { authActions, loaderActions } from "../store/actions";
 
 const Routes = () => {
 
@@ -18,7 +20,7 @@ const Routes = () => {
 
 	const { checkAuthState, getUserData } = firebase();
 	const { authentication } = authActions;
-	const { enableLoading, disableLoading } = loadingActions;
+	const { enableLoading, disableLoading } = loaderActions;
 
 	/**
      * Verificar a validade do token do usuário

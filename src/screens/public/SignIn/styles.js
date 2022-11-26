@@ -1,18 +1,18 @@
 import styled from "styled-components/native";
 
-export const ContainerRoot = styled.View`
+export const Container = styled.View`
   flex: 1;
+  padding: 30px;
   align-items: center;
   justify-content: center;
-  padding: 30px;
 `;
 
-export const ContainerForm = styled(ContainerRoot)`
+export const FormContainer = styled(Container)`
   width: 100%;
   padding: 0;
 `;
 
-export const ContainerVersion = styled.View`
+export const Version = styled.View`
   justify-content: flex-end;
 `;
 
@@ -22,7 +22,9 @@ export const Form = styled.View`
 `;
 
 export const LabelVersion = styled.Text`
-  color: ${({theme}) => theme.colors.text.primary};
-  font-size: 12px;
+	font-size: 12px;
+  ${({theme}) => `
+		color: ${theme.colors.text["primary-v1"]};
+	`};
 `;
 

@@ -10,7 +10,7 @@ export const Polygon = {
 	}]
 };
 
-export const Line = {
+export const LineString = {
 	type: "FeatureCollection",
 	features: [
 		{

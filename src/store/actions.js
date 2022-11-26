@@ -1,13 +1,13 @@
-import authSlice from "./authSlice";
-import fireIndicesSlice from "./firesIndicesSlice";
-import loadingSlice from "./loadingSlice";
+import authSlice from "./auth-slice";
+import loaderSlice from "./loader-slice";
+import firesSlice from "./fires-slice";
 
 const authActions = authSlice.actions;
-const firesIndicesActions = fireIndicesSlice.actions;
-const loadingActions = loadingSlice.actions;
+const firesActions = firesSlice.actions;
+const loaderActions = loaderSlice.actions;
 
 export {
 	authActions,
-	firesIndicesActions,
-	loadingActions
+	firesActions,
+	loaderActions
 };

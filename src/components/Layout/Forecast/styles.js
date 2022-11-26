@@ -13,8 +13,8 @@ export const Container = styled.View`
   align-items: center;
   border-radius: 15px;
   justify-content: space-between;
-  border: 1px solid ${({theme}) => theme.colors.main.primary};
-  background-color: ${({theme}) => theme.colors.main.tertiary};
+  border: 1px solid ${({theme}) => theme.colors.main["primary-v1"]};
+  background-color: ${({theme}) => theme.colors.main["primary-v3"]};
 `;
 
 export const ContainerInfo = styled.View`
@@ -25,7 +25,7 @@ export const ContainerInfo = styled.View`
 
 export const Label = styled.Text`
   font-size: 13px;
-  color: #fff;
+  color: ${({theme}) => theme.colors.text["primary-v2"]};
 `;
 
 export const WindInfoLabel = styled.Text`
@@ -33,7 +33,7 @@ export const WindInfoLabel = styled.Text`
   font-size: 10px;
   margin-right: 6px;
   margin-bottom: -3px;
-  color: #fff;
+  color: ${({theme}) => theme.colors.text["primary-v2"]};
 `;
 
 export const NorthLabel = styled.Text`
@@ -42,7 +42,7 @@ export const NorthLabel = styled.Text`
   margin-right: 1px;
   margin-bottom: -3px;
   font-weight: bold;
-  color: #fff;
+  color: ${({theme}) => theme.colors.text["primary-v2"]};
 `;
 
 export const WindIcons = styled.View`

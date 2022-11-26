@@ -1,13 +1,13 @@
-import { tableSchema } from "@nozbe/watermelondb";
+import { TB_EVIDENCES } from "../../../constants";
 
-const EvidenceSchema = tableSchema({
-	name: "TB_EVIDENCES",
-	columns: [
-		{ name: "fireIndice", type: "string", isIndexed: true },
-		{ name: "path", type: "string" },
-		{ name: "fileType", type: "string" },
-		{ name: "createdAt", type: "string" }
-	]
-});
-
-export default EvidenceSchema;
+export const EvidenceSchema = {
+	name: TB_EVIDENCES,
+	properties: {
+		id: "string",
+		fireId: "string",
+		path: "string",
+		fileType: "string",
+		createdAt: "date"
+	},
+	primaryKey: "id"
+};

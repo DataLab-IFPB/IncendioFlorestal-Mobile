@@ -1,91 +1,88 @@
 /* eslint-disable no-undef */
-import React, { useEffect, useRef, useState } from "react";
-import firebase  from "../../../shared/services/firebase";
+import React, { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import Geolocation from "react-native-geolocation-service";
+import MapboxGL, { Logger } from "@rnmapbox/maps";
+import Toast from "react-native-toast-message";
+import { useNetInfo } from "@react-native-community/netinfo";
+import { useDispatch, useSelector } from "react-redux";
+
+import { usePermission } from "../../../hooks/usePermission";
+import { MAP_BOX_KEY } from "../../../constants";
+import firebase  from "../../../shared/services/firebase";
+import weather from "../../../shared/services/weather";
+import { firesActions, loaderActions } from "../../../store/actions";
+import { LineString } from "../../../helpers";
+import { createFireOutbreak } from "../../../helpers/fires";
+import {
+	clearAllFiresOffline,
+	getAllEvidenceByFireOffline,
+	getAllFiresOffline,
+	getAllTrailsByFireOffline,
+	saveFireOffline
+} from "../../../shared/services/realm";
+
+import { RecorderButton, FirePoint } from "../../../components/UI";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import MapboxGL, { Logger } from "@react-native-mapbox-gl/maps";
-import IconSimple from "react-native-vector-icons/SimpleLineIcons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import Toast from "react-native-toast-message";
-import { useTheme } from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import { RecorderButton } from "../../../components/UI";
-import { weather } from "../../../shared/services/weather";
-import { BackHandler, StatusBar, TouchableOpacity } from "react-native";
-import { useNetInfo } from "@react-native-community/netinfo";
-import { PERMISSION_LOCATION_USE, MAP_BOX_KEY } from "../../../constants";
-import { watermelonDB } from "../../../shared/services/watermelonDB";
-import { firesIndicesActions, loadingActions } from "../../../store/actions";
-import { formatDatetime } from "../../../shared/utils/formatDate";
-import {
-	ButtonClose,
-	Container,
-	ContainerButtonClose,
-	ContainerNotification,
-	Notification,
-	TextNotification
-} from "./styles";
+import { BackHandler, StatusBar } from "react-native";
 import {
 	Menu,
 	Filter,
 	Forecast,
-	FireIndiceDetails,
+	FireDetails,
 	ModalConfirmation,
 	ModalNotification,
 	MapManagerControl,
 	ModalWarning,
 	ModalInput
 } from "../../../components/Layout";
+import {
+	ButtonClose,
+	Container,
+	Actions,
+	NotificationContainer,
+	Notification,
+	TextNotification
+} from "./styles";
 
 const Map = ({ route }) => {
 
+	MapboxGL.setWellKnownTileServer("Mapbox");
 	MapboxGL.setAccessToken(MAP_BOX_KEY);
 
 	const dispatch = useDispatch();
 	const netInfo = useNetInfo();
 	const mapRef = useRef();
-	const theme = useTheme();
+	const { verifyPermission } = usePermission();
 	const offlineManager = MapboxGL.offlineManager;
 
 	const { getForecast } = weather();
-	const { enableLoading, disableLoading } = loadingActions;
+	const { enableLoading, disableLoading } = loaderActions;
 	const {
-		loadFireIndices,
-		loadFireIndicesOffline,
-		storeFireIndice
-	} = firesIndicesActions;
+		loadFires,
+		loadFiresOffline,
+		storeFires
+	} = firesActions;
 
 	const {
 		getFiresIndices,
 		registerNewEvidence,
+		registerNewTrail,
 		registerNewFireIndice
 	} = firebase();
-
-	const {
-		saveFireIndiceOffline,
-		clearFireIndicesOffline,
-		fetchFiresIndicesOffline,
-		fetchEvidencesOffline
-	} = watermelonDB().fireIndiceManagerDB();
 
 	const [mapManagerIsOpen, setMapManagerIsOpen] = useState(false);
 	const [filterDays, setFilterDays] = useState(1);
 	const [mapZoomIsEnabled, setMapZoomIsEnabled] = useState(true);
 	const [sourceTrail, setSourceTrail] = useState();
 	const [showModalFilter, setShowModalFilter] = useState(false);
+	const [showSubMenu, setShowSubMenu] = useState(false);
 	const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Street);
-	const [notification, setNofication] = useState({ show: false, message: "" });
 	const [error, setError] = useState("");
-	const [fireIndiceDetails, setFireIndiceDetails] = useState({
-		isVisible: false, fireIndice: null
-	});
-	const [showModalNewFireIndice, setShowModalNewFireIndice] = useState({
-		show: false, data: null
-	});
-	const [showButtonRecorderRouter, setShowButtonRecorderRouter] = useState({
-		show: false, fireIndice: null
-	});
+	const [showQuitPrompt, setShowQuitPrompt] = useState(false);
+	const [fireDetails, setFireDetails] = useState(null);
+	const [coordsNewFire, setCoordsNewFire] = useState(null);
+	const [recorderRouter, setRecorderRouter] = useState(null);
 	const [downloadArea, setDownloadArea] = useState({
 		northeast: null,
 		southwest: null
@@ -105,36 +102,22 @@ const Map = ({ route }) => {
 	});
 
 	const user = useSelector((state) => state.auth);
-	const firesIndicesActivated = useSelector((state) => state.firesIndices.filtered);
+	const fires = useSelector((state) => state.fires.filtered);
+	const activeFires = useMemo(() => fires, [fires]);
 
 	Logger.setLogCallback((log) => {
 		const { message } = log;
-
-		// expected warnings - see https://github.com/mapbox/mapbox-gl-native/issues/15341#issuecomment-522889062
 		return message.match("Request failed due to a permanent error: Canceled") ||
 			message.match("Request failed due to a permanent error: Socket Closed");
 	});
 
-	// Monitor do status da rede do dispositivo
-	useEffect(() => {
-		if (netInfo.isConnected !== null && !netInfo.isConnected) {
-			setNofication({
-				show: true,
-				message: `Sem Conexão!
-        \nTodos os registros cadastrados manualmente serão enviado para a base de dados ao se conectar novamente.`
-			});
-		}
-	}, [netInfo]);
-
 	// Exibir trilhas
 	useEffect(() => {
 		const params = route.params;
-
 		if (params) {
-			const { recoderTrailIsActive, fireIndice, coordinates } = params;
+			const { recoderTrailIsActive, fire, coordinates } = params;
 			if (recoderTrailIsActive) {
-				const fireIndiceId = fireIndice._raw.id || fireIndice.id;
-				setShowButtonRecorderRouter({ show: true, fireIndice: fireIndiceId });
+				setRecorderRouter(fire.id);
 			} else if (coordinates) {
 				LineString.features[0].geometry.coordinates = [];
 				LineString.features[0].geometry.coordinates = coordinates;
@@ -145,55 +128,78 @@ const Map = ({ route }) => {
 
 	// Sincronizar dados offline
 	useEffect(() => {
-		const syncDataOffline = async () => {
-			const data = await fetchFiresIndicesOffline();
-			data.forEach(async (fireIndice, index) => {
+		const syncOfflineData = async () => {
+			const data = await getAllFiresOffline();
+			data.forEach(async (fire, index) => {
 				const fireIndiceFormatted = {
-					latitude: fireIndice.longitude,
-					longitude: fireIndice.latitude,
-					userCreated: fireIndice.userCreated,
-					active: fireIndice.active,
-					status: JSON.parse(fireIndice.status)
+					latitude: fire.longitude,
+					longitude: fire.latitude,
+					userCreated: fire.userCreated,
+					active: fire.active,
+					status: JSON.parse(fire.status)
 				};
 
 				const uidFireIndice = await saveFireIndice(fireIndiceFormatted);
-				const evidences = await fetchEvidencesOffline(fireIndice.id);
+				const evidences = await getAllEvidenceByFireOffline(fire.id);
+				const trails = await getAllTrailsByFireOffline(fire.id);
 
 				evidences.forEach(async (evidence) => {
 					await registerNewEvidence(
-						evidence.path, evidence.fileType, user.registration, uidFireIndice
+						evidence.path,
+						evidence.fileType,
+						user.registration,
+						uidFireIndice
 					);
 				});
 
-				if (index === data.length - 1)
-					clearFireIndicesOffline();
+				trails.forEach(async (trail) => {
+					const data = {
+						fireId: trail.fireId,
+						start_coordinates: {
+							latitude: trail.start_latitude,
+							longitude: trail.start_longitude,
+						},
+						end_coordinates: {
+							latitude: trail.end_latitude,
+							longitude: trail.end_longitude,
+						}
+					};
+					await registerNewTrail(uidFireIndice, user.registration, data);
+				});
 
+				if (index === data.length - 1) {
+					clearAllFiresOffline();
+				}
 			});
-
-		};
-
-		const loadDataOffiline = async () => {
-			const data = await fetchFiresIndicesOffline();
-			dispatch(loadFireIndices(data));
 		};
 
 		const verify = async () => {
 			if (netInfo.isConnected !== null) {
-				if (netInfo.isConnected)
-					syncDataOffline();
-				else
-					loadDataOffiline();
+				if (netInfo.isConnected) {
+					syncOfflineData();
+				} else {
+					const data = await getAllFiresOffline();
+					dispatch(loadFiresOffline(data));
+				}
 			}
 		};
-
 		verify();
 	}, [netInfo.isConnected]);
 
 	useEffect(() => {
-		BackHandler.addEventListener("hardwareBackPress", () => {
+		const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+			if (mapManagerIsOpen)
+				setMapManagerIsOpen(false);
+			else if(showSubMenu)
+				setShowSubMenu(false);
+			else
+				setShowQuitPrompt(true);
+
 			return true;
 		});
-	}, []);
+
+		return () => backHandler.remove();
+	}, [mapManagerIsOpen, showSubMenu]);
 
 	// Carregar dados
 	useEffect(() => {
@@ -201,28 +207,16 @@ const Map = ({ route }) => {
 			if (netInfo.isConnected) {
 				await fetchFireIndices();
 			} else {
-				const data = await fetchFiresIndicesOffline();
-				dispatch(loadFireIndicesOffline(data));
+				const data = await getAllFiresOffline();
+				dispatch(loadFiresOffline(data));
 			}
 		};
 
 		if (netInfo.isConnected !== null)
 			fetchData();
-
 	}, [netInfo]);
 
 	useEffect(() => {
-		async function verifyPermission() {
-			const permission = await AsyncStorage.getItem(PERMISSION_LOCATION_USE);
-
-			if (!permission) {
-				const request = await MapboxGL.requestAndroidLocationPermissions();
-				await AsyncStorage.setItem(
-					PERMISSION_LOCATION_USE,
-					JSON.stringify(request),
-				);
-			}
-		}
 		verifyPermission();
 	}, []);
 
@@ -275,42 +269,33 @@ const Map = ({ route }) => {
 
 	async function fetchFireIndices() {
 		const data = await getFiresIndices();
-		dispatch(loadFireIndices(data));
+		dispatch(loadFires(data));
 	}
 
-	function createNewFireIndice(event) {
-		const [longitude, latitude] = event.geometry.coordinates;
+	async function generateFireIndice() {
+		const [longitude, latitude] = coordsNewFire.geometry.coordinates;
+		const fireOutbreak = createFireOutbreak(latitude, longitude);
 
-		return {
-			latitude,
-			longitude,
-			userCreated: true,
-			active: true,
-			status: {
-				registered_at: formatDatetime(new Date()),
-				in_attendance_at: "",
-				finished_at: ""
+		try {
+			if (netInfo.isConnected) {
+				saveFireIndice(fireOutbreak);
+			} else {
+				const fire = await saveFireOffline(fireOutbreak);
+				dispatch(storeFires(fire));
 			}
-		};
-	}
-
-	function generateFireIndice() {
-		const data = showModalNewFireIndice.data;
-		const indiceCreated = createNewFireIndice(data);
-
-		if (netInfo.isConnected) {
-			saveFireIndice(indiceCreated);
-		} else {
-			saveFireIndiceOffline(indiceCreated);
+		} catch {
+			Toast.show({
+				type: "error",
+				text1: "Atenção!",
+				text2: "Ocorreu um problema ao salvar o incêndio",
+				visibilityTime: 5000
+			});
 		}
-
-		setShowModalNewFireIndice({ show: false, data: null });
+		setCoordsNewFire(null);
 	}
 
 	async function saveFireIndice(fireIndice) {
-
-		dispatch(enableLoading("Salvando novo registro..."));
-
+		dispatch(enableLoading("Salvando novo registro"));
 		const weather = await getForecast(fireIndice.longitude, fireIndice.latitude);
 		const newIndice = {
 			brightness: null,
@@ -324,9 +309,10 @@ const Map = ({ route }) => {
 			weather,
 			...fireIndice
 		};
+
 		const uid = await registerNewFireIndice(newIndice);
 
-		dispatch(storeFireIndice({ ...newIndice, uid }));
+		dispatch(storeFires({ ...newIndice, uid }));
 		fetchFireIndices();
 		dispatch(disableLoading());
 
@@ -338,87 +324,6 @@ const Map = ({ route }) => {
 			userGeolocation.longitude,
 			userGeolocation.latitude,
 		]);
-	}
-
-	function showFireIndiceDetails(fireIndice) {
-		const copyFireIndice = { ...fireIndice, status: fireIndice.status };
-
-		if (typeof copyFireIndice.status === "string") {
-			copyFireIndice.status = JSON.parse(copyFireIndice.status);
-		}
-
-		setFireIndiceDetails({
-			isVisible: true,
-			fireIndice: copyFireIndice
-		});
-	}
-
-	function updateDaysSliderHandler(days) {
-		setFilterDays(days);
-	}
-
-	function closeModalFilter() {
-		setShowModalFilter(false);
-	}
-
-	function closeModalFireIndiceDetails() {
-		setFireIndiceDetails({
-			isVisible: false,
-			fireIndice: null
-		});
-	}
-
-	function confirmNofifactionHandler() {
-		setNofication({ show: false, message: "" });
-	}
-
-	function showRocorderRouterHandler() {
-		setShowButtonRecorderRouter((currentState) => !currentState);
-	}
-
-	function renderFiresIndices() {
-		return (
-			firesIndicesActivated.map((register, index) => {
-				if (register.active) {
-					return (
-						<MapboxGL.PointAnnotation
-							id={`${index}`}
-							onSelected={() => showFireIndiceDetails(register)}
-							onDeselected={() => showFireIndiceDetails(register)}
-							key={index}
-							coordinate={[
-								register.latitude,
-								register.longitude
-							]}
-						>
-							{register.userCreated ? (
-								<TouchableOpacity>
-									<IconSimple
-										name='fire'
-										size={30}
-										color={theme.colors.icon.secondary}
-									/>
-								</TouchableOpacity>
-							) : (
-								<TouchableOpacity>
-									<IconSimple
-										name='fire'
-										size={30}
-										color={register.brightness >= 500 ?
-											theme.colors.icon.primary : theme.colors.icon.tertiary
-										}
-									/>
-								</TouchableOpacity>
-							)}
-						</MapboxGL.PointAnnotation>
-					);
-				}
-			})
-		);
-	}
-
-	function cancelRecoderHandler() {
-		setShowButtonRecorderRouter({ show: false, fireIndice: null });
 	}
 
 	async function generateDownloadArea(event) {
@@ -487,24 +392,39 @@ const Map = ({ route }) => {
 		});
 	}
 
+	const renderFires = useCallback(() => {
+		return (
+			activeFires.map((register) => {
+				if (register.active && !register.status.finished_at) {
+					return (
+						<FirePoint
+							key={register.id}
+							register={register}
+							setFireDetails={setFireDetails}
+						/>
+					);
+				}
+			})
+		);
+	});
+
 	return (
 		<>
 			<StatusBar barStyle='light-content' backgroundColor='#000' />
+			<ModalNotification />
 
 			{showModalFilter && (
 				<Filter
 					filterDays={filterDays}
-					visible={showModalFilter}
-					closeModal={closeModalFilter}
-					onUpdateDaysSlider={updateDaysSliderHandler}
+					closeModal={() => setShowModalFilter(false)}
+					onUpdateDaysSlider={setFilterDays}
 				/>
 			)}
 
-			{fireIndiceDetails.fireIndice && (
-				<FireIndiceDetails
-					fireIndice={fireIndiceDetails.fireIndice}
-					isVisible={fireIndiceDetails.isVisible}
-					onClose={closeModalFireIndiceDetails}
+			{!!fireDetails && (
+				<FireDetails
+					fire={fireDetails}
+					onClose={() => setFireDetails(null)}
 				/>
 			)}
 
@@ -513,14 +433,6 @@ const Map = ({ route }) => {
 					isVisible={!!error}
 					message={error}
 					onConfirm={() => setError("")}
-				/>
-			)}
-
-			{notification.show && (
-				<ModalNotification
-					isVisible={notification.show}
-					message={notification.message}
-					onConfirm={confirmNofifactionHandler}
 				/>
 			)}
 
@@ -534,47 +446,56 @@ const Map = ({ route }) => {
 				/>
 			)}
 
-			{showModalNewFireIndice.show && (
+			{showQuitPrompt && (
 				<ModalConfirmation
-					isVisible={showModalNewFireIndice.show}
-					message={
-						`${!netInfo.isConnected ? "Registro offline\n\n" : ""}Deseja adicionar um novo registro de incêndio?`
-					}
-					onConfirm={generateFireIndice}
-					onCancel={() => setShowModalNewFireIndice({ show: false, data: null })}
+					isVisible={showQuitPrompt}
+					message={"Tem certeza que deseja sair do aplicativo?"}
+					onConfirm={() => BackHandler.exitApp()}
+					onCancel={() => setShowQuitPrompt(false)}
 				/>
 			)}
 
+			<ModalConfirmation
+				isVisible={!!coordsNewFire}
+				message={
+					`${!netInfo.isConnected ? "Registro offline\n\n" : ""}Deseja adicionar um novo registro de incêndio?`
+				}
+				onConfirm={generateFireIndice}
+				onCancel={() => setCoordsNewFire(null)}
+			/>
+
 			<Container>
 				{netInfo.isConnected && !mapManagerIsOpen && (
-					<Forecast userCoordinates={userGeolocation}/>
+					<Forecast userCoordinates={userGeolocation} />
 				)}
 
 				{!mapManagerIsOpen && (
 					<Menu
+						showSubMenu={showSubMenu}
+						setShowSubMenu={setShowSubMenu}
 						handleLocation={returnToLocaleHandler}
 						handleFilter={() => setShowModalFilter(true)}
-						onRecorderRouter={showRocorderRouterHandler}
+						onRecorderRouter={() => setRecorderRouter((state) => !state)}
 						handleMapStyle={setMapStyle}
 						handleMapManager={() => setMapManagerIsOpen(true)}
 					/>
 				)}
 
-				{showButtonRecorderRouter.show && (
+				{recorderRouter && (
 					<RecorderButton
 						currentCoordinates={userGeolocation}
 						userRegistration={user.registration}
-						onCancel={cancelRecoderHandler}
-						uidFireIndice={showButtonRecorderRouter.fireIndice}
+						fireId={recorderRouter}
+						onCancel={() => setRecorderRouter(null)}
 					/>
 				)}
 
 				{sourceTrail && (
-					<ContainerButtonClose>
+					<Actions>
 						<ButtonClose onPress={() => setSourceTrail(null)}>
-							<AntDesign name="close" color="#FFF" size={20}/>
+							<AntDesign name="close" color="#FFF" size={20} />
 						</ButtonClose>
-					</ContainerButtonClose>
+					</Actions>
 				)}
 
 				<MapboxGL.MapView
@@ -588,7 +509,7 @@ const Map = ({ route }) => {
 					renderToHardwareTextureAndroid={true}
 					onLongPress={(event) => {
 						if (!mapManagerIsOpen) {
-							setShowModalNewFireIndice({ show: true, data: event });
+							setCoordsNewFire(event);
 						}
 					}}
 					onRegionDidChange={(event) => {
@@ -632,7 +553,7 @@ const Map = ({ route }) => {
 						renderMode='native'
 					/>
 
-					{renderFiresIndices()}
+					{renderFires()}
 				</MapboxGL.MapView>
 
 				{mapManagerIsOpen && (
@@ -642,7 +563,7 @@ const Map = ({ route }) => {
 							onCancel={() => setMapManagerIsOpen(false)}
 						/>
 
-						<ContainerNotification>
+						<NotificationContainer>
 							<Notification>
 								<Ionicons
 									name="alert-circle-outline"
@@ -653,7 +574,7 @@ const Map = ({ route }) => {
 									Posicione-se sobre a área de download
 								</TextNotification>
 							</Notification>
-						</ContainerNotification>
+						</NotificationContainer>
 					</>
 				)}
 			</Container>

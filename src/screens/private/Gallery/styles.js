@@ -1,28 +1,28 @@
 import styled from "styled-components/native";
 import VideoPlayer from "react-native-video";
 
-export const RootContainer = styled.View`
+export const Container = styled.View`
 	flex: 1;
 `;
 
 export const Header = styled.View`
-	padding: 20px;
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
+	padding: 20px;
 
 	${({isEmptyMedias}) => !isEmptyMedias && `
 		justify-content: flex-start;
 	`}
 `;
 
-export const ContainerMedia = styled.View`
+export const Media = styled.View`
 	flex: 1;
 	justify-content: center;
 	align-items: center;
 `;
 
-export const ContainerIconPlayer = styled.View`
+export const IconPlayer = styled.View`
 	height: 100%;
 	width: 100%;
 	z-index: 999;
@@ -32,10 +32,10 @@ export const ContainerIconPlayer = styled.View`
 `;
 
 export const Title = styled.Text`
-	font-weight: bold;
 	font-size: 18px;
-	letter-spacing: 3px;
+	font-weight: bold;
 	text-align: center;
+	letter-spacing: 3px;
 
 	${({isEmptyMedias}) => !isEmptyMedias && `
 		width: 90%;
@@ -43,8 +43,8 @@ export const Title = styled.Text`
 `;
 
 export const Label = styled.Text`
-	font-size: 16px;
 	height: 10%;
+	font-size: 16px;
 	text-align: center;
 `;
 
@@ -66,17 +66,17 @@ export const Video = styled(VideoPlayer)`
 
 export const Slider = styled.View`
 	width: 100%;
+	justify-content: space-around;
+	align-items: center;
 	margin-bottom: 15px;
 	padding-left: 20px;
-	align-items: center;
-	justify-content: space-around;
 `;
 
 export const ItemSlider = styled.TouchableOpacity`
 	margin: 10px;
 	${({isSelected, theme}) => isSelected && `
 		border-radius: 18px;
-		border: 3px solid ${theme.colors.main.primary};
+		border: 3px solid ${theme.colors.main["primary-v1"]};
 	`};
 `;
 

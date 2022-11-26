@@ -1,7 +1,8 @@
 import React from "react";
-import Icon from "react-native-vector-icons/Feather";
+
 import { useTheme } from "styled-components";
 import { PrimaryButton } from "../../UI";
+import Icon from "react-native-vector-icons/Feather";
 import {
 	ContainerRoot,
 	Container,
@@ -21,7 +22,7 @@ const ModalWarning = ({ message, isVisible, onConfirm }) => {
 			<ContainerRoot>
 				<Container>
 					<ContainerIcon>
-						<Icon name='alert-circle' size={100} color={theme.colors.main.primary}/>
+						<Icon name='alert-circle' size={100} color={theme.colors.main["primary-v1"]}/>
 					</ContainerIcon>
 					<ContainerContent>
 						<Title>Ooops!!</Title>

@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 import Map from "../screens/private/Map";
 import Gallery from "../screens/private/Gallery";
 import TrailManager from "../screens/private/TrailManager";
 import DownloadedPacks from "../screens/private/DownloadedPacks";
-
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const PrivateRoutes = () => {
 

@@ -4,7 +4,7 @@ export const Container = styled.View`
   flex: 1;
 `;
 
-export const ContainerButtonClose = styled.View`
+export const Actions = styled.View`
 	width: 100%;
 	align-items: center;
 	position: absolute;
@@ -13,9 +13,9 @@ export const ContainerButtonClose = styled.View`
 `;
 
 export const Button = styled.TouchableOpacity`
+	display: flex;
 	width: 45px;
 	height: 45px;
-	display: flex;
 	align-items: center;
 	justify-content: center;
 `;
@@ -23,33 +23,33 @@ export const Button = styled.TouchableOpacity`
 export const ButtonClose = styled.TouchableOpacity`
 	justify-content: center;
 	align-items: center;
-	padding: 15px;
-	background-color: #000;
-	border-radius: 50px;
 	elevation: 3;
+	padding: 15px;
+	border-radius: 50px;
+	background-color: #000;
 `;
 
-export const ContainerNotification = styled.View`
+export const NotificationContainer = styled.View`
 	position: absolute;
-	bottom: 20px;
-	width: 100%;
 	align-items: center;
 	justify-content: center;
 	elevation: 3;
+	bottom: 20px;
+	width: 100%;
 `;
 
 export const Notification = styled.View`
 	flex-direction: row;
-	width: 85%;
-	padding: 5px;
 	align-items: center;
 	justify-content: center;
-	background-color: #000;
+	width: 85%;
+	padding: 5px;
 	border-radius: 25px;
+	background-color: #000;
 `;
 
 export const TextNotification = styled.Text`
-	color: #FFF;
 	margin-left: 5px;
 	font-weight: bold;
+	color: ${({theme}) => theme.colors.text["primary-v2"]};
 `;

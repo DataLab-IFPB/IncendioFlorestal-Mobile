@@ -1,21 +1,21 @@
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import ImagePicker from "react-native-image-crop-picker";
-import firebase from "../../../shared/services/firebase";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { useSelector } from "react-redux";
-import { Button, Container } from "./styles";
 import { useNetInfo } from "@react-native-community/netinfo";
-import { watermelonDB } from "../../../shared/services/watermelonDB";
-import { RESOLUTION_IMAGE_AND_VIDEO } from "../../../constants";
+import { useSelector } from "react-redux";
 
-const AddEvidence = ({ fireIndice }) => {
+import { RESOLUTION_IMAGE_AND_VIDEO } from "../../../constants";
+import firebase from "../../../shared/services/firebase";
+
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { Button, Container } from "./styles";
+import { saveEvidenceOffline } from "../../../shared/services/realm";
+
+const AddEvidence = ({ fire }) => {
 
 	const ICON_SIZE = 15;
 
 	const netInfo = useNetInfo();
 	const { registerNewEvidence } = firebase();
-	const { saveEvicendeOffline } = watermelonDB();
 
 	const [file, setFile] = useState(null);
 	const userRegistration = useSelector((state) => state.auth.registration);
@@ -26,11 +26,11 @@ const AddEvidence = ({ fireIndice }) => {
 				uploadFile();
 			} else {
 				const data = {
-					fireIndice_id: fireIndice.id,
+					fireId: fire.id,
 					path: file.path,
-					media: file.mime.split("/")[0]
+					fileType: file.mime.split("/")[0]
 				};
-				saveEvicendeOffline(data);
+				saveEvidenceOffline(data);
 			}
 
 			setFile(null);
@@ -79,7 +79,7 @@ const AddEvidence = ({ fireIndice }) => {
 
 	async function uploadFile() {
 		if (file) {
-			await registerNewEvidence(file.path, file.mime.split("/")[0], userRegistration, fireIndice.uid);
+			await registerNewEvidence(file.path, file.mime.split("/")[0], userRegistration, fire.id);
 		}
 	}
 

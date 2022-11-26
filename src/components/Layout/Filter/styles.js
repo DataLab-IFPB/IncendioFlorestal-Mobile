@@ -41,6 +41,6 @@ export const Label = styled.Text`
 `;
 
 export const LabelSlider = styled.Text`
-    margin-top: 10px;
-    font-size: 14px;
+	margin-top: 10px;
+	font-size: 14px;
 `;

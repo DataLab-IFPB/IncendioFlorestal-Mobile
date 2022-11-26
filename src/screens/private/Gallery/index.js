@@ -1,42 +1,43 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import FontAwesome from "react-native-vector-icons/FontAwesome5";
-import firebase from "../../../shared/services/firebase";
 import fs from "react-native-fs";
-import { FlatList, BackHandler } from "react-native";
 import { useDispatch } from "react-redux";
-import { ActionButton } from "../../../components/UI";
-import { loadingActions } from "../../../store/actions";
 import { useNetInfo } from "@react-native-community/netinfo";
+
+import firebase from "../../../shared/services/firebase";
+import { formatDateString, formatDatetime } from "../../../shared/utils/formatDate";
+import { loaderActions } from "../../../store/actions";
+
+import { FlatList, BackHandler } from "react-native";
+import { ActionButton } from "../../../components/UI";
 import { ModalConfirmation } from "../../../components/Layout";
-import { formatDateString } from "../../../shared/utils/formatDate";
-import { watermelonDB } from "../../../shared/services/watermelonDB";
+import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import {
-	ContainerIconPlayer,
-	ContainerMedia,
-	Header,
-	Image,
+	Container,
+	IconPlayer,
+	Slider,
 	ImageSlider,
 	ItemSlider,
+	Header,
+	Media,
+	Image,
+	Video,
 	Label,
 	Title,
-	RootContainer,
-	Slider,
-	Video,
 	TitleLabel
 } from "./styles";
+import { deleteEvidenceByIdOffline, getAllEvidenceByFireOffline } from "../../../shared/services/realm";
 
 const Gallery = ({ navigation, route }) => {
 
 	const netInfo = useNetInfo();
 	const dispatch = useDispatch();
 
-	const { fireIndice } = route.params;
-	const { enableLoading, disableLoading } = loadingActions;
+	const { fire } = route.params;
+	const { enableLoading, disableLoading } = loaderActions;
 	const { getEvidences, getMedia, removeEvidence } = firebase();
-	const { fetchEvidencesOffline, removeEvidenceOffline } = watermelonDB();
 
-	const [medias, setMedia] = useState([]);
+	const [medias, setMedias] = useState([]);
 	const [configModal, setConfigModal] = useState({ show: false });
 	const [selectedMedia, setSelectedMedia] = useState({ id: null, media: "", path: "", info: "" });
 
@@ -54,14 +55,15 @@ const Gallery = ({ navigation, route }) => {
 	}, [netInfo]);
 
 	async function loadEvidencesOnline() {
-		dispatch(enableLoading("Carregando evidências..."));
+		dispatch(enableLoading("Carregando evidências"));
+		setMedias([]);
 
-		const data = await getEvidences(fireIndice.uid);
+		const data = await getEvidences(fire.id);
 		if (data) {
 			Object.keys(data).forEach(async (key, index) => {
 
 				const path = await getMedia(data[key].file);
-				medias.push({ path, uid: key, ...data[key] });
+				setMedias((state) => [...state, { path, id: key, ...data[key] }]);
 
 				if (index === 0) {
 					setSelectedMedia({
@@ -78,19 +80,17 @@ const Gallery = ({ navigation, route }) => {
 	}
 
 	async function loadEvidencesOffline() {
-		dispatch(enableLoading("Carregando evidências..."));
-		const data = await fetchEvidencesOffline(fireIndice.id);
-
+		dispatch(enableLoading("Carregando evidências"));
+		const data = await getAllEvidenceByFireOffline(fire.id);
 		if (data[0]) {
-			setMedia(data);
+			setMedias(data);
 			setSelectedMedia({
 				id: data[0].id,
 				media: data[0].fileType,
 				path: data[0].path,
-				info: data[0].createdAt
+				info: formatDatetime(data[0].createdAt)
 			});
 		}
-
 		dispatch(disableLoading());
 	}
 
@@ -105,28 +105,26 @@ const Gallery = ({ navigation, route }) => {
 
 	async function onConfirmDelete() {
 		clear();
-		dispatch(enableLoading("Apagando evidência..."));
+		dispatch(enableLoading("Apagando evidência"));
 
 		if (netInfo.isConnected) {
 			await removeEvidence(selectedMedia.id);
 			await loadEvidencesOnline();
-			dispatch(disableLoading());
 		} else {
 			try {
 				await fs.unlink(selectedMedia.path.split("///").pop());
-				await removeEvidenceOffline(selectedMedia.id);
+				deleteEvidenceByIdOffline(selectedMedia.id);
 				loadEvidencesOffline();
 				dispatch(disableLoading());
 			} catch {
 				dispatch(disableLoading());
 			}
 		}
-
 		onCancelDelete();
 	}
 
 	function clear() {
-		setMedia([]);
+		setMedias([]);
 		setSelectedMedia({
 			id: null, media: "", path: "", info: ""
 		});
@@ -141,19 +139,20 @@ const Gallery = ({ navigation, route }) => {
 	}
 
 	function onClose() {
-		navigation.navigate("Map", { fireIndice });
+		navigation.navigate("Map", { fire });
 	}
 
 	useEffect(() => {
 		const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
-			navigation.navigate("Map");
-		  }
-		);
+			onClose();
+			return true;
+		});
+
 		return () => backHandler.remove();
-	  }, []);
+	}, []);
 
 	return (
-		<RootContainer>
+		<Container>
 			<ModalConfirmation
 				isVisible={configModal.show}
 				message="Deseja excluir esta evidência?"
@@ -162,16 +161,16 @@ const Gallery = ({ navigation, route }) => {
 			/>
 
 			<Header isEmptyMedias={!!medias.length}>
-				<ActionButton icon='close' onPress={onClose}/>
+				<ActionButton icon='close' onPress={onClose} />
 
 				<Title isEmptyMedias={!!medias.length}>
 					GALERIA
 				</Title>
 
-				{!!medias.length && <ActionButton icon='trash' onPress={openModal}/>}
+				{!!medias.length && <ActionButton icon='trash' onPress={openModal} />}
 			</Header>
 
-			<ContainerMedia>
+			<Media>
 				{!medias.length && <Label>Nenhuma evidência registrada</Label>}
 
 				{!!medias.length && <Label>
@@ -181,7 +180,7 @@ const Gallery = ({ navigation, route }) => {
 
 				{/* IMAGE */}
 				{!!medias.length && selectedMedia.media === "image" && (
-					<Image source={{ uri: selectedMedia.path }}/>
+					<Image source={{ uri: selectedMedia.path }} />
 				)}
 
 				{/* VIDEO */}
@@ -193,29 +192,29 @@ const Gallery = ({ navigation, route }) => {
 						source={{ uri: selectedMedia.path }}
 					/>
 				)}
-			</ContainerMedia>
+			</Media>
 
 			<Slider>
 				<FlatList
 					horizontal
 					data={medias}
-					keyExtractor={(item) => item.path}
+					keyExtractor={(item) => item.id}
 					renderItem={({ item }) => (
 						<ItemSlider
 							onPress={changeMediaHandler.bind(null, item)}
 							isSelected={item.path === selectedMedia.path}
 						>
 							{item.media === "video" && (
-								<ContainerIconPlayer>
-									<FontAwesome name="play-circle" color="#FFF" size={30}/>
-								</ContainerIconPlayer>
+								<IconPlayer>
+									<FontAwesome name="play-circle" color="#FFF" size={30} />
+								</IconPlayer>
 							)}
-							<ImageSlider source={{ uri: item.path }}/>
+							<ImageSlider source={{ uri: item.path }} />
 						</ItemSlider>
 					)}
 				/>
 			</Slider>
-		</RootContainer>
+		</Container>
 	);
 };
 

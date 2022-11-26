@@ -1,10 +1,12 @@
 import React from "react";
 import { Label, Touchable } from "./styles";
+import { ActivityIndicator } from "react-native";
 
-const ModalButton = ({ message, onPress, highlighted = false }) => {
+const ModalButton = ({ message, onPress, highlighted = false, load = false }) => {
 	return(
 		<Touchable onPress={onPress} isHighlighted={highlighted}>
-			<Label>{message}</Label>
+			{!load && <Label>{message}</Label>}
+			{!!load && <ActivityIndicator size="small" color="#FFF" />}
 		</Touchable>
 	);
 };

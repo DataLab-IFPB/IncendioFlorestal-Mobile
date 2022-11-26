@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import FontAwesome from "react-native-vector-icons/FontAwesome5";
-import { weather } from "../../../shared/services/weather";
 import { useNetInfo } from "@react-native-community/netinfo";
+
+import weather from "../../../shared/services/weather";
+
+import FontAwesome from "react-native-vector-icons/FontAwesome5";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import {
 	Container,
 	ContainerInfo,
@@ -21,9 +23,9 @@ const Forecast = ({ userCoordinates }) => {
 	const [currentWeather, setCurrentWeather] = useState(null);
 
 	useEffect(() => {
-		if (userCoordinates.latitude && userCoordinates.longitude)
+		if (userCoordinates.latitude && userCoordinates.longitude) {
 			refreshWeather();
-
+		}
 	}, [userCoordinates, netInfo.isConnected]);
 
 
@@ -55,7 +57,7 @@ const Forecast = ({ userCoordinates }) => {
 	}
 
 	function iconIonicons(name, color) {
-		return <Ionicons name={name} size={15} color={color}/>;
+		return (<Ionicons name={name} size={15} color={color} />);
 	}
 
 	if(netInfo.isConnected) {
@@ -63,26 +65,32 @@ const Forecast = ({ userCoordinates }) => {
 			<Container>
 				{/* Velocidade e direcao do vento */}
 				<ContainerInfo>
-					<FontAwesome name='wind' color="white" size={15}/>
+					<FontAwesome name='wind' color="white" size={15} />
 					{windInfoContainer()}
 				</ContainerInfo>
 
 				{/* Temperatura */}
 				<ContainerInfo>
 					{iconIonicons("thermometer-outline", "red")}
-					<Label> {renderInfo(currentWeather && currentWeather.temp_c + "º")} </Label>
+					<Label>
+						{renderInfo(currentWeather && currentWeather.temp_c + "º")}
+					</Label>
 				</ContainerInfo>
 
 				{/* Humidade */}
 				<ContainerInfo>
 					{iconIonicons("water", "skyblue")}
-					<Label> {renderInfo(currentWeather && Math.floor(currentWeather.humidity) + "%")} </Label>
+					<Label>
+						{renderInfo(currentWeather && Math.floor(currentWeather.humidity) + "%")}
+					</Label>
 				</ContainerInfo>
 
 				{/* Precipitacao */}
 				<ContainerInfo>
 					{iconIonicons("thunderstorm-outline", "skyblue")}
-					<Label> {renderInfo(currentWeather && currentWeather.precip_in + "%")} </Label>
+					<Label>
+						{renderInfo(currentWeather && currentWeather.precip_in + "%")}
+					</Label>
 				</ContainerInfo>
 			</Container>
 		);
