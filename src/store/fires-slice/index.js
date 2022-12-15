@@ -33,12 +33,11 @@ const fires = createSlice({
 				});
 
 				const filtered = fireIndicesFiltered.filter((item) => {
-					if (!item.status.finished_at) {
-						const dateFireIndice = new Date(item.status.registered_at.split(" ")[0]);
+					const dateFireIndice = new Date(item.status.registered_at.split(" ")[0]);
+					const isInAttendance = item.status.in_attendance_at && !item.status.finished_at;
 
-						if (dateFireIndice > dateFilter) {
-							return item;
-						}
+					if (dateFireIndice > dateFilter || isInAttendance) {
+						return item;
 					}
 				});
 
@@ -74,13 +73,12 @@ const fires = createSlice({
 			}
 
 			const filtered = state.raw.filter((item) => {
-				if (!item.status.finished_at) {
 					const dateFireIndice = new Date(item.status.registered_at.split(" ")[0]);
+					const isInAttendance = item.status.in_attendance_at && !item.status.finished_at;
 
-					if (dateFireIndice >= limitDate) {
+					if (dateFireIndice >= limitDate || isInAttendance) {
 						return item;
 					}
-				}
 			});
 
 			return {
