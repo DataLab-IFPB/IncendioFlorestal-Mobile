@@ -395,7 +395,6 @@ const Map = ({ route }) => {
 	const renderFires = useCallback(() => {
 		return (
 			activeFires.map((register) => {
-				if (register.active && !register.status.finished_at) {
 					return (
 						<FirePoint
 							key={register.id}
@@ -403,7 +402,6 @@ const Map = ({ route }) => {
 							setFireDetails={setFireDetails}
 						/>
 					);
-				}
 			})
 		);
 	});

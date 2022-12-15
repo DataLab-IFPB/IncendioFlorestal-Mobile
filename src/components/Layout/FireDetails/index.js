@@ -139,6 +139,20 @@ const FireDetails = ({ fire, onClose }) => {
 		});
 	}
 
+	const pickColor = () => {
+		if (fire.status.finished_at) {
+			return theme.colors.icon["accent-color-v5"];
+		} else if (fire.status.in_attendance_at) {
+			return theme.colors.icon["accent-color-v4"];
+		} else if (fire.userCreated) {
+			return theme.colors.icon["accent-color-v2"];
+		} else if (fire.brightness >= 500) {
+			return theme.colors.icon["accent-color-v1"];
+		} else {
+			return theme.colors.icon["accent-color-v3"];
+		}
+	}
+
 	return (
 		<Modal transparent animationType="slide" visible onRequestClose={onClose}>
 			<RootContainer>
@@ -158,8 +172,7 @@ const FireDetails = ({ fire, onClose }) => {
 						<SimpleLineIcons
 							name='fire'
 							size={50}
-							color={fire.userCreated ?
-								theme.colors.icon["accent-color-v2"] : theme.colors.icon["accent-color-v1"]}
+							color={pickColor()}
 						/>
 					</ContainerIcon>
 
