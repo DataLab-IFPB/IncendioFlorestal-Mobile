@@ -59,7 +59,7 @@ const Filter = ({
 
 					<ContainerSlider>
 						<LabelSlider>
-							{`${days} ${days === 1 ? "dia" : "dias"}`}
+							{`${days === 1 ? "Hoje" : "24 horas"}`}
 						</LabelSlider>
 						<Slider
 							step={1}

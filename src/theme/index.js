@@ -14,7 +14,9 @@ const configTheme = {
 		icon: {
 			"accent-color-v1": "#F00000",
 			"accent-color-v2": "#FFF000",
-			"accent-color-v3": "#FF4500"
+			"accent-color-v3": "#FF4500",
+			"accent-color-v4": "#0099ff",
+			"accent-color-v5": "#00b300"
 		},
 
 		text: {

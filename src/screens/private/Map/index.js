@@ -31,6 +31,7 @@ import {
 	Forecast,
 	FireDetails,
 	ModalConfirmation,
+	ModalFireLegend,
 	ModalNotification,
 	MapManagerControl,
 	ModalWarning,
@@ -76,6 +77,7 @@ const Map = ({ route }) => {
 	const [mapZoomIsEnabled, setMapZoomIsEnabled] = useState(true);
 	const [sourceTrail, setSourceTrail] = useState();
 	const [showModalFilter, setShowModalFilter] = useState(false);
+	const [showFireLegend, setShowFireLegend] = useState(false);
 	const [showSubMenu, setShowSubMenu] = useState(false);
 	const [mapStyle, setMapStyle] = useState(MapboxGL.StyleURL.Street);
 	const [error, setError] = useState("");
@@ -395,7 +397,6 @@ const Map = ({ route }) => {
 	const renderFires = useCallback(() => {
 		return (
 			activeFires.map((register) => {
-				if (register.active && !register.status.finished_at) {
 					return (
 						<FirePoint
 							key={register.id}
@@ -403,7 +404,6 @@ const Map = ({ route }) => {
 							setFireDetails={setFireDetails}
 						/>
 					);
-				}
 			})
 		);
 	});
@@ -418,6 +418,13 @@ const Map = ({ route }) => {
 					filterDays={filterDays}
 					closeModal={() => setShowModalFilter(false)}
 					onUpdateDaysSlider={setFilterDays}
+				/>
+			)}
+
+			{showFireLegend && (
+				<ModalFireLegend
+					isVisible={showFireLegend}
+					onClose={() => setShowFireLegend(false)}
 				/>
 			)}
 
@@ -475,6 +482,7 @@ const Map = ({ route }) => {
 						setShowSubMenu={setShowSubMenu}
 						handleLocation={returnToLocaleHandler}
 						handleFilter={() => setShowModalFilter(true)}
+						handleFireLegend={() => setShowFireLegend(true)}
 						onRecorderRouter={() => setRecorderRouter((state) => !state)}
 						handleMapStyle={setMapStyle}
 						handleMapManager={() => setMapManagerIsOpen(true)}

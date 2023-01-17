@@ -13,6 +13,7 @@ const Menu = ({
 	setShowSubMenu,
 	handleLocation,
 	handleFilter,
+	handleFireLegend,
 	handleMapStyle,
 	handleMapManager
 }) => {
@@ -57,6 +58,10 @@ const Menu = ({
 	return (
 		<React.Fragment>
 			<Container>
+				<MenuButton onPress={handleFireLegend}>
+					{iconMaterial("info")}
+				</MenuButton>
+
 				<MenuButton onPress={handleLocation}>
 					{iconMaterial("my-location")}
 				</MenuButton>

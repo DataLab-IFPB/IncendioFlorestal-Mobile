@@ -21,6 +21,20 @@ const FirePoint = ({ register, setFireDetails }) => {
 		}
 	}, [load]);
 
+	const pickColor = () => {
+		if (register.status.finished_at) {
+			return theme.colors.icon["accent-color-v5"];
+		} else if (register.status.in_attendance_at) {
+			return theme.colors.icon["accent-color-v4"];
+		} else if (register.userCreated) {
+			return theme.colors.icon["accent-color-v2"];
+		} else if (register.brightness >= 500) {
+			return theme.colors.icon["accent-color-v1"];
+		} else {
+			return theme.colors.icon["accent-color-v3"];
+		}
+	}
+
 	return (
 		<MapboxGL.MarkerView
 			id={register.id}
@@ -29,36 +43,16 @@ const FirePoint = ({ register, setFireDetails }) => {
 				register.longitude
 			]}
 		>
-			{register.userCreated ? (
-				<TouchableOpacity
-					onPress={() => setLoad(true)}
-				>
-					{load && <ActivityIndicator size="small" color="#F00000" />}
-					{!load && (
-						<IconSimple
-							name='fire'
-							size={30}
-							color={theme.colors.icon["accent-color-v2"]}
-						/>
-					)}
-				</TouchableOpacity>
-			) : (
-				<TouchableOpacity
-					onPress={() => setLoad(true)}
-				>
-					{load && <ActivityIndicator size="small" color="#F00000" />}
-					{!load && (
-						<IconSimple
-							name='fire'
-							size={30}
-							color={register.brightness >= 500 ?
-								theme.colors.icon["accent-color-v1"] :
-								theme.colors.icon["accent-color-v3"]
-							}
-						/>
-					)}
-				</TouchableOpacity>
-			)}
+			<TouchableOpacity onPress={() => setLoad(true)}>
+				{load && <ActivityIndicator size="small" color={pickColor()} />}
+				{!load && (
+					<IconSimple
+						name='fire'
+						size={30}
+						color={pickColor()}
+					/>
+				)}
+			</TouchableOpacity>
 		</MapboxGL.MarkerView>
 	);
 };
