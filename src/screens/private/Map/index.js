@@ -105,7 +105,8 @@ const Map = ({ route }) => {
 
 	const user = useSelector((state) => state.auth);
 	const fires = useSelector((state) => state.fires.filtered);
-	const activeFires = useMemo(() => fires, [fires]);
+	const clusters = useSelector((state) => state.fires.clusters);
+	const activeFires = useMemo(() => clusters, [clusters]);
 
 	Logger.setLogCallback((log) => {
 		const { message } = log;
@@ -313,11 +314,11 @@ const Map = ({ route }) => {
 		};
 
 		const uid = await registerNewFireIndice(newIndice);
+		
 
 		dispatch(storeFires({ ...newIndice, uid }));
 		fetchFireIndices();
 		dispatch(disableLoading());
-
 		return uid;
 	}
 
@@ -400,7 +401,7 @@ const Map = ({ route }) => {
 					return (
 						<FirePoint
 							key={register.id}
-							register={register}
+							register={register.focos}
 							setFireDetails={setFireDetails}
 						/>
 					);
@@ -430,7 +431,7 @@ const Map = ({ route }) => {
 
 			{!!fireDetails && (
 				<FireDetails
-					fire={fireDetails}
+					fires={fireDetails}
 					onClose={() => setFireDetails(null)}
 				/>
 			)}

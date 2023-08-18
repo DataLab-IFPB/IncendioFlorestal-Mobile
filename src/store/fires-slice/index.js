@@ -5,7 +5,8 @@ const fires = createSlice({
 	name: "fires",
 	initialState: {
 		filtered: [],
-		raw: []
+		raw: [],
+		clusters: [],
 	},
 	reducers: {
 		loadFires(state, action) {
@@ -20,6 +21,7 @@ const fires = createSlice({
 
 					return {
 						id: key,
+						clusterId: fireIndice.cluster,
 						active: fireIndice.active,
 						brightness: fireIndice.brightness,
 						confidence: fireIndice.confidence,
@@ -27,23 +29,31 @@ const fires = createSlice({
 						latitude: fireIndice.longitude,
 						longitude: fireIndice.latitude,
 						userCreated: fireIndice.userCreated,
-						status: typeof(fireIndice.status) === "string" ?
-							JSON.parse(fireIndice.status) : fireIndice.status
+						status:
+							typeof fireIndice.status === "string"
+								? JSON.parse(fireIndice.status)
+								: fireIndice.status,
 					};
 				});
 
 				const filtered = fireIndicesFiltered.filter((item) => {
-					const dateFireIndice = new Date(item.status.registered_at.split(" ")[0]);
-					const isInAttendance = item.status.in_attendance_at && !item.status.finished_at;
+					const dateFireIndice = new Date(
+						item.status.registered_at.split(" ")[0]
+					);
+					const isInAttendance =
+						item.status.in_attendance_at && !item.status.finished_at;
 
 					if (dateFireIndice > dateFilter || isInAttendance) {
 						return item;
 					}
 				});
 
+				const clusters = formatFocosInCluster(filtered);
+
 				return {
 					filtered,
-					raw: [...fireIndicesFiltered]
+					raw: [...fireIndicesFiltered],
+					clusters,
 				};
 			}
 
@@ -56,7 +66,7 @@ const fires = createSlice({
 			if (payload) {
 				return {
 					filtered: [...payload],
-					raw: [...payload]
+					raw: [...payload],
 				};
 			}
 
@@ -73,17 +83,20 @@ const fires = createSlice({
 			}
 
 			const filtered = state.raw.filter((item) => {
-					const dateFireIndice = new Date(item.status.registered_at.split(" ")[0]);
-					const isInAttendance = item.status.in_attendance_at && !item.status.finished_at;
+				const dateFireIndice = new Date(
+					item.status.registered_at.split(" ")[0]
+				);
+				const isInAttendance =
+					item.status.in_attendance_at && !item.status.finished_at;
 
-					if (dateFireIndice >= limitDate || isInAttendance) {
-						return item;
-					}
+				if (dateFireIndice >= limitDate || isInAttendance) {
+					return item;
+				}
 			});
 
 			return {
 				filtered,
-				raw: state.raw
+				raw: state.raw,
 			};
 		},
 
@@ -91,10 +104,12 @@ const fires = createSlice({
 			const { payload } = action;
 			const filtered = [...state.filtered, payload];
 			const raw = [...state.raw, payload];
+			const clusters = [...state.clusters];
 
 			return {
 				filtered,
-				raw
+				raw,
+				clusters,
 			};
 		},
 
@@ -105,10 +120,31 @@ const fires = createSlice({
 
 			return {
 				filtered: [...filtered, payload],
-				raw: [...raw, payload]
+				raw: [...raw, payload],
 			};
+		},
+	},
+});
+
+function formatFocosInCluster(fireIndices) {
+	const clustersMap = new Map();
+
+	for (const fireIndice of fireIndices) {
+		const { id, clusterId, ...rest } = fireIndice;
+		const foco = { id, clusterId, ...rest };
+
+		if (clustersMap.has(clusterId)) {
+			clustersMap.get(clusterId).focos.push(foco);
+		} else {
+			clustersMap.set(clusterId, {
+				id: id,
+				cluster: clusterId,
+				focos: [foco],
+			});
 		}
 	}
-});
+
+	return Array.from(clustersMap.values());
+}
 
 export default fires;

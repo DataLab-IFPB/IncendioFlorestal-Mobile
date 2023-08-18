@@ -34,7 +34,7 @@ import {
 	statusIndicador,
 } from "./styles";
 
-const FireDetails = ({ fire, onClose }) => {
+const FireDetails = ({ fires, onClose }) => {
 	const theme = useTheme();
 	const netInfo = useNetInfo();
 	const navigation = useNavigation();
@@ -50,24 +50,27 @@ const FireDetails = ({ fire, onClose }) => {
 
 	const [currentWeather, setCurrentWeather] = useState();
 	const [currentStatus, setCurrentStatus] = useState(0);
-	const [configModal, setConfigModal] = useState({ show: false, message: "", data: null });
+	const [configModal, setConfigModal] = useState({
+		show: false,
+		message: "",
+		data: null,
+	});
 
 	// Obter dados climáticos
+	const fire = fires[0];
 	useEffect(() => {
 		const loadForecast = async () => {
 			if (fire)
 				setCurrentWeather(await getForecast(fire.latitude, fire.longitude));
 		};
 
-		if (netInfo.isConnected)
-			loadForecast();
+		if (netInfo.isConnected) loadForecast();
 	}, [netInfo.isConnected, fire]);
 
 	// Obter status atual
 	useEffect(() => {
 		Object.values(fire.status).forEach((status, index) => {
-			if (status)
-				setCurrentStatus(index);
+			if (status) setCurrentStatus(index);
 		});
 	}, []);
 
@@ -90,7 +93,7 @@ const FireDetails = ({ fire, onClose }) => {
 					setConfigModal({
 						show: true,
 						message: `Deseja atualizar o status para "${LABELS_STATUS[position]}?"`,
-						data: position
+						data: position,
 					});
 				}
 			}
@@ -113,7 +116,7 @@ const FireDetails = ({ fire, onClose }) => {
 		Object.keys(status).forEach((key, index) => {
 			if (index === position) {
 				update(key, index);
-			} else if( index === (position - 1) && !status[key] ) {
+			} else if (index === position - 1 && !status[key]) {
 				update(key, index);
 			}
 		});
@@ -135,7 +138,7 @@ const FireDetails = ({ fire, onClose }) => {
 		setConfigModal({
 			show: false,
 			message: "",
-			data: null
+			data: null,
 		});
 	}
 
@@ -151,7 +154,7 @@ const FireDetails = ({ fire, onClose }) => {
 		} else {
 			return theme.colors.icon["accent-color-v3"];
 		}
-	}
+	};
 
 	return (
 		<Modal transparent animationType="slide" visible onRequestClose={onClose}>
@@ -166,22 +169,22 @@ const FireDetails = ({ fire, onClose }) => {
 				)}
 
 				<Container>
-					<ActionButton icon='close' onPress={onClose}/>
+					<ActionButton icon="close" onPress={onClose} />
 
 					<ContainerIcon>
-						<SimpleLineIcons
-							name='fire'
-							size={50}
-							color={pickColor()}
-						/>
+						<SimpleLineIcons name="fire" size={50} color={pickColor()} />
 					</ContainerIcon>
 
-					<Label>Registrado em:</Label>
-					<Label isBold>{formatUTC(fire.status.registered_at.split(" ")[0])}</Label>
+					<Label>Ocorreu em:</Label>
+					<Label isBold>
+						{formatUTC(fire.status.registered_at.split(" ")[0])} ás{" "}
+						{fire.status.registered_at.split(" ")[1]}
+					</Label>
 
-					<Space size={10}/>
-
-					<Label>Ocorreu às: {fire.status.registered_at.split(" ")[1]}</Label>
+					<Space size={10} />
+					{fires.length === 1 ? null :
+					<Label isBold>Esse Cluster possui {fires.length} focos de incêndio!</Label>
+					}
 
 					<ContainerStepIndicador>
 						<StepIndicator
@@ -194,28 +197,47 @@ const FireDetails = ({ fire, onClose }) => {
 					</ContainerStepIndicador>
 
 					<ContainerWeather>
-						<Space size={10}/>
-						<Label>Local: {currentWeather ? currentWeather.locale : "Não identificado"}</Label>
+						<Space size={10} />
+						<Label>
+							Local:{" "}
+							{currentWeather ? currentWeather.locale : "Não identificado"}
+						</Label>
 
 						<ContainerDataWeather>
 							<Info>
-								<FontAwesome name='wind' color='#010101' size={ICON_SIZE}/>
-								<Label>{currentWeather ? currentWeather.wind_kph + " KM/H" : "-"}</Label>
+								<FontAwesome name="wind" color="#010101" size={ICON_SIZE} />
+								<Label>
+									{currentWeather ? currentWeather.wind_kph + " KM/H" : "-"}
+								</Label>
 							</Info>
 
 							<Info>
-								<Ionicons name='thermometer-outline' color='red' size={ICON_SIZE}/>
-								<Label>{currentWeather ? currentWeather.temp_c + "°C" : "-"}</Label>
+								<Ionicons
+									name="thermometer-outline"
+									color="red"
+									size={ICON_SIZE}
+								/>
+								<Label>
+									{currentWeather ? currentWeather.temp_c + "°C" : "-"}
+								</Label>
 							</Info>
 
 							<Info>
-								<Ionicons name='water-outline' color='blue' size={ICON_SIZE}/>
-								<Label>{currentWeather ? currentWeather.humidity + "%" : "-"}</Label>
+								<Ionicons name="water-outline" color="blue" size={ICON_SIZE} />
+								<Label>
+									{currentWeather ? currentWeather.humidity + "%" : "-"}
+								</Label>
 							</Info>
 
 							<Info>
-								<Ionicons name='thunderstorm-outline' color='skyblue' size={ICON_SIZE}/>
-								<Label>{currentWeather ? currentWeather.precip_in + "%" : "-"}</Label>
+								<Ionicons
+									name="thunderstorm-outline"
+									color="skyblue"
+									size={ICON_SIZE}
+								/>
+								<Label>
+									{currentWeather ? currentWeather.precip_in + "%" : "-"}
+								</Label>
 							</Info>
 						</ContainerDataWeather>
 					</ContainerWeather>
@@ -230,11 +252,10 @@ const FireDetails = ({ fire, onClose }) => {
 						</Button>
 					</ContainerOptions>
 
-					<Space size={8}/>
+					<Space size={8} />
 
 					<Label isBold>Adicionar Evidências</Label>
-					<AddEvidence fire={fire}/>
-
+					<AddEvidence fire={fire} />
 				</Container>
 			</RootContainer>
 		</Modal>
