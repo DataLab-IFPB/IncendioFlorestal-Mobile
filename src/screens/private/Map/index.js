@@ -315,7 +315,6 @@ const Map = ({ route }) => {
 
 		const uid = await registerNewFireIndice(newIndice);
 		
-
 		dispatch(storeFires({ ...newIndice, uid }));
 		fetchFireIndices();
 		dispatch(disableLoading());

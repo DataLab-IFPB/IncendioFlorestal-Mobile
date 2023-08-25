@@ -35,6 +35,7 @@ import {
 } from "./styles";
 
 const FireDetails = ({ fires, onClose }) => {
+	
 	const theme = useTheme();
 	const netInfo = useNetInfo();
 	const navigation = useNavigation();

@@ -47,6 +47,7 @@ const fires = createSlice({
 						return item;
 					}
 				});
+				
 				const clusters = formatFocosInCluster(filtered);
 
 				return {
