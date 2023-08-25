@@ -47,7 +47,6 @@ const fires = createSlice({
 						return item;
 					}
 				});
-
 				const clusters = formatFocosInCluster(filtered);
 
 				return {
@@ -67,6 +66,7 @@ const fires = createSlice({
 				return {
 					filtered: [...payload],
 					raw: [...payload],
+					clusters,
 				};
 			}
 
@@ -94,9 +94,12 @@ const fires = createSlice({
 				}
 			});
 
+			const clusters = formatFocosInCluster(filtered);
+
 			return {
 				filtered,
 				raw: state.raw,
+				clusters,
 			};
 		},
 
