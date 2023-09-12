@@ -1,5 +1,11 @@
 /* eslint-disable no-undef */
-import React, { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import React, {
+	useEffect,
+	useRef,
+	useState,
+	useMemo,
+	useCallback,
+} from "react";
 import Geolocation from "react-native-geolocation-service";
 import MapboxGL, { Logger } from "@rnmapbox/maps";
 import Toast from "react-native-toast-message";
@@ -8,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { usePermission } from "../../../hooks/usePermission";
 import { MAP_BOX_KEY } from "../../../constants";
-import firebase  from "../../../shared/services/firebase";
+import firebase from "../../../shared/services/firebase";
 import weather from "../../../shared/services/weather";
 import { firesActions, loaderActions } from "../../../store/actions";
 import { LineString } from "../../../helpers";
@@ -18,7 +24,7 @@ import {
 	getAllEvidenceByFireOffline,
 	getAllFiresOffline,
 	getAllTrailsByFireOffline,
-	saveFireOffline
+	saveFireOffline,
 } from "../../../shared/services/realm";
 
 import { RecorderButton, FirePoint } from "../../../components/UI";
@@ -35,7 +41,7 @@ import {
 	ModalNotification,
 	MapManagerControl,
 	ModalWarning,
-	ModalInput
+	ModalInput,
 } from "../../../components/Layout";
 import {
 	ButtonClose,
@@ -43,11 +49,11 @@ import {
 	Actions,
 	NotificationContainer,
 	Notification,
-	TextNotification
+	TextNotification,
 } from "./styles";
+import getGcp from "../../../shared/services/gcp";
 
 const Map = ({ route }) => {
-
 	MapboxGL.setWellKnownTileServer("Mapbox");
 	MapboxGL.setAccessToken(MAP_BOX_KEY);
 
@@ -59,17 +65,13 @@ const Map = ({ route }) => {
 
 	const { getForecast } = weather();
 	const { enableLoading, disableLoading } = loaderActions;
-	const {
-		loadFires,
-		loadFiresOffline,
-		storeFires
-	} = firesActions;
+	const { loadFires, loadFiresOffline, storeFires } = firesActions;
 
 	const {
 		getFiresIndices,
 		registerNewEvidence,
 		registerNewTrail,
-		registerNewFireIndice
+		registerNewFireIndice,
 	} = firebase();
 
 	const [mapManagerIsOpen, setMapManagerIsOpen] = useState(false);
@@ -87,13 +89,13 @@ const Map = ({ route }) => {
 	const [recorderRouter, setRecorderRouter] = useState(null);
 	const [downloadArea, setDownloadArea] = useState({
 		northeast: null,
-		southwest: null
+		southwest: null,
 	});
 	const [inputModal, setInputModal] = useState({
 		show: false,
 		message: "",
 		label: "",
-		data: null
+		data: null,
 	});
 
 	const [userGeolocation, setUserGeolocation] = useState({
@@ -110,8 +112,10 @@ const Map = ({ route }) => {
 
 	Logger.setLogCallback((log) => {
 		const { message } = log;
-		return message.match("Request failed due to a permanent error: Canceled") ||
-			message.match("Request failed due to a permanent error: Socket Closed");
+		return (
+			message.match("Request failed due to a permanent error: Canceled") ||
+			message.match("Request failed due to a permanent error: Socket Closed")
+		);
 	});
 
 	// Exibir trilhas
@@ -139,7 +143,7 @@ const Map = ({ route }) => {
 					longitude: fire.latitude,
 					userCreated: fire.userCreated,
 					active: fire.active,
-					status: JSON.parse(fire.status)
+					status: JSON.parse(fire.status),
 				};
 
 				const uidFireIndice = await saveFireIndice(fireIndiceFormatted);
@@ -165,7 +169,7 @@ const Map = ({ route }) => {
 						end_coordinates: {
 							latitude: trail.end_latitude,
 							longitude: trail.end_longitude,
-						}
+						},
 					};
 					await registerNewTrail(uidFireIndice, user.registration, data);
 				});
@@ -190,16 +194,16 @@ const Map = ({ route }) => {
 	}, [netInfo.isConnected]);
 
 	useEffect(() => {
-		const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
-			if (mapManagerIsOpen)
-				setMapManagerIsOpen(false);
-			else if(showSubMenu)
-				setShowSubMenu(false);
-			else
-				setShowQuitPrompt(true);
+		const backHandler = BackHandler.addEventListener(
+			"hardwareBackPress",
+			() => {
+				if (mapManagerIsOpen) setMapManagerIsOpen(false);
+				else if (showSubMenu) setShowSubMenu(false);
+				else setShowQuitPrompt(true);
 
-			return true;
-		});
+				return true;
+			}
+		);
 
 		return () => backHandler.remove();
 	}, [mapManagerIsOpen, showSubMenu]);
@@ -215,8 +219,7 @@ const Map = ({ route }) => {
 			}
 		};
 
-		if (netInfo.isConnected !== null)
-			fetchData();
+		if (netInfo.isConnected !== null) fetchData();
 	}, [netInfo]);
 
 	useEffect(() => {
@@ -237,7 +240,7 @@ const Map = ({ route }) => {
 				enableHighAccuracy: true,
 				timeout: 20000,
 				maximumAge: 2000,
-			},
+			}
 		);
 
 		Geolocation.getCurrentPosition(
@@ -252,7 +255,7 @@ const Map = ({ route }) => {
 				enableHighAccuracy: true,
 				timeout: 20000,
 				maximumAge: 2000,
-			},
+			}
 		);
 
 		return () => Geolocation.clearWatch(watchPosition);
@@ -272,6 +275,7 @@ const Map = ({ route }) => {
 
 	async function fetchFireIndices() {
 		const data = await getFiresIndices();
+		
 		dispatch(loadFires(data));
 	}
 
@@ -291,7 +295,7 @@ const Map = ({ route }) => {
 				type: "error",
 				text1: "Atenção!",
 				text2: "Ocorreu um problema ao salvar o incêndio",
-				visibilityTime: 5000
+				visibilityTime: 5000,
 			});
 		}
 		setCoordsNewFire(null);
@@ -299,7 +303,10 @@ const Map = ({ route }) => {
 
 	async function saveFireIndice(fireIndice) {
 		dispatch(enableLoading("Salvando novo registro"));
-		const weather = await getForecast(fireIndice.longitude, fireIndice.latitude);
+		const weather = await getForecast(
+			fireIndice.longitude,
+			fireIndice.latitude
+		);
 		const newIndice = {
 			brightness: null,
 			brightness_2: null,
@@ -310,7 +317,7 @@ const Map = ({ route }) => {
 			track: "",
 			version: "",
 			weather,
-			...fireIndice
+			...fireIndice,
 		};
 
 		const uid = await registerNewFireIndice(newIndice);
@@ -318,7 +325,13 @@ const Map = ({ route }) => {
 		dispatch(storeFires({ ...newIndice, uid }));
 		fetchFireIndices();
 		dispatch(disableLoading());
+		gcp();
 		return uid;
+	}
+
+	async function gcp() {
+		await getGcp();
+		fetchFireIndices();
 	}
 
 	function returnToLocaleHandler() {
@@ -339,7 +352,7 @@ const Map = ({ route }) => {
 			setInputModal({
 				show: true,
 				message: "nome da área",
-				label: "Área"
+				label: "Área",
 			});
 		});
 	}
@@ -355,23 +368,28 @@ const Map = ({ route }) => {
 						type: "success",
 						text1: "Área baixada com sucesso!",
 						text2: "Verifique a lista de áreas salvas",
-						visibilityTime: 5000
+						visibilityTime: 5000,
 					});
 				} else {
 					dispatch(enableLoading(~~status.percentage + "%"));
 				}
 			};
 
-			await offlineManager.createPack({
-				name: areaName,
-				styleURL: mapStyle,
-				minZoom: 10,
-				maxZoom: 13,
-				bounds: [
-					downloadArea.northeast,		//Northeast (superior direito) longitude latitude
-					downloadArea.southwest		//Southwest (inferior esquerdo) longitude latitude
-				]
-			}, progressListener, () => {})
+			await offlineManager
+				.createPack(
+					{
+						name: areaName,
+						styleURL: mapStyle,
+						minZoom: 10,
+						maxZoom: 13,
+						bounds: [
+							downloadArea.northeast, //Northeast (superior direito) longitude latitude
+							downloadArea.southwest, //Southwest (inferior esquerdo) longitude latitude
+						],
+					},
+					progressListener,
+					() => {}
+				)
 				.catch(() => {
 					setError("Uma área com o mesmo nome já foi baixada.");
 				});
@@ -390,27 +408,25 @@ const Map = ({ route }) => {
 		setInputModal({
 			show: false,
 			message: "",
-			label: ""
+			label: "",
 		});
 	}
 
 	const renderFires = useCallback(() => {
-		return (
-			activeFires.map((register) => {
-					return (
-						<FirePoint
-							key={register.id}
-							register={register.focos}
-							setFireDetails={setFireDetails}
-						/>
-					);
-			})
-		);
+		return activeFires.map((register) => {
+			return (
+				<FirePoint
+					key={register.id}
+					register={register.focos}
+					setFireDetails={setFireDetails}
+				/>
+			);
+		});
 	});
 
 	return (
 		<>
-			<StatusBar barStyle='light-content' backgroundColor='#000' />
+			<StatusBar barStyle="light-content" backgroundColor="#000" />
 			<ModalNotification />
 
 			{showModalFilter && (
@@ -429,10 +445,7 @@ const Map = ({ route }) => {
 			)}
 
 			{!!fireDetails && (
-				<FireDetails
-					fires={fireDetails}
-					onClose={() => setFireDetails(null)}
-				/>
+				<FireDetails fires={fireDetails} onClose={() => setFireDetails(null)} />
 			)}
 
 			{!!error && (
@@ -448,8 +461,8 @@ const Map = ({ route }) => {
 					message={inputModal.message}
 					onConfirm={handleAddNewPack}
 					onCancel={handleCloseInputModal}
-					onChangeText={newName => setAreaName(newName)}
-					keyboardType='default'
+					onChangeText={(newName) => setAreaName(newName)}
+					keyboardType="default"
 				/>
 			)}
 
@@ -464,9 +477,9 @@ const Map = ({ route }) => {
 
 			<ModalConfirmation
 				isVisible={!!coordsNewFire}
-				message={
-					`${!netInfo.isConnected ? "Registro offline\n\n" : ""}Deseja adicionar um novo registro de incêndio?`
-				}
+				message={`${
+					!netInfo.isConnected ? "Registro offline\n\n" : ""
+				}Deseja adicionar um novo registro de incêndio?`}
 				onConfirm={generateFireIndice}
 				onCancel={() => setCoordsNewFire(null)}
 			/>
@@ -544,10 +557,7 @@ const Map = ({ route }) => {
 					/>
 
 					{sourceTrail && (
-						<MapboxGL.ShapeSource
-							id="trail"
-							shape={sourceTrail}
-						>
+						<MapboxGL.ShapeSource id="trail" shape={sourceTrail}>
 							<MapboxGL.LineLayer
 								id="trailRoute"
 								style={{ lineColor: "red", lineWidth: 5 }}
@@ -558,7 +568,7 @@ const Map = ({ route }) => {
 					<MapboxGL.UserLocation
 						showsUserHeadingIndicator={true}
 						visible={true}
-						renderMode='native'
+						renderMode="native"
 					/>
 
 					{renderFires()}
@@ -573,11 +583,7 @@ const Map = ({ route }) => {
 
 						<NotificationContainer>
 							<Notification>
-								<Ionicons
-									name="alert-circle-outline"
-									color="#FFF"
-									size={25}
-								/>
+								<Ionicons name="alert-circle-outline" color="#FFF" size={25} />
 								<TextNotification>
 									Posicione-se sobre a área de download
 								</TextNotification>

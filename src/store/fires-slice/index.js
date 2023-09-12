@@ -137,15 +137,14 @@ function formatFocosInCluster(fireIndices) {
 		const { id, clusterId, ...rest } = fireIndice;
 		const foco = { id, clusterId, ...rest };
 
-		if (clustersMap.has(clusterId)) {
-			clustersMap.get(clusterId).focos.push(foco);
-		} else {
-			clustersMap.set(clusterId, {
-				id: id,
-				cluster: clusterId,
-				focos: [foco],
-			});
-		}
+		const cluster = clustersMap.get(clusterId) || {
+			id: id,
+			cluster: clusterId,
+			focos: [],
+		};
+		cluster.focos.push(foco);
+
+		clustersMap.set(clusterId, cluster);
 	}
 
 	return Array.from(clustersMap.values());
