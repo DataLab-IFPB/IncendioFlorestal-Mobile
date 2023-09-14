@@ -123,13 +123,25 @@ const FireDetails = ({ fires, onClose }) => {
 		});
 
 		if (netInfo.isConnected) {
-			await updateStatusFireIndice(fire.id, status);
-			const firesIndicesUpdated = await getFiresIndices();
-			dispatch(loadFires(firesIndicesUpdated));
+			await Promise.all(
+				fires.map(async (foco) => {
+				  await updateStatusFireIndice(foco.id, status);
+				})
+			  );
+		  
+			  const firesIndicesUpdated = await getFiresIndices();
+			  dispatch(loadFires(firesIndicesUpdated));
 		} else {
-			updateFireStatusOfflice(fire.id, JSON.stringify(status));
-			dispatch(updateFire({ ...fire, status }));
-		}
+			await Promise.all(
+				fires.map(async (foco) => {
+				  updateFireStatusOfflice(foco.id, JSON.stringify(status));
+				})
+			  );
+		  
+			  fires.forEach((foco) => {
+				dispatch(updateFire({ ...foco, status }));
+			  });
+			}
 
 		onCancelUpdateStatus();
 		dispatch(disableLoading());
