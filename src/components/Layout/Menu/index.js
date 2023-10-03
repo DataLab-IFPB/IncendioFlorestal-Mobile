@@ -15,7 +15,8 @@ const Menu = ({
 	handleFilter,
 	handleFireLegend,
 	handleMapStyle,
-	handleMapManager
+	handleMapManager,
+	syncData
 }) => {
 	const subMenuAnimation = useRef(new Animated.Value(0)).current;
 
@@ -73,6 +74,10 @@ const Menu = ({
 				<MenuButton onPress={handleMapManager}>
 					{iconFontAwesome("download")}
 				</MenuButton>
+
+				<MenuButton onPress={syncData}>
+					{iconFontAwesome("sync-alt")}
+				</MenuButton>				
 
 				<MenuButton onPress={subMenuHandler}>
 					{iconFontAwesome("layer-group")}

@@ -499,6 +499,11 @@ const Map = ({ route }) => {
 						onRecorderRouter={() => setRecorderRouter((state) => !state)}
 						handleMapStyle={setMapStyle}
 						handleMapManager={() => setMapManagerIsOpen(true)}
+						syncData={async () => {
+							dispatch(enableLoading("Sincronizando dados"));
+							await fetchFireIndices();
+							dispatch(disableLoading());
+						}}
 					/>
 				)}
 

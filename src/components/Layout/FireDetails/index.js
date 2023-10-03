@@ -196,7 +196,7 @@ const FireDetails = ({ fires, onClose }) => {
 
 					<Space size={10} />
 					{fires.length === 1 ? null :
-					<Label isBold>Esse Cluster possui {fires.length} focos de incêndio!</Label>
+					<Label isBold>Essa Área possui {fires.length} focos de incêndio</Label>
 					}
 
 					<ContainerStepIndicador>
