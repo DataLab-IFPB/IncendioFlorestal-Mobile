@@ -131,23 +131,35 @@ const fires = createSlice({
 });
 
 function formatFocosInCluster(fireIndices) {
-	const clustersMap = new Map();
+    const clustersMap = new Map();
 
-	for (const fireIndice of fireIndices) {
-		const { id, clusterId, ...rest } = fireIndice;
-		const foco = { id, clusterId, ...rest };
+    for (const fireIndice of fireIndices) {
+        const { id, clusterId, ...rest } = fireIndice;
+        const foco = { id, clusterId, ...rest };
 
-		const cluster = clustersMap.get(clusterId) || {
-			id: id,
-			cluster: clusterId,
-			focos: [],
-		};
-		cluster.focos.push(foco);
+        if (clusterId !== undefined) {
+            if (clustersMap.has(clusterId)) {
+                clustersMap.get(clusterId).focos.push(foco);
+            } else {
+                clustersMap.set(clusterId, {
+                    id: id,
+                    cluster: clusterId,
+                    focos: [foco],
+                });
+            }
+        } else {
+            if (clustersMap.has(id)) {
+                clustersMap.get(id).focos.push(foco);
+            } else {
+                clustersMap.set(id, {
+                    id: id,
+                    focos: [foco],
+                });
+            }
+        }
+    }
 
-		clustersMap.set(clusterId, cluster);
-	}
-
-	return Array.from(clustersMap.values());
+    return Array.from(clustersMap.values());
 }
 
 export default fires;
