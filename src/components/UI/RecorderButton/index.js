@@ -2,7 +2,7 @@ import React, { Fragment, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNetInfo } from "@react-native-community/netinfo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { Alert } from "react-native";
 import { START_COORDINATES } from "../../../constants";
 import firebase from "../../../shared/services/firebase";
 import { loaderActions } from "../../../store/actions";
@@ -51,7 +51,12 @@ const RecorderButton = ({
 		};
 
 		if (netInfo.isConnected) {
-			await registerNewTrail(fireId, userRegistration, data);
+			try {
+				const result = await registerNewTrail(fireId, userRegistration, data);
+				Alert.alert("Sucesso", result);
+			} catch (error) {
+				Alert.alert("Erro", error);
+			}
 		} else {
 			saveTrailOffline({
 				fireId,

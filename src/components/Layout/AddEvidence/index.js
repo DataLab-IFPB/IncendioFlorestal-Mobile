@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ImagePicker from "react-native-image-crop-picker";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { useSelector } from "react-redux";
+import { Alert } from 'react-native';
 
 import { RESOLUTION_IMAGE_AND_VIDEO } from "../../../constants";
 import firebase from "../../../shared/services/firebase";
@@ -79,7 +80,12 @@ const AddEvidence = ({ fire }) => {
 
 	async function uploadFile() {
 		if (file) {
-			await registerNewEvidence(file.path, file.mime.split("/")[0], userRegistration, fire.id);
+			try {
+				const result = await registerNewEvidence(file.path, file.mime.split("/")[0], userRegistration, fire.id);
+				Alert.alert('Sucesso', result);
+			  } catch (error) {
+				Alert.alert('Erro', error);
+			  }
 		}
 	}
 

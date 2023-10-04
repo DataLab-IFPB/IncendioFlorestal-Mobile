@@ -95,9 +95,9 @@ const firebase = () => {
 				fire_indice: fireIndice,
 				user
 			}).then(() => {
-				resolve();
+				resolve("Trilha salva com sucesso");
 			}).catch(() => {
-				reject();
+				reject("Erro ao salvar Trilha");
 			});
 		});
 	}
