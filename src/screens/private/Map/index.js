@@ -325,11 +325,12 @@ const Map = ({ route }) => {
 		dispatch(storeFires({ ...newIndice, uid }));
 		fetchFireIndices();
 		dispatch(disableLoading());
-		gcp();
+		generateClusters();
+		
 		return uid;
 	}
 
-	async function gcp() {
+	async function generateClusters() { 
 		await getGcp();
 		fetchFireIndices();
 	}

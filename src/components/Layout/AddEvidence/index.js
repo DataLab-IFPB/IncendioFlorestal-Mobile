@@ -27,7 +27,7 @@ const AddEvidence = ({ fire }) => {
 				uploadFile();
 			} else {
 				const data = {
-					fireId: fire.id,
+					fireId: fire.clusterId,
 					path: file.path,
 					fileType: file.mime.split("/")[0]
 				};
@@ -81,7 +81,7 @@ const AddEvidence = ({ fire }) => {
 	async function uploadFile() {
 		if (file) {
 			try {
-				const result = await registerNewEvidence(file.path, file.mime.split("/")[0], userRegistration, fire.id);
+				const result = await registerNewEvidence(file.path, file.mime.split("/")[0], userRegistration, fire.clusterId);
 				Alert.alert('Sucesso', result);
 			  } catch (error) {
 				Alert.alert('Erro', error);

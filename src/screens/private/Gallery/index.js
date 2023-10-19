@@ -58,7 +58,7 @@ const Gallery = ({ navigation, route }) => {
 		dispatch(enableLoading("Carregando evidências"));
 		setMedias([]);
 
-		const data = await getEvidences(fire.id);
+		const data = await getEvidences(fire.clusterId);
 		if (data) {
 			Object.keys(data).forEach(async (key, index) => {
 
