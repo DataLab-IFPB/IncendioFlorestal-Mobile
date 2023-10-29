@@ -500,7 +500,7 @@ const Map = ({ route }) => {
 						onRecorderRouter={() => setRecorderRouter((state) => !state)}
 						handleMapStyle={setMapStyle}
 						handleMapManager={() => setMapManagerIsOpen(true)}
-						syncData={async () => {
+						syncData={async () => {netInfo.isConnected &&
 							dispatch(enableLoading("Sincronizando dados"));
 							await fetchFireIndices();
 							dispatch(disableLoading());

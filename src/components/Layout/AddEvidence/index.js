@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ImagePicker from "react-native-image-crop-picker";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { useSelector } from "react-redux";
-import { Alert } from 'react-native';
+import { Alert } from "react-native";
 
 import { RESOLUTION_IMAGE_AND_VIDEO } from "../../../constants";
 import firebase from "../../../shared/services/firebase";
@@ -24,12 +24,16 @@ const AddEvidence = ({ fire }) => {
 	useEffect(() => {
 		if (file) {
 			if (netInfo.isConnected) {
-				uploadFile();
+				if(fire.clusterId){
+					uploadFile(fire.clusterId)
+				}else{
+					uploadFile(fire.id);
+				}
 			} else {
 				const data = {
-					fireId: fire.clusterId,
+					fireId: fire.id,
 					path: file.path,
-					fileType: file.mime.split("/")[0]
+					fileType: file.mime.split("/")[0],
 				};
 				saveEvidenceOffline(data);
 			}
@@ -78,14 +82,19 @@ const AddEvidence = ({ fire }) => {
 		return Math.round(duration / 1000) <= 300;
 	}
 
-	async function uploadFile() {
+	async function uploadFile(fireId) {
 		if (file) {
 			try {
-				const result = await registerNewEvidence(file.path, file.mime.split("/")[0], userRegistration, fire.clusterId);
-				Alert.alert('Sucesso', result);
-			  } catch (error) {
-				Alert.alert('Erro', error);
-			  }
+				const result = await registerNewEvidence(
+					file.path,
+					file.mime.split("/")[0],
+					userRegistration,
+					fireId
+				);
+				Alert.alert("Sucesso", result);
+			} catch (error) {
+				Alert.alert("Erro", error);
+			}
 		}
 	}
 

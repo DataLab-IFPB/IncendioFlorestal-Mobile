@@ -77,7 +77,7 @@ const FireDetails = ({ fires, onClose }) => {
 
 	function openGallery() {
 		onClose();
-		navigation.navigate("Gallery", { fire });
+		navigation.navigate("Gallery", { fires });
 	}
 
 	function openTrailManager() {

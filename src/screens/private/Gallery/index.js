@@ -5,7 +5,10 @@ import { useDispatch } from "react-redux";
 import { useNetInfo } from "@react-native-community/netinfo";
 
 import firebase from "../../../shared/services/firebase";
-import { formatDateString, formatDatetime } from "../../../shared/utils/formatDate";
+import {
+	formatDateString,
+	formatDatetime,
+} from "../../../shared/utils/formatDate";
 import { loaderActions } from "../../../store/actions";
 
 import { FlatList, BackHandler } from "react-native";
@@ -24,44 +27,60 @@ import {
 	Video,
 	Label,
 	Title,
-	TitleLabel
+	TitleLabel,
 } from "./styles";
-import { deleteEvidenceByIdOffline, getAllEvidenceByFireOffline } from "../../../shared/services/realm";
+import {
+	deleteEvidenceByIdOffline,
+	getAllEvidenceByFireOffline,
+} from "../../../shared/services/realm";
 
 const Gallery = ({ navigation, route }) => {
-
 	const netInfo = useNetInfo();
 	const dispatch = useDispatch();
 
-	const { fire } = route.params;
+	const { fires } = route.params;
 	const { enableLoading, disableLoading } = loaderActions;
 	const { getEvidences, getMedia, removeEvidence } = firebase();
 
 	const [medias, setMedias] = useState([]);
 	const [configModal, setConfigModal] = useState({ show: false });
-	const [selectedMedia, setSelectedMedia] = useState({ id: null, media: "", path: "", info: "" });
+	const [selectedMedia, setSelectedMedia] = useState({
+		id: null,
+		media: "",
+		path: "",
+		info: "",
+	});
 
 	// Load Data
 	useEffect(() => {
 		const load = async () => {
-			if (netInfo.isConnected)
-				await loadEvidencesOnline();
-			else
-				await loadEvidencesOffline();
+			if (netInfo.isConnected) {
+				dispatch(enableLoading("Carregando evidências"));
+				if(fires[0].clusterId){
+					await loadEvidencesOnline(fires[0].clusterId);
+				}
+				await Promise.all(
+					fires.map(async (fire) => {
+						await loadEvidencesOnline(fire.id);
+					})
+				);
+				
+
+				
+			} else 
+			await loadEvidencesOffline();
 		};
 
-		if (netInfo.isConnected !== null)
-			load();
+		if (netInfo.isConnected !== null) load();
 	}, [netInfo]);
 
-	async function loadEvidencesOnline() {
-		dispatch(enableLoading("Carregando evidências"));
+	async function loadEvidencesOnline(fireId) {
+		
 		setMedias([]);
 
-		const data = await getEvidences(fire.clusterId);
+		const data = await getEvidences(fireId);
 		if (data) {
 			Object.keys(data).forEach(async (key, index) => {
-
 				const path = await getMedia(data[key].file);
 				setMedias((state) => [...state, { path, id: key, ...data[key] }]);
 
@@ -70,7 +89,7 @@ const Gallery = ({ navigation, route }) => {
 						path,
 						media: data[key].fileType,
 						info: data[key].createdAt,
-						id: key
+						id: key,
 					});
 				}
 			});
@@ -81,14 +100,15 @@ const Gallery = ({ navigation, route }) => {
 
 	async function loadEvidencesOffline() {
 		dispatch(enableLoading("Carregando evidências"));
-		const data = await getAllEvidenceByFireOffline(fire.id);
+
+		const data = await getAllEvidenceByFireOffline(fires[0].id);
 		if (data[0]) {
 			setMedias(data);
 			setSelectedMedia({
 				id: data[0].id,
 				media: data[0].fileType,
 				path: data[0].path,
-				info: formatDatetime(data[0].createdAt)
+				info: formatDatetime(data[0].createdAt),
 			});
 		}
 		dispatch(disableLoading());
@@ -99,7 +119,7 @@ const Gallery = ({ navigation, route }) => {
 			id: item.id,
 			path: item.path,
 			media: item.fileType,
-			info: item.createdAt
+			info: item.createdAt,
 		});
 	}
 
@@ -109,7 +129,16 @@ const Gallery = ({ navigation, route }) => {
 
 		if (netInfo.isConnected) {
 			await removeEvidence(selectedMedia.id);
-			await loadEvidencesOnline();
+			
+			fires[0].clusterId ? await loadEvidencesOnline(fires[0].clusterId) : 
+				await Promise.all(
+				fires.map(async (fire) => {
+					await loadEvidencesOnline(fire.id);
+				})
+			);
+			
+			
+			
 		} else {
 			try {
 				await fs.unlink(selectedMedia.path.split("///").pop());
@@ -126,7 +155,10 @@ const Gallery = ({ navigation, route }) => {
 	function clear() {
 		setMedias([]);
 		setSelectedMedia({
-			id: null, media: "", path: "", info: ""
+			id: null,
+			media: "",
+			path: "",
+			info: "",
 		});
 	}
 
@@ -139,14 +171,18 @@ const Gallery = ({ navigation, route }) => {
 	}
 
 	function onClose() {
+		const fire = fires[0];
 		navigation.navigate("Map", { fire });
 	}
 
 	useEffect(() => {
-		const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
-			onClose();
-			return true;
-		});
+		const backHandler = BackHandler.addEventListener(
+			"hardwareBackPress",
+			() => {
+				onClose();
+				return true;
+			}
+		);
 
 		return () => backHandler.remove();
 	}, []);
@@ -161,22 +197,22 @@ const Gallery = ({ navigation, route }) => {
 			/>
 
 			<Header isEmptyMedias={!!medias.length}>
-				<ActionButton icon='close' onPress={onClose} />
+				<ActionButton icon="close" onPress={onClose} />
 
-				<Title isEmptyMedias={!!medias.length}>
-					GALERIA
-				</Title>
+				<Title isEmptyMedias={!!medias.length}>GALERIA</Title>
 
-				{!!medias.length && <ActionButton icon='trash' onPress={openModal} />}
+				{!!medias.length && <ActionButton icon="trash" onPress={openModal} />}
 			</Header>
 
 			<Media>
 				{!medias.length && <Label>Nenhuma evidência registrada</Label>}
 
-				{!!medias.length && <Label>
-					<TitleLabel>Registrado em:</TitleLabel>
-					{`\n${formatDateString(selectedMedia.info)}`}
-				</Label>}
+				{!!medias.length && (
+					<Label>
+						<TitleLabel>Registrado em:</TitleLabel>
+						{`\n${formatDateString(selectedMedia.info)}`}
+					</Label>
+				)}
 
 				{/* IMAGE */}
 				{!!medias.length && selectedMedia.media === "image" && (
